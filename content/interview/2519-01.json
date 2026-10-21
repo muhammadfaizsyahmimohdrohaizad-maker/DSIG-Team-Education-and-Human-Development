@@ -1,23 +1,23 @@
 {
   "occupation": "2519-01",
   "title": "System Tester",
-  "_note": "Task numbers follow the order in docs/02-methodology.md. Confirm them against eMASCO before the final demo.",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2519), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
   "questions": [
     {
       "id": "q1",
       "text": "Tell us about a time you designed test cases for a feature. How did you decide what to test first?",
-      "source": "eMASCO 2519, task 2",
+      "source": "eMASCO 2519, task 1: Membangunkan dan mendokumentasikan rancangan pengujian perisian.",
       "demoAnswer": "In my Quality Assurance & Control project, our team built a checkout form for a small online shop, and I was in charge of testing it. I listed every field first, then used boundary value analysis on the quantity and postcode fields. That gave me 14 test cases. I started with the quantity field because a wrong value there changes the price. I also ran an integration test to check the quantity field rejects 0 and 100."
     },
     {
       "id": "q2",
       "text": "Describe a bug you found and how you explained it to the person who wrote the code.",
-      "source": "eMASCO 2519, task 4"
+      "source": "eMASCO 2519, task 4: Melaksanakan, menganalisis dan mendokumentasikan keputusan pengujian aplikasi perisian serta ujian sistem maklumat dan telekomunikasi."
     },
     {
       "id": "q3",
       "text": "How would you check that a program does what its requirements say it should?",
-      "source": "eMASCO 2519, task 3"
+      "source": "eMASCO 2519, task 3: Mengesahkan bahawa fungsi atur cara adalah mengikut keperluan pengguna dan garis panduan yang ditetapkan."
     }
   ]
 }

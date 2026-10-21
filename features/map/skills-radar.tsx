@@ -41,7 +41,7 @@ export function SkillsRadar({ axes, values, summary }: Props) {
 
   return (
     <div className="radar" role="img" aria-label={`Skills radar. ${summary}`} aria-describedby="coverage-table">
-      <svg viewBox="-20 0 560 400" focusable="false" aria-hidden="true">
+      <svg viewBox="-40 0 600 400" focusable="false" aria-hidden="true">
         {[0.25, 0.5, 0.75, 1].map((f) => (
           <polygon key={f} className="ring" points={ring(f)} />
         ))}

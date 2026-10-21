@@ -5,6 +5,8 @@ import { useId, useState } from "react";
 import { btn } from "@/components/ui/button";
 import { useAnnounce } from "@/components/ui/live-region";
 import { FlagChip } from "@/components/ui/status-chip";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { chooseTarget } from "./actions";
 
 export type MatchCardData = {
   code: string;
@@ -32,10 +34,10 @@ export function MatchCard({ o, rank }: { o: MatchCardData; rank: number }) {
     <li className="card stack" aria-labelledby={`${quotesId}-title`}>
       <div className="row-between" style={{ alignItems: "flex-start" }}>
         <div className="stack-sm">
-          <h3 id={`${quotesId}-title`}>
+          <h2 id={`${quotesId}-title`} style={{ fontSize: "var(--text-h3)" }}>
             <span className="muted" style={{ fontWeight: 400 }}>{rank}. </span>
             {o.code} · {o.titleMs}
-          </h3>
+          </h2>
           <p className="muted">
             {o.titleEn}
             {o.isTarget ? <span> · your target role</span> : null}
@@ -52,7 +54,7 @@ export function MatchCard({ o, rank }: { o: MatchCardData; rank: number }) {
 
       {shown.length > 0 ? (
         <div className="stack-sm" id={quotesId}>
-          <p style={{ fontWeight: 500 }}>Evidence from your modules</p>
+          <p className="secondary muted">Evidence from your modules</p>
           {shown.map((e) => (
             <blockquote key={e.quote} className="quote">
               <p>“{e.quote}”</p>
@@ -63,7 +65,7 @@ export function MatchCard({ o, rank }: { o: MatchCardData; rank: number }) {
             <div>
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="link-btn"
                 aria-expanded={all}
                 aria-controls={quotesId}
                 onClick={() => {
@@ -83,23 +85,31 @@ export function MatchCard({ o, rank }: { o: MatchCardData; rank: number }) {
           <div className="stack-sm">
             <FlagChip>Check with adviser</FlagChip>
             <p>
-              Check with adviser: some of these links are uncertain.{" "}
+              Some of these links are uncertain.{" "}
               {o.uncertain.map((u) => `“${u.label[0].toUpperCase()}${u.label.slice(1)}” is linked at ${Math.round(u.confidence * 100)}%`).join("; ")}
               , so it is not counted yet.
             </p>
-            <div>
-              <Link href="/bookings/new" className={btn("secondary")}>
-                Talk to a human
-              </Link>
-            </div>
+            <p>
+              <Link href="/bookings/new" style={{ color: "inherit" }}>Talk to a human</Link> if you want an adviser to check it.
+            </p>
           </div>
         </div>
       ) : null}
 
-      <div>
+      <div className="row">
         <Link href={`/matches/${o.code}`} className={btn("secondary")}>
           View {o.code} details
         </Link>
+        {o.isTarget ? (
+          <span className="secondary muted">This is your target role</span>
+        ) : (
+          <form action={chooseTarget}>
+            <input type="hidden" name="code" value={o.code} />
+            <SubmitButton variant="secondary">
+              Choose as my target<span className="visually-hidden">: {o.titleEn}</span>
+            </SubmitButton>
+          </form>
+        )}
       </div>
     </li>
   );

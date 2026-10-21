@@ -40,3 +40,13 @@ export function addDays(iso: string, n: number): string {
   d.setUTCDate(d.getUTCDate() + n);
   return isoDay(d);
 }
+
+/** Today's date in Malaysia (UTC+8), as "2026-10-21". */
+export function todayMY(now: Date = new Date()): string {
+  return isoDay(new Date(now.getTime() + 8 * 3600_000));
+}
+
+/** The current local time in Malaysia as a slot string, "2026-10-21T14:05". */
+export function nowSlotMY(now: Date = new Date()): string {
+  return new Date(now.getTime() + 8 * 3600_000).toISOString().slice(0, 16);
+}

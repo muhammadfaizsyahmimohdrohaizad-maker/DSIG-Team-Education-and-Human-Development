@@ -4,7 +4,7 @@ import feedback from "@/content/llm/feedback.json";
 
 const RECORDED: Record<string, Record<string, unknown>> = { hint, feedback };
 
-/** Replays saved LLM output. No network call, so the demo is the same every time. */
+/** Saved model output: the vetted static hints, and sample feedback for the tests. No network call. */
 export function recorded(task: string, key: string): unknown | null {
   return RECORDED[task]?.[key] ?? null;
 }

@@ -1,0 +1,22 @@
+{
+  "occupation": "2512-01",
+  "title": "Software Developer",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2512), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "questions": [
+    {
+      "id": "2512-01-q1",
+      "text": "Tell us about a time you worked out what a piece of software needed to do before you built it. How did you find out the requirements?",
+      "source": "eMASCO 2512, task 1: Menyelidik, menganalisis dan menilai keperluan aplikasi perisian dan sistem operasi."
+    },
+    {
+      "id": "2512-01-q2",
+      "text": "Walk us through how you designed a program or app you built. Why did you structure it that way?",
+      "source": "eMASCO 2512, task 2: Menyelidik, mereka bentuk dan membangunkan sistem perisian komputer."
+    },
+    {
+      "id": "2512-01-q3",
+      "text": "Describe a time you fixed a bug in code that already existed. How did you find the cause without breaking anything else?",
+      "source": "eMASCO 2512, task 5: Mengubahsuai perisian sedia ada untuk membetulkan ralat dan menyesuaikannya dengan perkakasan baru…"
+    }
+  ]
+}

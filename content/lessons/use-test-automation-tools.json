@@ -2,8 +2,79 @@
   "skillId": "t-auto",
   "slug": "use-test-automation-tools",
   "label": "use test automation tools",
-  "todo": true,
-  "_note": "TODO: team content. Needs 5 recall items with hints and 5 mastery questions with an answer key.",
-  "items": [],
-  "mastery": []
+  "_note": "Draft written by the build; the team should review it against the QA module before a pilot.",
+  "items": [
+    {
+      "id": "uta-1",
+      "question": "Name two kinds of test that are worth automating and one kind that is usually better done by a person. Say why for each.",
+      "modelAnswer": "Worth automating: regression tests that run after every change (they repeat the same steps many times), and data-driven tests that run one flow with many inputs. Better done by a person: exploratory or usability testing, because it needs judgement about what feels wrong and changes every time.\n\nThe rule of thumb: automate what is repeated and stable; keep people on what needs judgement or changes often."
+    },
+    {
+      "id": "uta-2",
+      "question": "An automated UI test passes on your laptop but fails about one run in five on the build server. What is a likely cause, and how would you fix it?",
+      "modelAnswer": "It is a flaky test, most often a timing problem: the test clicks or reads an element before the page has finished loading or updating. Other causes are tests that share data and run in a different order.\n\nFix: wait for a specific condition (the element is visible, the request has finished) instead of a fixed sleep, and give each test its own data so order doesn't matter."
+    },
+    {
+      "id": "uta-3",
+      "question": "What does a CI pipeline do with your automated tests, and why does that help a team?",
+      "modelAnswer": "Continuous integration runs the automated tests on a server every time someone pushes code or opens a pull request, and reports pass or fail before the change is merged.\n\nIt helps because a break is found within minutes, by the person who caused it, while the change is still fresh, instead of days later during manual testing."
+    }
+  ],
+  "mastery": [
+    {
+      "id": "m1",
+      "text": "Which test is the best first candidate for automation?",
+      "options": [
+        "A one-off check of a new logo",
+        "A login regression test run after every release",
+        "Exploring a new feature for odd behaviour",
+        "Asking users if a page is easy to read"
+      ],
+      "key": 1
+    },
+    {
+      "id": "m2",
+      "text": "A Selenium or Playwright test clicks a button before the page has loaded and fails now and then. What is the best fix?",
+      "options": [
+        "Add a fixed 10-second sleep",
+        "Delete the test",
+        "Wait until the button is visible before clicking",
+        "Run the test only on your own laptop"
+      ],
+      "key": 2
+    },
+    {
+      "id": "m3",
+      "text": "What is the main job of a CI server such as GitHub Actions or Jenkins in testing?",
+      "options": [
+        "To write test cases for you",
+        "To run the automated tests on every change and report the result",
+        "To replace manual testers entirely",
+        "To store screenshots of the app"
+      ],
+      "key": 1
+    },
+    {
+      "id": "m4",
+      "text": "Your automated tests all share one test account and fail when run in a different order. What should you change?",
+      "options": [
+        "Give each test its own data or reset the data before it",
+        "Always run the tests in alphabetical order",
+        "Run fewer tests",
+        "Turn off the failing assertions"
+      ],
+      "key": 0
+    },
+    {
+      "id": "m5",
+      "text": "Which statement about test automation is true?",
+      "options": [
+        "Automated tests find every bug",
+        "Once written, automated tests never need maintenance",
+        "Automation is best for repeated, stable checks; people are better at exploratory testing",
+        "Automated tests should only run before a final release"
+      ],
+      "key": 2
+    }
+  ]
 }

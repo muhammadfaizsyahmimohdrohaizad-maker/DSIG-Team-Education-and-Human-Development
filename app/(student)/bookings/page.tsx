@@ -11,8 +11,8 @@ export const metadata: Metadata = { title: "My bookings" };
 
 export default async function BookingsPage() {
   const store = getStore();
-  const [all, adviser] = await Promise.all([store.listBookings(), store.getAdviser()]);
-  const mine = all.filter((b) => b.studentId === "aina").sort((a, b) => (a.slot < b.slot ? -1 : 1));
+  const [all, adviser, student, consent] = await Promise.all([store.listBookings(), store.getMyAdviser(), store.getStudent(), store.getConsent()]);
+  const mine = all.filter((b) => b.studentId === student.id).sort((a, b) => (a.slot < b.slot ? -1 : 1));
   const upcoming = mine.filter((b) => b.status === "requested" || b.status === "accepted");
   const past = mine.filter((b) => !(b.status === "requested" || b.status === "accepted")).reverse();
 
@@ -21,7 +21,10 @@ export default async function BookingsPage() {
       <div className="row-between">
         <div className="page-head">
           <h1>My bookings</h1>
-          <p>Status changes show here first. You also get an email when your adviser accepts, declines or cancels.</p>
+          <p>
+            Status changes show here first.{" "}
+            {consent?.bookingEmails ? "You also get an email when your adviser accepts, declines or cancels." : "Booking emails are off; you can turn them on in Settings."}
+          </p>
         </div>
         <Link href="/bookings/new" className={btn("primary")}>Request a session</Link>
       </div>
@@ -37,13 +40,13 @@ export default async function BookingsPage() {
           {upcoming.length > 0 ? (
             <section className="stack" aria-labelledby="up-title">
               <h2 id="up-title">Upcoming</h2>
-              <BookingList bookings={upcoming} adviserName={adviser.name} />
+              <BookingList bookings={upcoming} adviserName={adviser?.name ?? "your adviser"} />
             </section>
           ) : null}
           {past.length > 0 ? (
             <section className="stack" aria-labelledby="past-title">
               <h2 id="past-title">Past</h2>
-              <BookingList bookings={past} adviserName={adviser.name} />
+              <BookingList bookings={past} adviserName={adviser?.name ?? "your adviser"} />
             </section>
           ) : null}
         </>

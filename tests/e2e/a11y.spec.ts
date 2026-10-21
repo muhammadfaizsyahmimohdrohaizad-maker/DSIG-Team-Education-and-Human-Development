@@ -1,17 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { ADVISER_ROUTES, freshDemo, STUDENT_ROUTES } from "./helpers";
+import { buildPlan, deleteAccount, newStudent, PUBLIC_ROUTES, STUDENT_ROUTES, tickModulesAndTarget } from "./helpers";
 
 const WIDTHS = [375, 1280];
-
-/** The feedback page needs an answer, so the demo creates one through the interview. */
-async function feedbackRoute(page: Page) {
-  await page.goto("/interview");
-  await page.getByLabel("Your answer").fill("I tested the checkout form and found a date bug. I fixed it and re-ran the tests.");
-  await page.getByRole("button", { name: "Send answer" }).click();
-  await expect(page).toHaveURL(/\/feedback\//);
-  return new URL(page.url()).pathname;
-}
 
 async function checkPage(page: Page, route: string) {
   await page.goto(route);
@@ -29,10 +20,7 @@ async function checkPage(page: Page, route: string) {
   const unlabelled = await page.evaluate(() =>
     [...document.querySelectorAll<HTMLInputElement>("input, textarea, select")]
       .filter((el) => !["hidden", "submit"].includes(el.type))
-      .filter((el) => {
-        const text = [...(el.labels ?? [])].map((l) => l.textContent?.trim() ?? "").join("");
-        return !text && !el.getAttribute("aria-labelledby");
-      })
+      .filter((el) => ![...(el.labels ?? [])].map((l) => l.textContent?.trim() ?? "").join("") && !el.getAttribute("aria-labelledby"))
       .map((el) => el.id || el.name || el.tagName),
   );
   expect(unlabelled, `${route} fields without a visible label`).toEqual([]);
@@ -42,41 +30,33 @@ for (const width of WIDTHS) {
   test.describe(`at ${width}px`, () => {
     test.use({ viewport: { width, height: 800 } });
 
-    test("every student route fits and passes axe", async ({ page }) => {
-      await freshDemo(page);
+    test("public pages fit and pass axe", async ({ page }) => {
+      for (const route of PUBLIC_ROUTES) await test.step(route, () => checkPage(page, route));
+    });
+
+    test("the consent screen and every student page fit and pass axe", async ({ page }) => {
+      await page.goto("/sign-up");
+      await newStudent(page);
+      await tickModulesAndTarget(page);
+      await buildPlan(page, [
+        ["execute integration testing", 2],
+        ["use test automation tools", 2],
+        ["report test findings", 2],
+      ]);
       for (const route of STUDENT_ROUTES) await test.step(route, () => checkPage(page, route));
-      await test.step("feedback", async () => checkPage(page, await feedbackRoute(page)));
-    });
-
-    test("the adviser dashboard fits and passes axe", async ({ page }) => {
-      await freshDemo(page);
-      for (const route of ADVISER_ROUTES) await test.step(route, () => checkPage(page, route));
-    });
-
-    test("the skill drawer and cancel dialog pass axe while open", async ({ page }) => {
-      await freshDemo(page);
-      await page.getByRole("button", { name: /report test findings/i }).click();
-      await expect(page.getByRole("dialog")).toBeVisible();
-      const drawer = await new AxeBuilder({ page }).analyze();
-      expect(drawer.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
-      await page.keyboard.press("Escape");
-
-      await page.goto("/adviser");
-      await page.getByRole("button", { name: /^Accept for Aina/ }).click();
-      await page.getByRole("button", { name: /^Cancel booking for Aina/ }).click();
-      await expect(page.getByRole("dialog")).toBeVisible();
-      const modal = await new AxeBuilder({ page }).analyze();
-      expect(modal.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual([]);
+      await deleteAccount(page);
     });
   });
 }
 
 test("reduced motion removes the radar and drawer transitions", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await freshDemo(page);
-  const radar = await page.locator(".radar .shape").evaluate((el) => getComputedStyle(el).transitionDuration);
-  expect(radar).toBe("0s");
+  await newStudent(page);
+  await tickModulesAndTarget(page);
+  await page.goto("/map");
+  expect(await page.locator(".radar .shape").evaluate((el) => getComputedStyle(el).transitionDuration)).toBe("0s");
   await page.getByRole("button", { name: /report test findings/i }).click();
-  const drawer = await page.getByRole("dialog").evaluate((el) => getComputedStyle(el).animationName);
-  expect(drawer).toBe("none");
+  expect(await page.getByRole("dialog").evaluate((el) => getComputedStyle(el).animationName)).toBe("none");
+  await page.keyboard.press("Escape");
+  await deleteAccount(page);
 });

@@ -1,0 +1,59 @@
+{
+  "_note": "Placeholder links from module learning outcomes to skills, with link confidence 0 to 1.",
+  "links": [
+    {
+      "skillId": "s1",
+      "moduleId": "bst",
+      "confidence": 0.86,
+      "quote": "Execute test cases against a specified program and record the expected and actual results."
+    },
+    {
+      "skillId": "s2",
+      "moduleId": "qac",
+      "confidence": 0.78,
+      "quote": "Apply software quality assurance activities such as reviews, inspections and audits to a software product."
+    },
+    {
+      "skillId": "s3",
+      "moduleId": "qac",
+      "confidence": 0.52,
+      "quote": "Prepare documentation of the quality activities carried out on a software project."
+    },
+    {
+      "skillId": "s4",
+      "moduleId": "bop",
+      "confidence": 0.81,
+      "quote": "Write programs that use classes, objects and methods to solve a given problem."
+    },
+    {
+      "skillId": "s5",
+      "moduleId": "and",
+      "confidence": 0.84,
+      "quote": "Build an Android application with several activities and local data storage."
+    },
+    {
+      "skillId": "s6",
+      "moduleId": "awp",
+      "confidence": 0.79,
+      "quote": "Develop a dynamic web application that reads and writes data in a relational database."
+    },
+    {
+      "skillId": "s7",
+      "moduleId": "smre",
+      "confidence": 0.74,
+      "quote": "Elicit and specify functional and non-functional requirements for a software system."
+    },
+    {
+      "skillId": "s8",
+      "moduleId": "smre",
+      "confidence": 0.69,
+      "quote": "Model a system with UML use case, class and sequence diagrams."
+    },
+    {
+      "skillId": "s9",
+      "moduleId": "awp",
+      "confidence": 0.63,
+      "quote": "Develop a dynamic web application that reads and writes data in a relational database."
+    }
+  ]
+}

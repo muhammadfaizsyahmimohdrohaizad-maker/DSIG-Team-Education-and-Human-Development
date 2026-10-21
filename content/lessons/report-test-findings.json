@@ -2,8 +2,79 @@
   "skillId": "s3",
   "slug": "report-test-findings",
   "label": "report test findings",
-  "todo": true,
-  "_note": "TODO: team content. Needs 5 recall items with hints and 5 mastery questions with an answer key.",
-  "items": [],
-  "mastery": []
+  "_note": "Draft written by the build; the team should review it against the QA module before a pilot.",
+  "items": [
+    {
+      "id": "rtf-1",
+      "question": "List the parts of a good bug report, and say why the steps to reproduce matter most.",
+      "modelAnswer": "A short, specific title; the steps to reproduce; the expected result; the actual result; the environment (device, browser, version, test data); severity; and evidence such as a screenshot or log.\n\nThe steps matter most because a developer who cannot make the bug happen cannot confirm or fix it. Clear numbered steps turn \"it doesn't work\" into something anyone can repeat."
+    },
+    {
+      "id": "rtf-2",
+      "question": "What is the difference between severity and priority? Give an example where they differ.",
+      "modelAnswer": "Severity is how badly the bug affects the system. Priority is how soon it should be fixed, which also depends on the business.\n\nExample: the company name misspelt on the home page is low severity (nothing breaks) but high priority (every visitor sees it). A crash in a report run once a year can be high severity but lower priority."
+    },
+    {
+      "id": "rtf-3",
+      "question": "At the end of a test cycle you write a short test summary for the team. What should it say?",
+      "modelAnswer": "What was tested and what was not; how many tests ran, passed, failed and were blocked; the open defects by severity, with the most serious named; any risks or known issues; and a clear recommendation, for example ready to release, or not ready until two critical bugs are fixed.\n\nIt should let a manager decide without reading every test case."
+    }
+  ],
+  "mastery": [
+    {
+      "id": "m1",
+      "text": "Which bug report title is most useful?",
+      "options": [
+        "Checkout broken!!!",
+        "Bug in app",
+        "Checkout total ignores discount code when cart has one item",
+        "Please fix ASAP"
+      ],
+      "key": 2
+    },
+    {
+      "id": "m2",
+      "text": "What should the 'actual result' field contain?",
+      "options": [
+        "What you think the developer did wrong",
+        "What the system really did when you followed the steps",
+        "What the specification says should happen",
+        "How long the test took"
+      ],
+      "key": 1
+    },
+    {
+      "id": "m3",
+      "text": "A typo in the company name on the home page is best rated as:",
+      "options": [
+        "High severity, low priority",
+        "Low severity, high priority",
+        "High severity, high priority",
+        "Not a bug"
+      ],
+      "key": 1
+    },
+    {
+      "id": "m4",
+      "text": "Why include the environment (browser, device, app version) in a bug report?",
+      "options": [
+        "It makes the report longer",
+        "Some bugs happen only in one environment, so the developer needs it to reproduce the bug",
+        "It is required by law",
+        "It shows who found the bug"
+      ],
+      "key": 1
+    },
+    {
+      "id": "m5",
+      "text": "Which belongs in a test summary report?",
+      "options": [
+        "Every line of every test log",
+        "Open defects by severity and a clear release recommendation",
+        "Only the tests that passed",
+        "The names of developers who caused bugs"
+      ],
+      "key": 1
+    }
+  ]
 }

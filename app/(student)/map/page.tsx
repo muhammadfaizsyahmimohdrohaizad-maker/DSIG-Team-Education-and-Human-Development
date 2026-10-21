@@ -19,7 +19,6 @@ export default async function MapPage() {
   return (
     <div className="stack-lg">
       <div className="page-head">
-        <p className="stage-label">Stage 1 of 4 · Map</p>
         <h1>Your modules, mapped to skills</h1>
         <p>
           Tick the modules you have finished. Every skill we find comes with the exact line from your course outline, so you

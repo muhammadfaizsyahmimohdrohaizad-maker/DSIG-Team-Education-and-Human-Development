@@ -1,8 +1,25 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { expect, type Browser, type Locator, type Page } from "@playwright/test";
 
-/** Routes a student can reach with no setup. Dynamic ones use the demo data. */
+/**
+ * These tests run against the real app (DATA_MODE=supabase) and create real accounts, so use a
+ * separate Supabase project for testing. Each test student deletes its own account at the end.
+ * The adviser account is shared and must be the first adviser in that project, because a student
+ * is linked to the first adviser.
+ */
+
+export const PASSWORD = "e2e-password-123";
+export const ADVISER_EMAIL = "e2e-adviser@example.test";
+const MODULES = [
+  "Basic of Programming",
+  "Basic of Software Testing",
+  "Software Modelling & Requirements Engineering",
+  "Quality Assurance & Control",
+  "Android Programming",
+  "Advanced Web Programming",
+];
+
+/** Routes a signed-in student with a target and a plan can open. */
 export const STUDENT_ROUTES = [
-  "/onboarding",
   "/map",
   "/matches",
   "/matches/2519-01",
@@ -13,20 +30,93 @@ export const STUDENT_ROUTES = [
   "/interview",
   "/bookings",
   "/bookings/new",
+  "/settings",
   "/delete-my-data",
 ];
-export const ADVISER_ROUTES = ["/adviser"];
+export const PUBLIC_ROUTES = ["/sign-in", "/sign-up", "/legal/privacy", "/legal/processors", "/legal/terms", "/legal/ai", "/legal/sources", "/legal/accessibility"];
 
-/** Accept the consent screen, then put the demo data back to its starting state. */
-export async function freshDemo(page: Page) {
-  await page.goto("/onboarding");
-  await page.getByLabel("I understand how my data is used").check();
-  await page.getByRole("button", { name: "Start with the demo student" }).click();
+const unique = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
+/** Signs up a new student, accepts the consent screen with only the boxes asked for, and lands on the Map. */
+export async function newStudent(page: Page, opts: { ai?: boolean; adviser?: boolean } = {}) {
+  const id = unique();
+  const email = `e2e-student-${id}@example.test`;
+  const name = `Test Student ${id}`;
+  await page.goto("/sign-up");
+  await page.getByLabel("Full name").fill(name);
+  await page.getByLabel("Email").fill(email);
+  await page.getByLabel("Password").fill(PASSWORD);
+  await page.getByLabel("Semester").selectOption("5");
+  await page.getByRole("button", { name: "Create account" }).click();
+  await expect(page).toHaveURL(/\/onboarding$/);
+
+  // Nothing is ticked for the student.
+  for (const box of await page.getByRole("checkbox").all()) await expect(box).not.toBeChecked();
+  await page.getByRole("checkbox", { name: /Store and use my data/ }).check();
+  if (opts.ai) await page.getByRole("checkbox", { name: /external AI provider/ }).check();
+  if (opts.adviser) await page.getByRole("checkbox", { name: /career adviser see my progress/ }).check();
+  await page.getByRole("button", { name: "Agree and continue" }).click();
   await expect(page).toHaveURL(/\/map$/);
-  const reset = page.waitForResponse((r) => r.request().method() === "POST");
-  await page.getByRole("button", { name: "Reset demo data" }).click();
-  await reset;
-  await expect(page.getByRole("heading", { level: 1, name: "Your modules, mapped to skills" })).toBeVisible();
+  return { email, name };
+}
+
+/** Ticks all six modules, then makes 2519-01 System Tester the target. */
+export async function tickModulesAndTarget(page: Page) {
+  await page.goto("/map");
+  for (const m of MODULES) {
+    const box = page.getByRole("checkbox", { name: m });
+    if (!(await box.isChecked())) {
+      // Each tick is saved by a server action; wait for it so the next page sees it.
+      const saved = page.waitForResponse((r) => r.request().method() === "POST");
+      await box.check();
+      await saved;
+    }
+  }
+  await page.goto("/matches/2519-01");
+  await page.getByRole("button", { name: "Choose as my target" }).click();
+  await expect(page).toHaveURL(/\/plan$/);
+}
+
+/** Rates the three gap skills and builds the plan. */
+export async function buildPlan(page: Page, ratings: [string, number][]) {
+  await page.goto("/plan");
+  for (const [skill, value] of ratings) {
+    await page.getByRole("group", { name: skill }).getByRole("radio", { name: `${value} of 5` }).check();
+  }
+  await page.getByRole("button", { name: "Build my plan" }).click();
+}
+
+/** Deletes the signed-in student's account through Settings, which is also what a real student does. */
+export async function deleteAccount(page: Page) {
+  await page.goto("/delete-my-data");
+  await page.getByRole("button", { name: "Delete my account and data" }).click();
+  await expect(page).toHaveURL(/\/sign-in/);
+}
+
+/** Signs in the shared test adviser in a fresh browser context, creating it the first time. */
+export async function adviserPage(browser: Browser): Promise<Page> {
+  const code = process.env.STAFF_INVITE_CODE;
+  if (!code) throw new Error("Set STAFF_INVITE_CODE in .env.local; the adviser test account needs it.");
+  const page = await (await browser.newContext()).newPage();
+  await page.goto("/sign-in");
+  await page.getByLabel("Email").fill(ADVISER_EMAIL);
+  await page.getByLabel("Password").fill(PASSWORD);
+  await page.getByRole("button", { name: "Sign in" }).click();
+  if (await page.getByText("don't match an account").isVisible().catch(() => false)) {
+    await page.goto("/sign-up");
+    await page.getByRole("radio", { name: /A career adviser/ }).check();
+    await page.getByLabel("Full name").fill("Test Adviser");
+    await page.getByLabel("Email").fill(ADVISER_EMAIL);
+    await page.getByLabel("Password").fill(PASSWORD);
+    await page.getByLabel("Staff code").fill(code);
+    await page.getByRole("button", { name: "Create account" }).click();
+  }
+  if (/\/staff\/undertaking$/.test(page.url()) || (await page.getByRole("heading", { name: "Staff confidentiality undertaking" }).isVisible().catch(() => false))) {
+    await page.getByRole("checkbox", { name: /I agree to it/ }).check();
+    await page.getByRole("button", { name: "Accept and open my dashboard" }).click();
+  }
+  await expect(page.getByRole("heading", { level: 1, name: "Students" })).toBeVisible();
+  return page;
 }
 
 /** Press Tab until `target` has focus. Fails if it cannot be reached, so unreachable controls show up. */

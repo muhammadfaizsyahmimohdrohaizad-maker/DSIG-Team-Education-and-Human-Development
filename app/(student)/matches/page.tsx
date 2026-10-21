@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { btn } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { MatchList } from "@/features/matches/match-list";
 import { getMatches } from "@/server/engines/matches";
 import { getStore } from "@/server/data";
@@ -6,7 +10,22 @@ import { getStore } from "@/server/data";
 export const metadata: Metadata = { title: "Occupation matches" };
 
 export default async function MatchesPage() {
-  const [matches, student] = await Promise.all([getMatches(), getStore().getStudent()]);
+  const [matches, student, ticked] = await Promise.all([getMatches(), getStore().getStudent(), getStore().getTicked()]);
+  if (ticked.length === 0) {
+    return (
+      <div className="stack-lg">
+        <div className="page-head">
+          <h1>Occupations your modules point to</h1>
+          <p>Matches come from the modules you have finished.</p>
+        </div>
+        <Card flush>
+          <EmptyState title="Tick your modules first" action={<Link href="/map" className={btn("primary")}>Choose my modules</Link>}>
+            Tick the modules you have finished on the Map, and the nine MASCO 2020 occupations are ranked against them.
+          </EmptyState>
+        </Card>
+      </div>
+    );
+  }
   const items = matches.map((o) => ({
     code: o.code,
     titleMs: o.titleMs,
@@ -24,18 +43,17 @@ export default async function MatchesPage() {
   return (
     <div className="stack-lg">
       <div className="page-head">
-        <p className="stage-label">Stage 1 of 4 · Map</p>
         <h1>Occupations your modules point to</h1>
         <p>
           Ranked by how much of each job&apos;s skill list your modules already cover. Codes come from MASCO 2020,
           Malaysia&apos;s official list of occupations.
         </p>
       </div>
-      <details className="card">
+      <details className="disclosure">
         <summary style={{ cursor: "pointer", fontWeight: 500, minHeight: 44, display: "flex", alignItems: "center" }}>
           How the match is calculated
         </summary>
-        <div className="stack prose" style={{ marginTop: 12 }}>
+        <div className="stack prose">
           <p>
             We list the skills each occupation needs and count the ones your modules cover. Essential skills count fully,
             optional skills count half.

@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { OkChip } from "@/components/ui/status-chip";
 import { PracticeTabs } from "@/features/practice/practice-tabs";
-import { DEMO_TODAY } from "@/lib/config";
 import { shortDay, slotShort } from "@/lib/date";
 import { getStore } from "@/server/data";
 import { feedbackFor, latestAnswerId } from "@/server/engines/feedback";
@@ -40,11 +39,12 @@ export default async function TodayPage() {
   return (
     <div className="stack-lg">
       <div className="page-head">
-        <p className="stage-label">Stage 3 of 4 · Practice · {shortDay(DEMO_TODAY)}</p>
+        <p className="stage-label">{shortDay(queue.today)}</p>
         <h1>Today&apos;s practice</h1>
         <p>
-          {plural(queue.dueCount, "question")} due, about {plural(queue.minutes, "minute")}. Questions come back just before you
-          would forget them.
+          {queue.planBuilt
+            ? `${plural(queue.dueCount, "question")} due, about ${plural(queue.minutes, "minute")}. Questions come back just before you would forget them.`
+            : "Build your plan first. Your questions then come back just before you would forget them."}
         </p>
         {startHref && queue.planBuilt ? (
           <div>
@@ -55,27 +55,6 @@ export default async function TodayPage() {
         ) : null}
       </div>
 
-      <dl className="stat-row">
-        <div className="card stat">
-          <dt className="secondary muted">Gap skills mastered</dt>
-          <dd><strong>{queue.masteredCount} of {queue.gapCount}</strong></dd>
-        </div>
-        <div className="card stat">
-          <dt className="secondary muted">Interview answers practised</dt>
-          <dd><strong>{answers.length}</strong></dd>
-        </div>
-        <div className="card stat">
-          <dt className="secondary muted">STAR result step</dt>
-          <dd><strong>{resultStep ? (resultStep.present ? "Present" : "Missing") : "Not checked yet"}</strong>{resultStep && !resultStep.present ? <span className="secondary muted"> in last answer</span> : null}</dd>
-        </div>
-        <div className="card stat">
-          <dt className="secondary muted">Adviser session</dt>
-          <dd>
-            <strong>{session ? slotShort(session.slot) : "None booked"}</strong>
-            {session ? <span className="secondary muted"> · {session.status}</span> : null}
-          </dd>
-        </div>
-      </dl>
 
       <PracticeTabs current="lessons" />
 
@@ -168,6 +147,30 @@ export default async function TodayPage() {
           </Card>
         </div>
       </div>
+      <section className="stack" aria-labelledby="progress-title">
+        <h2 id="progress-title">Your progress</h2>
+        <dl className="stat-row">
+          <div className="stat">
+            <dt className="secondary muted">Gap skills mastered</dt>
+            <dd><strong>{queue.masteredCount} of {queue.gapCount}</strong></dd>
+          </div>
+          <div className="stat">
+            <dt className="secondary muted">Interview answers practised</dt>
+            <dd><strong>{answers.length}</strong></dd>
+          </div>
+          <div className="stat">
+            <dt className="secondary muted">STAR result step</dt>
+            <dd><strong>{resultStep ? (resultStep.present ? "Present" : "Missing") : "Not checked yet"}</strong>{resultStep && !resultStep.present ? <span className="secondary muted"> in last answer</span> : null}</dd>
+          </div>
+          <div className="stat">
+            <dt className="secondary muted">Adviser session</dt>
+            <dd>
+              <strong>{session ? slotShort(session.slot) : "None booked"}</strong>
+              {session ? <span className="secondary muted"> · {session.status}</span> : null}
+            </dd>
+          </div>
+        </dl>
+      </section>
     </div>
   );
 }

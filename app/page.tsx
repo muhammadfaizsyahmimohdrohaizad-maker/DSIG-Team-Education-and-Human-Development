@@ -1,7 +1,6 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { currentAccount, homeFor } from "@/server/auth/account";
 
 export default async function Home() {
-  const consented = (await cookies()).get("cp_consent");
-  redirect(consented ? "/map" : "/onboarding");
+  redirect(homeFor(await currentAccount()));
 }

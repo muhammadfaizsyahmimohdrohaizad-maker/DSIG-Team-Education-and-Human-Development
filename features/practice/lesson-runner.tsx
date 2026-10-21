@@ -157,7 +157,7 @@ export function LessonRunner({ slug, skillLabel, items, hasMastery }: { slug: st
         </div>
       ) : (
         <div className="stack">
-          <section className="card stack-sm" aria-labelledby="model-title" style={{ background: "var(--accent-tint)" }}>
+          <section className="callout stack-sm" aria-labelledby="model-title">
             <h3 id="model-title">Model answer</h3>
             <p className="prose pre-line">{modelAnswer}</p>
           </section>

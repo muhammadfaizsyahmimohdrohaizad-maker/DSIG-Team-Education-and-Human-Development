@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { actOnBooking } from "@/server/engines/handoff";
 import type { BookingAction } from "@/lib/booking/transitions";
@@ -19,8 +18,4 @@ export async function adviserAct(bookingId: string, action: string, reason?: str
   revalidatePath("/adviser");
   revalidatePath("/bookings");
   return { ok: true };
-}
-
-export async function signOut() {
-  redirect("/bookings");
 }

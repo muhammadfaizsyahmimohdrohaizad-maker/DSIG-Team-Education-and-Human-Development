@@ -1,0 +1,22 @@
+{
+  "occupation": "2514-01",
+  "title": "Computer Programmer",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2514), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "questions": [
+    {
+      "id": "2514-01-q1",
+      "text": "Tell us about a program you wrote from a specification or brief. How did you make sure the code matched what was asked?",
+      "source": "eMASCO 2514, task 1: Menulis dan menjaga code outline yang digariskan dalam panduan dan spesifikasi menurut standard akreditasi kualiti."
+    },
+    {
+      "id": "2514-01-q2",
+      "text": "How do you check that a program produces the right output before you call it done?",
+      "source": "eMASCO 2514, task 3: Menjalankan percubaan runs dan aplikasi perisian untuk mengesahkan ia akan menghasilkan maklumat yang dikehendaki."
+    },
+    {
+      "id": "2514-01-q3",
+      "text": "Describe a technical problem you got stuck on. How did you explain it to someone else and solve it?",
+      "source": "eMASCO 2514, task 5: Mengenal pasti dan membincangkan masalah teknikal, proses dan penyelesaian."
+    }
+  ]
+}

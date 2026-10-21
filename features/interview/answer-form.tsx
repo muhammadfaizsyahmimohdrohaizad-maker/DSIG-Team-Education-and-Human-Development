@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { sendAnswer } from "./actions";
+import { DictateButton } from "./dictate-button";
 
 export function AnswerForm({
   questionId,
@@ -12,18 +13,19 @@ export function AnswerForm({
   total,
   text,
   source,
-  initialAnswer,
+  initialAnswer = "",
 }: {
   questionId: string;
   index: number;
   total: number;
   text: string;
   source: string;
-  initialAnswer: string;
+  initialAnswer?: string;
 }) {
   const [answer, setAnswer] = useState(initialAnswer);
   const [error, setError] = useState<string | null>(null);
   const ref = useRef<HTMLTextAreaElement>(null);
+  const addSpoken = useCallback((spoken: string) => setAnswer((a) => (a.trim() ? `${a.trimEnd()} ${spoken}` : spoken)), []);
 
   return (
     <Card className="stack" aria-labelledby="iq-title">
@@ -65,15 +67,10 @@ export function AnswerForm({
         <p className="meta" role="status">
           {answer.length} characters. There is no limit and no timer.
         </p>
-        <div className="row">
+        <DictateButton onText={addSpoken} />
+        <div>
           <SubmitButton>Send answer</SubmitButton>
-          <button type="button" className="btn btn-secondary" disabled aria-describedby="dictate-note">
-            Dictate answer (Chrome only)
-          </button>
         </div>
-        <p id="dictate-note" className="secondary muted">
-          Dictation is not available in this demo. Typing works on any device, and audio is never stored.
-        </p>
       </form>
     </Card>
   );

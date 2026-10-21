@@ -5,7 +5,7 @@ export type RecallRating = "again" | "hard" | "good" | "easy";
 const RATINGS = { again: Rating.Again, hard: Rating.Hard, good: Rating.Good, easy: Rating.Easy } as const;
 
 // Fuzz is off so the same answer gives the same date, and short-term steps are off so every
-// answer schedules at least a day ahead. The demo, the tests and the "Next review" line rely on that.
+// answer schedules at least a day ahead. The tests and the "Next review" line rely on that.
 const scheduler = fsrs(generatorParameters({ enable_fuzz: false, enable_short_term: false }));
 
 export function newCard(now: Date): Card {

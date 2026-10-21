@@ -23,7 +23,6 @@ export default async function LessonPage({ params }: Params) {
   return (
     <div className="stack-lg">
       <div className="page-head">
-        <p className="stage-label">Stage 3 of 4 · Practice</p>
         <h1>{lesson.label}</h1>
       </div>
       {lesson.items.length === 0 ? (

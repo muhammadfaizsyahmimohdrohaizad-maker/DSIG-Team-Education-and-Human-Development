@@ -297,15 +297,23 @@ Code licence: to be decided before public release. Data terms to respect:
 - MASCO 2020 / eMASCO (MOHR): reuse terms not confirmed (unverified). The team must check before redistributing task lists.
 - Avoid AGPL dependencies (for example PyMuPDF) unless the repo is released as open source.
 
-## Run the demo
+## Run it
+
+1. Create a Supabase project (Singapore region). In Authentication → Sign In / Providers → Email, turn off **Confirm email**.
+2. Open Supabase → SQL Editor, paste all of `supabase/migrations/0001_init.sql` and press Run. It creates the tables, the access rules (row-level security) and the functions the app calls.
+3. Copy `.env.example` to `.env.local` and fill in the Supabase URL, anon key, service-role key, a `STAFF_INVITE_CODE` and your AI key.
+4. Run:
 
 ```bash
 pnpm install
-cp .env.example .env.local   # optional: the defaults are already demo mode
 pnpm dev                     # http://localhost:3000
 pnpm test                    # unit tests for lib/ and the visual rules
-pnpm exec playwright install chromium   # once
-pnpm test:e2e                # demo path with the keyboard, plus axe at 375 and 1280 px
 ```
 
-Demo mode (`DATA_MODE=fixtures`, `LLM_PROVIDER=recorded`) needs no database and no network. State is kept in memory; "Reset demo data" in the footer puts it back. The footer's "View as" switch moves between the student and adviser views.
+Students create an account, accept the consent screen, and start on the Map. Advisers and institution staff sign up with the staff code, accept the confidentiality undertaking, and land on their dashboard. A student is linked to the first adviser account the first time they ask for one.
+
+`supabase/tests/rls.sql` checks the access rules on a scratch Postgres database with Supabase's `auth` schema; it is not for the live project.
+
+`DATA_MODE=fixtures` runs one in-memory sample student with no database, for the unit tests and offline work.
+
+Browser tests (`pnpm exec playwright install chromium` once, then `pnpm test:e2e`) sign up real accounts, so point `.env.local` at a separate Supabase test project with `STAFF_INVITE_CODE` set. They create one shared adviser (`e2e-adviser@example.test`), which must be the first adviser in that project, and every test student deletes its own account at the end.

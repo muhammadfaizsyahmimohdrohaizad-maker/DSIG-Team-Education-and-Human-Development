@@ -22,7 +22,7 @@ export function BookingList({ bookings, adviserName }: { bookings: Booking[]; ad
               </div>
               <p className="secondary muted">
                 With {adviserName}
-                {b.status === "cancelled" && b.cancelledBy === "adviser" ? " · cancelled by your adviser" : ""}
+                {b.status === "cancelled" ? (b.cancelledBy === "adviser" ? " · cancelled by your adviser" : " · cancelled by you") : ""}
               </p>
               {b.note ? <p className="prose">Your note: “{b.note}”</p> : null}
               {b.status === "cancelled" && b.cancelledBy === "adviser" && b.cancelReason ? (

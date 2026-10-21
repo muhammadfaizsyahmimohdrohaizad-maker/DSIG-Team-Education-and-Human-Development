@@ -1,5 +1,6 @@
 import "server-only";
 import { slotLabel } from "@/lib/date";
+import { SITE_URL } from "../env";
 import type { Booking } from "@/lib/types";
 import { sendEmail } from "./send";
 
@@ -16,6 +17,6 @@ export async function sendBookingStatusEmail(booking: Booking, to: string): Prom
   await sendEmail({
     to,
     subject,
-    text: `Status: ${booking.status}\nTime: ${slotLabel(booking.slot)}\nSee details: https://careerprep.example/bookings`,
+    text: `Status: ${booking.status}\nTime: ${slotLabel(booking.slot)}\nSee details: ${SITE_URL}/bookings`,
   });
 }

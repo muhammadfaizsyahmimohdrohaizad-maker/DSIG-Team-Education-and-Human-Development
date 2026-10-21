@@ -86,7 +86,7 @@ export function MapView({
             <p>GMI Diploma in Software Engineering</p>
           </div>
           <ModulePicker modules={modules} ticked={ticked} onToggle={toggle} />
-          <p className="meta">Uploading a module descriptor is off in this demo. Modules are entered by hand.</p>
+          <p className="meta">Uploading a module descriptor isn&apos;t available yet, so tick your modules by hand.</p>
           <p className="secondary">
             <strong style={{ fontWeight: 600 }}>
               {ticked.size} of {modules.length}

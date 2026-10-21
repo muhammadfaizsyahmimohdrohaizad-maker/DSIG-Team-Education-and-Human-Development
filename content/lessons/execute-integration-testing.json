@@ -2,7 +2,7 @@
   "skillId": "t-int",
   "slug": "execute-integration-testing",
   "label": "execute integration testing",
-  "_note": "Two recall items are written. TODO: team content for the other three. The mastery check has all five questions.",
+  "_note": "Two recall items and the full five-question mastery check.",
   "items": [
     {
       "id": "eit-1",

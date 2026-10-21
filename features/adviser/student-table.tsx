@@ -16,7 +16,7 @@ import { adviserAct } from "./actions";
 export type StudentRow = {
   id: string;
   name: string;
-  semester: number;
+  semester: number | null;
   target: string;
   gaps: string;
   feedback: string;
@@ -108,6 +108,7 @@ export function StudentTable({ rows }: { rows: StudentRow[] }) {
 
   return (
     <div className="stack" ref={root}>
+      <h2 className="visually-hidden">Student list</h2>
       <div className="field" style={{ maxWidth: 420 }}>
         <label htmlFor="student-search">Search students</label>
         <div style={{ position: "relative" }}>
@@ -127,7 +128,13 @@ export function StudentTable({ rows }: { rows: StudentRow[] }) {
 
       {problem ? <p className="notice notice-danger" role="alert">{problem}</p> : null}
 
-      {shown.length === 0 ? (
+      {rows.length === 0 ? (
+        <div className="table-frame">
+          <EmptyState title="No students yet" level={3}>
+            Students appear here once they choose to share their progress with you or send you a booking request.
+          </EmptyState>
+        </div>
+      ) : shown.length === 0 ? (
         <div className="table-frame">
           <EmptyState
             title="No students match your search"
@@ -158,7 +165,7 @@ export function StudentTable({ rows }: { rows: StudentRow[] }) {
                     <th scope="row">
                       {r.name}
                       <br />
-                      <span className="secondary muted" style={{ fontWeight: 400 }}>Semester {r.semester}</span>
+                      {r.semester ? <span className="secondary muted" style={{ fontWeight: 400 }}>Semester {r.semester}</span> : null}
                     </th>
                     <td>{r.target}</td>
                     <td>{r.gaps}</td>
@@ -175,7 +182,7 @@ export function StudentTable({ rows }: { rows: StudentRow[] }) {
             {shown.map((r) => (
               <li key={r.id} className="card stack" data-row={r.id}>
                 <h3>
-                  {r.name} <span className="secondary muted" style={{ fontWeight: 400 }}>· Semester {r.semester}</span>
+                  {r.name} {r.semester ? <span className="secondary muted" style={{ fontWeight: 400 }}>· Semester {r.semester}</span> : null}
                 </h3>
                 <dl className="stack-sm">
                   <div><dt className="secondary muted">Target occupation</dt><dd>{r.target}</dd></div>

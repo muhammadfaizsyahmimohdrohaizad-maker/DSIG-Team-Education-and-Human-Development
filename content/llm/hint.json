@@ -1,5 +1,5 @@
 {
-  "_note": "Recorded LLM output for LLM_PROVIDER=recorded. Keyed by recall item id. A hint must never contain the answer.",
+  "_note": "Vetted static hints, keyed by recall item id. Used when the student has not agreed to AI processing, when the model is unavailable, and in tests. A hint must never contain the answer.",
   "eit-1": [
     {
       "level": 1,
@@ -32,6 +32,108 @@
       "level": 3,
       "title": "Worked example",
       "text": "Imagine rehearsing a play before the lead actor arrives. A helper reads the lead's lines from a script so the other actors can practise their cues. The scene runs, even though the real actor is missing."
+    }
+  ],
+  "uta-1": [
+    {
+      "level": 1,
+      "title": "Nudge",
+      "text": "Think about which tests you would have to repeat again and again."
+    },
+    {
+      "level": 2,
+      "title": "Concept",
+      "text": "Machines are good at doing the same steps exactly the same way many times. People are good at noticing that something feels wrong."
+    },
+    {
+      "level": 3,
+      "title": "Worked example",
+      "text": "A washing machine handles the weekly laundry, but you still check by eye whether a new shirt's colour will run."
+    }
+  ],
+  "uta-2": [
+    {
+      "level": 1,
+      "title": "Nudge",
+      "text": "Ask what is different between your laptop and the build server, especially speed."
+    },
+    {
+      "level": 2,
+      "title": "Concept",
+      "text": "Tests that depend on how fast something loads, or on data another test left behind, can pass or fail by chance."
+    },
+    {
+      "level": 3,
+      "title": "Worked example",
+      "text": "It is like texting a friend 'I'm here' before checking they've opened the door: sometimes they have, sometimes not."
+    }
+  ],
+  "uta-3": [
+    {
+      "level": 1,
+      "title": "Nudge",
+      "text": "Think about when a broken change is found, and by whom."
+    },
+    {
+      "level": 2,
+      "title": "Concept",
+      "text": "Running checks automatically at the moment code is shared means problems surface while the change is still small and fresh."
+    },
+    {
+      "level": 3,
+      "title": "Worked example",
+      "text": "A smoke alarm that sounds as soon as the toast burns is more useful than finding the smoke damage next week."
+    }
+  ],
+  "rtf-1": [
+    {
+      "level": 1,
+      "title": "Nudge",
+      "text": "Imagine the developer reading your report has never seen the bug happen."
+    },
+    {
+      "level": 2,
+      "title": "Concept",
+      "text": "A report has to let someone else see the same problem and know what should have happened instead."
+    },
+    {
+      "level": 3,
+      "title": "Worked example",
+      "text": "A recipe that says 'make the cake' is useless; one with ingredients, steps and a photo of the result can be followed."
+    }
+  ],
+  "rtf-2": [
+    {
+      "level": 1,
+      "title": "Nudge",
+      "text": "One of these is about damage, the other is about timing."
+    },
+    {
+      "level": 2,
+      "title": "Concept",
+      "text": "How much a problem hurts the system and how urgently the business needs it fixed are separate questions with separate answers."
+    },
+    {
+      "level": 3,
+      "title": "Worked example",
+      "text": "A small stain on a wedding dress the night before the wedding is minor damage but very urgent."
+    }
+  ],
+  "rtf-3": [
+    {
+      "level": 1,
+      "title": "Nudge",
+      "text": "Think about the one decision the reader of the summary has to make."
+    },
+    {
+      "level": 2,
+      "title": "Concept",
+      "text": "A summary gives the overall picture, the biggest risks, and a recommendation, rather than every detail."
+    },
+    {
+      "level": 3,
+      "title": "Worked example",
+      "text": "A weather forecast says 'bring an umbrella', not every pressure reading taken that day."
     }
   ]
 }

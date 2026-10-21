@@ -5,6 +5,9 @@ import { btn } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FlagChip, NeutralChip, OkChip } from "@/components/ui/status-chip";
 import { MATCH_CONFIDENCE_THRESHOLD } from "@/lib/config";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { chooseTarget } from "@/features/matches/actions";
+import { getStore } from "@/server/data";
 import { getOccupationDetail, type SkillWithEvidence } from "@/server/engines/matches";
 
 type Params = { params: Promise<{ code: string }> };
@@ -42,8 +45,9 @@ function SkillRow({ skill, covered }: { skill: SkillWithEvidence; covered: boole
 
 export default async function OccupationPage({ params }: Params) {
   const { code } = await params;
-  const detail = await getOccupationDetail(code);
+  const [detail, student] = await Promise.all([getOccupationDetail(code), getStore().getStudent()]);
   if (!detail) notFound();
+  const isTarget = student.targetCode === code;
   const { occupation, match, covered, gaps } = detail;
 
   return (
@@ -53,7 +57,9 @@ export default async function OccupationPage({ params }: Params) {
       </nav>
 
       <div className="page-head">
-        <p className="stage-label">MASCO 2020 · {occupation.role === "primary" ? "your target role" : occupation.role === "secondary" ? "related role" : "entry-level alternative"}</p>
+        <p className="stage-label">
+          MASCO 2020 · {isTarget ? "your target role" : occupation.role === "entry-level" ? "entry-level alternative" : "related role"}
+        </p>
         <h1>
           {occupation.code} · {occupation.titleMs}
         </h1>
@@ -69,9 +75,16 @@ export default async function OccupationPage({ params }: Params) {
           </p>
         </div>
         <div className="row">
-          <Link href="/plan" className={btn("primary")}>
-            Build my plan for this role
-          </Link>
+          {isTarget ? (
+            <Link href="/plan" className={btn("primary")}>
+              Go to my plan
+            </Link>
+          ) : (
+            <form action={chooseTarget}>
+              <input type="hidden" name="code" value={occupation.code} />
+              <SubmitButton>Choose as my target</SubmitButton>
+            </form>
+          )}
           <Link href="/bookings/new" className={btn("secondary")}>
             Talk to a human
           </Link>

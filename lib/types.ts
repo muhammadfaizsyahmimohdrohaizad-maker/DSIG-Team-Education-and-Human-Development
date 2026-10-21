@@ -1,4 +1,4 @@
-export type Persona = { id: string; name: string; semester: number; targetCode: string | null };
+export type Persona = { id: string; name: string; semester: number | null; targetCode: string | null; email?: string };
 export type Module = { id: string; semester: number; semesterLabel: string; name: string; coverage: number[] };
 
 export type Skill = { id: string; escoLabel: string; group: number; note: string };
@@ -50,7 +50,35 @@ export type Feedback = {
   nextStep: string;
   weakArea: { label: string; itemId: string };
 };
-export type InterviewAnswer = { id: string; questionId: string; text: string; createdAt: string };
+export type InterviewAnswer = {
+  id: string;
+  questionId: string;
+  text: string;
+  createdAt: string;
+  /** Saved AI feedback, once written. */
+  feedback?: Feedback | null;
+  /** The AI could not write valid feedback, so an adviser should look at this answer. */
+  needsAdviser?: boolean;
+};
+
+export type Role = "student" | "adviser" | "institution";
+
+/** One consent decision. Each change is a new record; the latest one applies. */
+export type Consent = {
+  processing: boolean;
+  aiProcessing: boolean;
+  bookingEmails: boolean;
+  adviserVisibility: boolean;
+  under18: boolean;
+  parentalConsent: boolean;
+  noticeVersion: string;
+  createdAt: string;
+};
+
+export type Staff = { id: string; name: string; unit: string; role: Role; undertakingAccepted: boolean };
+
+/** One anonymous row per consenting student, for the institution view. */
+export type CohortRow = { targetCode: string | null; modules: string[]; ratings: Record<string, number> };
 
 export type AdviserStudent = {
   id: string;
@@ -59,4 +87,16 @@ export type AdviserStudent = {
   target: string;
   gaps: string;
   feedback: string;
+};
+
+/** What the database gives an adviser about one of their students. Read-only. */
+export type RosterRow = {
+  id: string;
+  name: string;
+  semester: number | null;
+  targetCode: string | null;
+  modules: string[];
+  ratings: Record<string, number>;
+  feedbackSummary: string | null;
+  needsAdviser: boolean;
 };

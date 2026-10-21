@@ -104,3 +104,19 @@ export async function getSkillsMap() {
     .map((l) => ({ ...l, label: skillById.get(l.skillId)!.escoLabel, group: groups[skillById.get(l.skillId)!.group], moduleName: moduleName.get(l.moduleId) ?? "" }));
   return { axes, modules, ticked, found };
 }
+
+/** Target and gap skills for any student, from their modules. Used by the adviser and institution views. */
+export async function describeTarget(modules: string[], targetCode: string | null) {
+  const store = getStore();
+  const [occupations, links, { skills }] = await Promise.all([store.listOccupations(), store.getLinks(), store.getSkills()]);
+  const occupation = occupations.find((o) => o.code === targetCode);
+  if (!occupation) return { occupation: null, pct: null, gaps: [] as { id: string; label: string; uncertain: boolean }[] };
+  const match = scoreOccupation(occupation, bestConfidence(links, modules));
+  const label = new Map(skills.map((s) => [s.id, s.escoLabel]));
+  const gaps = [...match.gapEssential, ...match.gapOptional].map((id) => ({
+    id,
+    label: label.get(id) ?? id,
+    uncertain: match.uncertain.includes(id),
+  }));
+  return { occupation, pct: match.pct, gaps };
+}

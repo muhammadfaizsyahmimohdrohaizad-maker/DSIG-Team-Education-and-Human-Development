@@ -14,10 +14,14 @@ export default function DeleteMyDataPage() {
         <h1>Delete my data</h1>
       </div>
       <Card className="stack">
-        <p className="prose">Delete all data for this account? This removes your modules, answers and bookings and cannot be undone.</p>
+        <p className="prose">
+          Delete your account and all its data? This removes your profile, consent record, modules, ratings, practice history,
+          interview answers, feedback and bookings straight away. It cannot be undone. Take a copy first in{" "}
+          <Link href="/settings">Settings</Link> if you want one.
+        </p>
         <form action={deleteMyData} className="row">
-          <SubmitButton variant="danger">Delete my data</SubmitButton>
-          <Link href="/map" className={btn("secondary")}>Keep my data</Link>
+          <SubmitButton variant="danger">Delete my account and data</SubmitButton>
+          <Link href="/settings" className={btn("secondary")}>Keep my data</Link>
         </form>
       </Card>
     </div>

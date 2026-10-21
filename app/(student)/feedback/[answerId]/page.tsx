@@ -15,12 +15,15 @@ export default async function FeedbackPage({ params }: Params) {
   const { answerId } = await params;
   const result = await feedbackFor(answerId);
   if (!result) notFound();
-  const { answer, question, feedback, weakAreaAdded } = result;
+  const { answer, question, feedback, weakAreaAdded, aiAllowed, questionNumber, questionCount, occupationTitle } = result;
+  const next = questionNumber >= questionCount ? 1 : questionNumber + 1;
 
   return (
     <div className="stack-lg">
       <div className="page-head">
-        <p className="stage-label">Stage 4 of 4 · Feedback · System Tester interview, {question ? `question ${question.id.replace("q", "")}` : "your answer"}</p>
+        <p className="stage-label">
+          Mock interview for {occupationTitle}, question {questionNumber}
+        </p>
         <h1>Feedback on your answer</h1>
         <p>There is no score here. The notes below are about this one answer, so you know exactly what to change next time.</p>
       </div>
@@ -35,6 +38,9 @@ export default async function FeedbackPage({ params }: Params) {
 
       {feedback ? (
         <>
+          <p className="notice notice-info">
+            Written by AI from this answer only. It can be wrong. It is about your answer, not about you, and there is no grade.
+          </p>
           <section className="stack" aria-labelledby="star-title">
             <h2 id="star-title">Structure (STAR)</h2>
             <StarList parts={feedback.star} />
@@ -55,22 +61,25 @@ export default async function FeedbackPage({ params }: Params) {
             <WeakAreaButton answerId={answer.id} label={feedback.weakArea.label} initiallyAdded={weakAreaAdded} />
             <div className="row">
               <Link href="/bookings/new" className={btn("secondary")}>Talk to a human</Link>
-              <Link href="/interview?q=2" className={btn("secondary")}>Try question 2</Link>
+              <Link href={`/interview?q=${next}`} className={btn("secondary")}>Try question {next}</Link>
             </div>
           </div>
-          <p className="meta prose">
-            Feedback was written by AI from this answer only, checked against the task list for 2519-01. If something looks wrong, an adviser can go through it with you.
-          </p>
         </>
       ) : (
-        <Card className="stack">
-          <h2>No feedback for this question yet</h2>
+        <Card className="stack" aria-labelledby="na-title">
+          <p>
+            <span className="chip chip-warn">Needs adviser</span>
+          </p>
+          <h2 id="na-title">An adviser should look at this answer</h2>
           <p className="prose">
-            The demo only has recorded feedback for question 1. Try that one, or ask an adviser to go through your answer with you.
+            {aiAllowed
+              ? "The AI couldn't write feedback that passed our checks, so we won't show you anything unreliable. Your answer is saved."
+              : "You chose not to send your answers to an AI provider, so there is no AI feedback. Your answer is saved."}{" "}
+            A career adviser can go through it with you.
           </p>
           <div className="row">
-            <Link href="/interview?q=1" className={btn("primary")}>Try question 1</Link>
-            <Link href="/bookings/new" className={btn("secondary")}>Talk to a human</Link>
+            <Link href="/bookings/new" className={btn("primary")}>Talk to a human</Link>
+            <Link href={`/interview?q=${next}`} className={btn("secondary")}>Try question {next}</Link>
           </div>
         </Card>
       )}

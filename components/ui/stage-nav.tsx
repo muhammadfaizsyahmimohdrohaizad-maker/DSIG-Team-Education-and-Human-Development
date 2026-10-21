@@ -5,14 +5,14 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { btn } from "./button";
 
+// The plan page is reached from Map and Practice, so it highlights Practice instead of having its own item.
 const STAGES = [
-  { n: 1, label: "Map", href: "/map", match: ["/map", "/matches"] },
-  { n: 2, label: "Plan", href: "/plan", match: ["/plan"] },
-  { n: 3, label: "Practice", href: "/practice", match: ["/practice", "/interview"] },
-  { n: 4, label: "Feedback", href: "/feedback", match: ["/feedback"] },
+  { label: "Map", href: "/map", match: ["/map", "/matches"] },
+  { label: "Practice", href: "/practice", match: ["/practice", "/plan", "/interview"] },
+  { label: "Feedback", href: "/feedback", match: ["/feedback"] },
 ];
 
-/** The student header: brand, four stages, bookings, and the always-visible "Talk to a human". */
+/** The student header: brand, three stages, bookings, and the always-visible "Talk to a human". */
 export function StageNav({ updates, feedbackHref }: { updates: number; feedbackHref: string }) {
   const pathname = usePathname() ?? "";
   const [open, setOpen] = useState(false);
@@ -32,7 +32,6 @@ export function StageNav({ updates, feedbackHref }: { updates: number; feedbackH
               aria-current={is(s.match) ? "page" : undefined}
               onClick={() => setOpen(false)}
             >
-              <span className="num" aria-hidden="true">{s.n}</span>
               {s.label}
             </Link>
           ))}

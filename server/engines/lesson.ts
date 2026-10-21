@@ -2,16 +2,14 @@ import "server-only";
 import { getStore } from "../data";
 import { generateJSON } from "../llm/adapter";
 import { hintLadderSchema } from "../llm/schemas";
-import { DEMO_TODAY } from "@/lib/config";
-import { addDays, isoDay } from "@/lib/date";
+import { REAL } from "../env";
+import { addDays, todayMY } from "@/lib/date";
 import { newCard, review, type RecallRating } from "@/lib/fsrs/scheduler";
 import { leaksAnswer } from "@/lib/llm/guards";
 import { orderGaps } from "@/lib/plan/order-gaps";
 import type { Hint, Lesson, RecallItem } from "@/lib/types";
 import { getGapSkills } from "./matches";
 
-// The demo always reviews at 10:00 on the pretend day, so dates match the video.
-const NOW = new Date(`${DEMO_TODAY}T02:00:00Z`);
 
 export async function lessonBySlug(slug: string): Promise<Lesson | null> {
   return (await getStore().listLessons()).find((l) => l.slug === slug) ?? null;
@@ -30,7 +28,10 @@ export async function hintFor(itemId: string, level: 1 | 2 | 3): Promise<Hint | 
   const found = await findItem(itemId);
   if (!found) return null;
   const { lesson, item } = found;
+  // Without consent to AI processing, the vetted static hints are used and nothing is sent out.
+  const consent = await getStore().getConsent();
   const ladder = await generateJSON({
+    live: !!consent?.aiProcessing || !REAL,
     task: "hint",
     key: itemId,
     schema: hintLadderSchema,
@@ -57,9 +58,10 @@ export async function rateItem(itemId: string, rating: RecallRating): Promise<{ 
   if (!(await findItem(itemId))) return null;
   const store = getStore();
   const cards = await store.listCards();
-  const { card, due } = review(cards[itemId] ?? newCard(NOW), rating, NOW);
+  const now = new Date();
+  const { card, due } = review(cards[itemId] ?? newCard(now), rating, now);
   await store.saveCard(itemId, card);
-  return { nextReview: isoDay(due) };
+  return { nextReview: todayMY(due) };
 }
 
 export type TodaySkill = {
@@ -83,7 +85,8 @@ export async function todayQueue() {
     store.listWeakAreas(),
   ]);
 
-  const isDue = (itemId: string) => !cards[itemId] || isoDay(cards[itemId].due) <= DEMO_TODAY;
+  const today = todayMY();
+  const isDue = (itemId: string) => !cards[itemId] || todayMY(new Date(cards[itemId].due)) <= today;
   const ordered = orderGaps(gaps.map((g) => ({ skillId: g.id, label: g.escoLabel, essential: g.essential, rating: ratings[g.id] })));
 
   const skills: TodaySkill[] = ordered.flatMap((g) => {
@@ -107,8 +110,8 @@ export async function todayQueue() {
 
   const upcoming = new Map<string, number>();
   for (const itemId of Object.keys(cards)) {
-    const day = isoDay(cards[itemId].due);
-    if (day > DEMO_TODAY) upcoming.set(day, (upcoming.get(day) ?? 0) + 1);
+    const day = todayMY(new Date(cards[itemId].due));
+    if (day > today) upcoming.set(day, (upcoming.get(day) ?? 0) + 1);
   }
 
   return {
@@ -120,6 +123,7 @@ export async function todayQueue() {
     upcoming: [...upcoming.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([day, count]) => ({ day, count })),
     masteredCount: Object.values(mastery).filter((m) => m.passed).length,
     gapCount: gaps.length,
-    tomorrow: addDays(DEMO_TODAY, 1),
+    today,
+    tomorrow: addDays(today, 1),
   };
 }

@@ -1,0 +1,22 @@
+{
+  "occupation": "3514",
+  "title": "Web Technician",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/3514), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "questions": [
+    {
+      "id": "3514-q1",
+      "text": "A website your team runs goes down at night. What do you check first, and how do you get it back up?",
+      "source": "eMASCO 3514, task 1: Memasang, memantau, dan menyokong kebolehpercayaan dan kebolehgunaan laman web Internet dan Intranet atau perkakasan atau perisian pelayan web."
+    },
+    {
+      "id": "3514-q2",
+      "text": "Name two security steps you would take on a website you look after, and explain why each one matters.",
+      "source": "eMASCO 3514, task 3: Membangun, menyelaras, melaksana, dan memantau langkah keselamatan."
+    },
+    {
+      "id": "3514-q3",
+      "text": "Tell us about a change you made to a live website. How did you avoid breaking it for users?",
+      "source": "eMASCO 3514, task 6: Mengubahsuai laman web."
+    }
+  ]
+}

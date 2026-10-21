@@ -13,7 +13,23 @@ import { requestSessionAction } from "./actions";
 
 type Errors = { date?: string; time?: string };
 
-export function BookingForm({ adviserName, unit, minDate, defaultDate, defaultTime }: { adviserName: string; unit: string; minDate: string; defaultDate: string; defaultTime: string }) {
+export function BookingForm({
+  adviserName,
+  unit,
+  minDate,
+  defaultDate,
+  defaultTime,
+  hasTarget,
+  sharesProgress,
+}: {
+  adviserName: string;
+  unit: string;
+  minDate: string;
+  defaultDate: string;
+  defaultTime: string;
+  hasTarget: boolean;
+  sharesProgress: boolean;
+}) {
   const [date, setDate] = useState(defaultDate);
   const [time, setTime] = useState(defaultTime);
   const [note, setNote] = useState("");
@@ -130,13 +146,22 @@ export function BookingForm({ adviserName, unit, minDate, defaultDate, defaultTi
       <Card className="stack" aria-labelledby="see-title">
         <h2 id="see-title" style={{ fontSize: "var(--text-h3)" }}>What your adviser will see</h2>
         <ul className="stack-sm">
-          <li>Your target role: 2519-01 System Tester</li>
-          <li>Your three gap skills</li>
-          <li>A short summary of your interview feedback</li>
-          <li>Your note and the time you picked</li>
+          <li>Your name and semester</li>
+          <li>The time you picked and your note</li>
+          {sharesProgress ? (
+            <>
+              <li>{hasTarget ? "Your target role" : "That you haven't chosen a target role yet"}</li>
+              <li>Your gap skills and the 1 to 5 confidence you gave each one</li>
+              <li>A one-line summary of your latest interview feedback</li>
+            </>
+          ) : null}
         </ul>
-        <p className="secondary muted">She can&apos;t change any of your data. She can only accept, decline or cancel the booking.</p>
-        <p className="secondary muted">If she cancels, she has to give a reason, and you will see it.</p>
+        <p className="secondary muted">
+          {sharesProgress
+            ? "Never your answers in full, your email address or your practice history."
+            : "You keep your progress private, so nothing else is shared. You can change this in Settings."}
+        </p>
+        <p className="secondary muted">Your adviser can&apos;t change any of your data. They can only accept, decline, complete or cancel the booking, and must give a reason to cancel.</p>
       </Card>
     </div>
   );

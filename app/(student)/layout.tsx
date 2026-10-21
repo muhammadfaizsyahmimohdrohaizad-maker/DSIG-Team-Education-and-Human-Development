@@ -1,12 +1,15 @@
 import { LiveRegionProvider } from "@/components/ui/live-region";
 import { StageNav } from "@/components/ui/stage-nav";
+import { requireStudent } from "@/server/auth/account";
 import { latestAnswerId } from "@/server/engines/feedback";
 import { getStore } from "@/server/data";
-import { DemoFooter } from "../_components/demo-footer";
+import { SiteFooter } from "../_components/site-footer";
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {
-  const [bookings, latest] = await Promise.all([getStore().listBookings(), latestAnswerId()]);
-  const updates = bookings.filter((b) => b.studentId === "aina" && b.changedSinceViewed).length;
+  await requireStudent();
+  const store = getStore();
+  const [student, bookings, latest] = await Promise.all([store.getStudent(), store.listBookings(), latestAnswerId()]);
+  const updates = bookings.filter((b) => b.studentId === student.id && b.changedSinceViewed).length;
 
   return (
     <LiveRegionProvider>
@@ -14,7 +17,7 @@ export default async function StudentLayout({ children }: { children: React.Reac
       <main id="main" tabIndex={-1}>
         {children}
       </main>
-      <DemoFooter role="student" />
+      <SiteFooter student />
     </LiveRegionProvider>
   );
 }

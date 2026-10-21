@@ -1,0 +1,22 @@
+{
+  "occupation": "3512",
+  "title": "ICT User Support Technician",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/3512), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "questions": [
+    {
+      "id": "3512-q1",
+      "text": "A user says their laptop can't print. Walk us through the questions you would ask and the checks you would make.",
+      "source": "eMASCO 3512, task 1: Menjawab pertanyaan pengguna berhubung dengan operasi perisian dan perkakasan untuk menyelesaikan masalah."
+    },
+    {
+      "id": "3512-q2",
+      "text": "Tell us about a time you found an error in a system by watching how it behaved. How did you confirm what was wrong?",
+      "source": "eMASCO 3512, task 2: Memasukkan arahan dan mengesan ralat serta memerhatikan pemfungsian sistem untuk mengesahkan operasi yang betul."
+    },
+    {
+      "id": "3512-q3",
+      "text": "How would you prepare a new computer for a staff member who starts tomorrow? What would you set up, and in what order?",
+      "source": "eMASCO 3512, task 5: Mempersiapkan peralatan untuk kegunaan kakitangan…"
+    }
+  ]
+}

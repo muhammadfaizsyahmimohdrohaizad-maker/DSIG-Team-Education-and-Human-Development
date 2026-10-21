@@ -1,0 +1,22 @@
+{
+  "occupation": "3513",
+  "title": "Computer Network and Systems Technician",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/3513), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "questions": [
+    {
+      "id": "3513-q1",
+      "text": "Several users say the network is slow. How would you find the cause?",
+      "source": "eMASCO 3513, task 1: Mengendalikan, menyelenggara, dan mengesan masalah sistem rangkaian."
+    },
+    {
+      "id": "3513-q2",
+      "text": "Tell us about a time you helped someone with a connection problem. How did you explain the fix so they understood it?",
+      "source": "eMASCO 3513, task 3: Membantu pengguna dengan masalah rangkaian dan komunikasi data."
+    },
+    {
+      "id": "3513-q3",
+      "text": "Why do backups matter, and how would you check that a backup can really be restored?",
+      "source": "eMASCO 3513, task 6: Melaksanakan tugas menghidupkan dan mematikan sistem termasuk sistem sandaran dan operasi pemulihan bencana."
+    }
+  ]
+}

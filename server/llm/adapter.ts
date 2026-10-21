@@ -14,9 +14,11 @@ const cache = (g.__careerprepLlmCache ??= new Map());
 
 /**
  * The one door to the LLM. Returns validated output, or null when there is nothing to return.
- * - `recorded` replays content/llm/ by `key` (the demo, the e2e tests).
- * - a live provider sends `prompt`; `cacheKey` identifies the answer. If the call fails or the
- *   reply fails the schema (or `accept`), the recorded output for `key` is used instead, if any.
+ * - `recorded` replays content/llm/ by `key` (tests, and the static hint fallback).
+ * - a live provider sends `prompt`; `cacheKey` identifies the answer. A reply that fails the schema
+ *   (or `accept`) gets one more try. If both fail, the recorded output for `key` is used, if any
+ *   and if `fallback` allows it (vetted static hints do; interview feedback must not).
+ * - `live: false` skips the model, e.g. when the student has not agreed to AI processing.
  */
 export async function generateJSON<T>(request: {
   task: LlmTask;
@@ -26,8 +28,11 @@ export async function generateJSON<T>(request: {
   cacheKey?: string;
   /** Extra check on a live reply, e.g. that hints don't give the answer away. */
   accept?: (value: T) => boolean;
+  live?: boolean;
+  fallback?: boolean;
 }): Promise<T | null> {
   const fromRecording = (): T | null => {
+    if (request.fallback === false) return null;
     const raw = recorded(request.task, request.key);
     if (raw === null) return null;
     const parsed = request.schema.safeParse(raw);
@@ -35,21 +40,24 @@ export async function generateJSON<T>(request: {
   };
 
   const provider = env.LLM_PROVIDER;
-  if (provider === "recorded" || !request.prompt) return fromRecording();
+  if (provider === "recorded" || !request.prompt || request.live === false) return fromRecording();
 
   const cacheKey = `${request.task}:${request.cacheKey ?? request.key}`;
   if (cache.has(cacheKey)) return cache.get(cacheKey) as T;
 
-  try {
-    const text = await complete(provider, request.prompt);
-    const parsed = request.schema.safeParse(extractJson(text));
-    if (parsed.success && (request.accept?.(parsed.data) ?? true)) {
-      cache.set(cacheKey, parsed.data);
-      return parsed.data;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const text = await complete(provider, request.prompt);
+      const parsed = request.schema.safeParse(extractJson(text));
+      if (parsed.success && (request.accept?.(parsed.data) ?? true)) {
+        cache.set(cacheKey, parsed.data);
+        return parsed.data;
+      }
+      console.warn(`[llm] ${request.task}: reply ${attempt} did not pass the checks`);
+    } catch (error) {
+      console.error(`[llm] ${request.task}: ${error instanceof Error ? error.message : String(error)}`);
+      break; // Network and provider errors were already retried in providers/live.ts.
     }
-    console.warn(`[llm] ${request.task}: reply did not pass the checks, using the recorded fallback`);
-  } catch (error) {
-    console.error(`[llm] ${request.task}: ${error instanceof Error ? error.message : String(error)}`);
   }
   return fromRecording();
 }

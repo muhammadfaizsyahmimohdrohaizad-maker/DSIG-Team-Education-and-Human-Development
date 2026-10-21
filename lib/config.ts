@@ -10,5 +10,14 @@ export const MATCH_CONFIDENCE_THRESHOLD = readNumber(process.env.MATCH_CONFIDENC
 /** Share of mastery questions that must be right: 0.8 means 4 of 5. */
 export const MASTERY_PASS_MARK = readNumber(process.env.MASTERY_PASS_MARK, 0.8);
 
-/** The demo build pretends it is this day, so dates in the video stay the same. */
-export const DEMO_TODAY = "2026-10-21";
+/** Version of the privacy notice and consent wording. Stored with every consent record. */
+export const NOTICE_VERSION = "draft-2026-10-21";
+
+/** Version of the staff confidentiality undertaking. Stored with every acceptance. */
+export const UNDERTAKING_VERSION = "draft-2026-10-21";
+
+/** Effective date printed on every legal page. */
+export const LEGAL_EFFECTIVE_DATE = "21 October 2026";
+
+/** Groups smaller than this are never shown on the institution view. */
+export const MIN_GROUP = 5;

@@ -2,15 +2,40 @@ import "server-only";
 import { getStore } from "../data";
 import { generateJSON } from "../llm/adapter";
 import { feedbackSchema } from "../llm/schemas";
+import { REAL } from "../env";
+import { reference } from "../data/reference";
+import type { Feedback } from "@/lib/types";
 
 /** Feedback for one saved answer. `feedback` is null when nothing is recorded for that question. */
 export async function feedbackFor(answerId: string) {
   const store = getStore();
   const answer = await store.getAnswer(answerId);
   if (!answer) return null;
-  const interview = await store.getInterview();
-  const question = interview.questions.find((q) => q.id === answer.questionId);
-  const items = (await store.listLessons()).flatMap((l) => l.items.map((i) => ({ id: i.id, skill: l.label, question: i.question })));
+  const [consent, lessons, weak] = await Promise.all([store.getConsent(), store.listLessons(), store.listWeakAreas()]);
+  // The answer belongs to the question set it was written for, even if the target changed since.
+  const found = reference.questionById(answer.questionId);
+  const interview = found?.set ?? reference.interviewFor(null);
+  const question = found?.question;
+  const result = (feedback: Feedback | null, needsAdviser: boolean) => ({
+    answer,
+    question,
+    questionNumber: found?.n ?? 1,
+    questionCount: interview.questions.length,
+    occupationTitle: `${interview.occupation} ${interview.title}`,
+    feedback,
+    needsAdviser,
+    aiAllowed: !!consent?.aiProcessing,
+    weakAreaAdded: !!feedback && weak.includes(feedback.weakArea.itemId),
+  });
+
+  // Written once and saved with the answer, so it never changes on a reload.
+  if (answer.feedback || answer.needsAdviser) return result(answer.feedback ?? null, !!answer.needsAdviser);
+  if (!consent?.aiProcessing && REAL) {
+    await store.saveFeedback(answer.id, null, true);
+    return result(null, true);
+  }
+
+  const items = lessons.flatMap((l) => l.items.map((i) => ({ id: i.id, skill: l.label, question: i.question })));
   const feedback = await generateJSON({
     task: "feedback",
     key: `${interview.occupation}:${answer.questionId}`,
@@ -35,9 +60,11 @@ export async function feedbackFor(answerId: string) {
       ].join("\n"),
     },
     accept: (f) => items.some((i) => i.id === f.weakArea.itemId),
+    // Recorded feedback was written for a sample answer, so it must never stand in for a real one.
+    fallback: !REAL,
   });
-  const weak = await store.listWeakAreas();
-  return { answer, question, feedback, weakAreaAdded: !!feedback && weak.includes(feedback.weakArea.itemId) };
+  if (REAL) await store.saveFeedback(answer.id, feedback, !feedback);
+  return result(feedback, !feedback);
 }
 
 /** Puts the answer's weak area into the review queue (it comes back as a due recall item). */

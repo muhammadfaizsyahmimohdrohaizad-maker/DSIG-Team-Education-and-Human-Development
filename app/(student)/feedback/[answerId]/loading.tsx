@@ -5,7 +5,6 @@ export default function Loading() {
   return (
     <div className="stack-lg">
       <div className="page-head">
-        <p className="stage-label">Stage 4 of 4 · Feedback</p>
         <h1>Feedback on your answer</h1>
         <p>Reading your answer. This takes a few seconds.</p>
       </div>
