@@ -1,8 +1,0 @@
-node_modules
-.next
-.env.local
-*.tsbuildinfo
-next-env.d.ts
-test-results
-playwright-report
-pipeline/data/raw
