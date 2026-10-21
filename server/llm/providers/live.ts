@@ -8,7 +8,7 @@ const TIMEOUT_MS = 25_000;
 const DEFAULT_MODEL = {
   openai: "gpt-4o-mini",
   anthropic: "claude-haiku-5-5",
-  gemini: "gemini-2.5-flash",
+  gemini: "gemini-3.8-flash",
 } as const;
 
 type Live = keyof typeof DEFAULT_MODEL;
@@ -19,15 +19,24 @@ function key(provider: Live): string {
   return value;
 }
 
+// Busy (429) and overloaded (500, 503) answers are usually gone within seconds, so retry twice.
+const RETRY_STATUS = new Set([429, 500, 503]);
+const RETRY_DELAYS_MS = [1500, 4000];
+
 async function post<T>(url: string, headers: Record<string, string>, body: unknown): Promise<T> {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json", ...headers },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-  });
-  if (!res.ok) throw new Error(`${new URL(url).host} answered ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  return (await res.json()) as T;
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...headers },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+    if (res.ok) return (await res.json()) as T;
+    const detail = `${new URL(url).host} answered ${res.status}: ${(await res.text()).slice(0, 300)}`;
+    if (!RETRY_STATUS.has(res.status) || attempt >= RETRY_DELAYS_MS.length) throw new Error(detail);
+    console.warn(`[llm] ${detail.split(":")[0]}, retrying`);
+    await new Promise((r) => setTimeout(r, RETRY_DELAYS_MS[attempt]));
+  }
 }
 
 /** Sends one prompt to the configured provider and returns the reply text. Throws on any failure. */
