@@ -1,0 +1,37 @@
+{
+  "_note": "Recorded LLM output for LLM_PROVIDER=recorded. Keyed by recall item id. A hint must never contain the answer.",
+  "eit-1": [
+    {
+      "level": 1,
+      "title": "Nudge",
+      "text": "Think about how many parts of the system each test touches at once."
+    },
+    {
+      "level": 2,
+      "title": "Concept",
+      "text": "A unit test checks one component in isolation, often with fake versions of the parts it depends on. An integration test checks that two or more real components work together through the interface between them."
+    },
+    {
+      "level": 3,
+      "title": "Worked example",
+      "text": "Think of a bicycle. Squeezing the brake lever to see that it moves is like a unit test. Squeezing it and checking that the wheel actually slows down is like an integration test: the lever, cable and brake pad all have to work together."
+    }
+  ],
+  "eit-2": [
+    {
+      "level": 1,
+      "title": "Nudge",
+      "text": "Think about what you can do when a part you depend on is not ready yet."
+    },
+    {
+      "level": 2,
+      "title": "Concept",
+      "text": "One way to keep testing is to put a fake in the missing part's place. The fake only returns fixed replies, but that is enough for the part above it to run."
+    },
+    {
+      "level": 3,
+      "title": "Worked example",
+      "text": "Imagine rehearsing a play before the lead actor arrives. A helper reads the lead's lines from a script so the other actors can practise their cues. The scene runs, even though the real actor is missing."
+    }
+  ]
+}

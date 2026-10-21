@@ -1,0 +1,193 @@
+{
+  "_note": "Placeholder ESCO-style skill labels. Replace with exact labels from the pipeline output. Groups index into modules.json axes.",
+  "groups": [
+    "Software testing",
+    "Programming",
+    "Web development",
+    "Mobile development",
+    "Requirements and modelling",
+    "Databases"
+  ],
+  "skills": [
+    {
+      "id": "s1",
+      "escoLabel": "execute software tests",
+      "group": 0,
+      "note": ""
+    },
+    {
+      "id": "s2",
+      "escoLabel": "apply quality assurance methods",
+      "group": 0,
+      "note": ""
+    },
+    {
+      "id": "s3",
+      "escoLabel": "report test findings",
+      "group": 0,
+      "note": "Writing up what failed, how to repeat it and how serious it is."
+    },
+    {
+      "id": "s4",
+      "escoLabel": "use object-oriented programming",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "s5",
+      "escoLabel": "develop mobile applications",
+      "group": 3,
+      "note": ""
+    },
+    {
+      "id": "s6",
+      "escoLabel": "develop web applications",
+      "group": 2,
+      "note": ""
+    },
+    {
+      "id": "s7",
+      "escoLabel": "define technical requirements",
+      "group": 4,
+      "note": ""
+    },
+    {
+      "id": "s8",
+      "escoLabel": "create software design",
+      "group": 4,
+      "note": ""
+    },
+    {
+      "id": "s9",
+      "escoLabel": "use query languages",
+      "group": 5,
+      "note": ""
+    },
+    {
+      "id": "t-int",
+      "escoLabel": "execute integration testing",
+      "group": 0,
+      "note": "Testing that separate parts of a system work together."
+    },
+    {
+      "id": "t-auto",
+      "escoLabel": "use test automation tools",
+      "group": 0,
+      "note": "Writing scripts that run your tests for you."
+    },
+    {
+      "id": "x-unit",
+      "escoLabel": "perform unit testing",
+      "group": 0,
+      "note": ""
+    },
+    {
+      "id": "x-debug",
+      "escoLabel": "debug software",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-vcs",
+      "escoLabel": "use version control",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-lib",
+      "escoLabel": "use software libraries",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-script",
+      "escoLabel": "use scripting programming",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-deploy",
+      "escoLabel": "deploy software",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-patterns",
+      "escoLabel": "use software design patterns",
+      "group": 4,
+      "note": ""
+    },
+    {
+      "id": "x-access",
+      "escoLabel": "apply web accessibility standards",
+      "group": 2,
+      "note": ""
+    },
+    {
+      "id": "x-dbadmin",
+      "escoLabel": "manage databases",
+      "group": 5,
+      "note": ""
+    },
+    {
+      "id": "x-diag",
+      "escoLabel": "diagnose ICT problems",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-help",
+      "escoLabel": "provide ICT user support",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-install",
+      "escoLabel": "install and configure software",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-net",
+      "escoLabel": "configure computer networks",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-netsec",
+      "escoLabel": "apply network security measures",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-netmon",
+      "escoLabel": "monitor network performance",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-hw",
+      "escoLabel": "maintain computer hardware",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-cabling",
+      "escoLabel": "install network cabling",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-servers",
+      "escoLabel": "administer server systems",
+      "group": 1,
+      "note": ""
+    },
+    {
+      "id": "x-backup",
+      "escoLabel": "perform data backups",
+      "group": 5,
+      "note": ""
+    }
+  ]
+}

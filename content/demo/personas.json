@@ -1,0 +1,16 @@
+{
+  "student": {
+    "id": "aina",
+    "name": "Aina",
+    "semester": 5,
+    "targetCode": "2519-01"
+  },
+  "tickedModules": [
+    "qac",
+    "and",
+    "awp",
+    "bop",
+    "bst",
+    "smre"
+  ]
+}

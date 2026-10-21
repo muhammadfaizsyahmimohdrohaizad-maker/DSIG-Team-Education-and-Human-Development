@@ -1,0 +1,97 @@
+{
+  "_note": "Placeholder module list and coverage points for the UI. The pipeline replaces this with real outcome-to-skill data.",
+  "axes": [
+    "Software testing",
+    "Programming",
+    "Web development",
+    "Mobile development",
+    "Requirements and modelling",
+    "Databases"
+  ],
+  "modules": [
+    {
+      "id": "bop",
+      "semester": 2,
+      "semesterLabel": "Semester 2",
+      "name": "Basic of Programming",
+      "coverage": [
+        0,
+        30,
+        5,
+        5,
+        0,
+        5
+      ]
+    },
+    {
+      "id": "bst",
+      "semester": 2,
+      "semesterLabel": "Semester 2",
+      "name": "Basic of Software Testing",
+      "coverage": [
+        35,
+        5,
+        0,
+        0,
+        5,
+        0
+      ]
+    },
+    {
+      "id": "smre",
+      "semester": 2,
+      "semesterLabel": "Semester 2",
+      "name": "Software Modelling & Requirements Engineering",
+      "coverage": [
+        5,
+        0,
+        0,
+        0,
+        40,
+        5
+      ]
+    },
+    {
+      "id": "qac",
+      "semester": 4,
+      "semesterLabel": "Later semesters",
+      "name": "Quality Assurance & Control",
+      "coverage": [
+        30,
+        0,
+        0,
+        0,
+        7,
+        0
+      ]
+    },
+    {
+      "id": "and",
+      "semester": 4,
+      "semesterLabel": "Later semesters",
+      "name": "Android Programming",
+      "coverage": [
+        0,
+        15,
+        0,
+        43,
+        0,
+        10
+      ]
+    },
+    {
+      "id": "awp",
+      "semester": 4,
+      "semesterLabel": "Later semesters",
+      "name": "Advanced Web Programming",
+      "coverage": [
+        0,
+        12,
+        50,
+        0,
+        0,
+        10
+      ]
+    }
+  ]
+}

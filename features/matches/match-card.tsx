@@ -1,0 +1,106 @@
+"use client";
+
+import Link from "next/link";
+import { useId, useState } from "react";
+import { btn } from "@/components/ui/button";
+import { useAnnounce } from "@/components/ui/live-region";
+import { FlagChip } from "@/components/ui/status-chip";
+
+export type MatchCardData = {
+  code: string;
+  titleMs: string;
+  titleEn: string;
+  isTarget: boolean;
+  pct: number;
+  coveredEssential: number;
+  essentialTotal: number;
+  coveredOptional: number;
+  optionalTotal: number;
+  evidence: { quote: string; moduleName: string }[];
+  uncertain: { label: string; confidence: number }[];
+};
+
+const PREVIEW = 2;
+
+export function MatchCard({ o, rank }: { o: MatchCardData; rank: number }) {
+  const [all, setAll] = useState(false);
+  const quotesId = useId();
+  const announce = useAnnounce();
+  const shown = all ? o.evidence : o.evidence.slice(0, PREVIEW);
+
+  return (
+    <li className="card stack" aria-labelledby={`${quotesId}-title`}>
+      <div className="row-between" style={{ alignItems: "flex-start" }}>
+        <div className="stack-sm">
+          <h3 id={`${quotesId}-title`}>
+            <span className="muted" style={{ fontWeight: 400 }}>{rank}. </span>
+            {o.code} · {o.titleMs}
+          </h3>
+          <p className="muted">
+            {o.titleEn}
+            {o.isTarget ? <span> · your target role</span> : null}
+          </p>
+        </div>
+        <p className="big-pct">Match {o.pct}%</p>
+      </div>
+      <div className="bar" aria-hidden="true">
+        <span style={{ width: `${o.pct}%` }} />
+      </div>
+      <p className="secondary muted">
+        Covers {o.coveredEssential} of {o.essentialTotal} essential skills and {o.coveredOptional} of {o.optionalTotal} optional skills.
+      </p>
+
+      {shown.length > 0 ? (
+        <div className="stack-sm" id={quotesId}>
+          <p style={{ fontWeight: 500 }}>Evidence from your modules</p>
+          {shown.map((e) => (
+            <blockquote key={e.quote} className="quote">
+              <p>“{e.quote}”</p>
+              <cite>{e.moduleName}</cite>
+            </blockquote>
+          ))}
+          {o.evidence.length > PREVIEW ? (
+            <div>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                aria-expanded={all}
+                aria-controls={quotesId}
+                onClick={() => {
+                  setAll(!all);
+                  announce(all ? "Showing fewer quotes." : `Showing all ${o.evidence.length} quotes.`);
+                }}
+              >
+                {all ? "Show fewer quotes" : `Show all ${o.evidence.length} quotes`}
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {o.uncertain.length > 0 ? (
+        <div className="notice notice-warn">
+          <div className="stack-sm">
+            <FlagChip>Check with adviser</FlagChip>
+            <p>
+              Check with adviser: some of these links are uncertain.{" "}
+              {o.uncertain.map((u) => `“${u.label[0].toUpperCase()}${u.label.slice(1)}” is linked at ${Math.round(u.confidence * 100)}%`).join("; ")}
+              , so it is not counted yet.
+            </p>
+            <div>
+              <Link href="/bookings/new" className={btn("secondary")}>
+                Talk to a human
+              </Link>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div>
+        <Link href={`/matches/${o.code}`} className={btn("secondary")}>
+          View {o.code} details
+        </Link>
+      </div>
+    </li>
+  );
+}

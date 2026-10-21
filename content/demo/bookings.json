@@ -1,0 +1,27 @@
+{
+  "bookings": [
+    {
+      "id": "bk-aina-1",
+      "studentId": "aina",
+      "slot": "2026-10-22T10:00",
+      "status": "requested",
+      "note": "I'd like help turning my checkout-form test project into a stronger interview answer. Also, does my QA module count for \"report test findings\"?",
+      "changedSinceViewed": false
+    },
+    {
+      "id": "bk-mei-1",
+      "studentId": "mei",
+      "slot": "2026-10-19T14:00",
+      "status": "accepted",
+      "note": "Practice run before my placement interview next week.",
+      "changedSinceViewed": false
+    },
+    {
+      "id": "bk-arjun-1",
+      "studentId": "arjun",
+      "slot": "2026-10-15T11:00",
+      "status": "completed",
+      "changedSinceViewed": false
+    }
+  ]
+}

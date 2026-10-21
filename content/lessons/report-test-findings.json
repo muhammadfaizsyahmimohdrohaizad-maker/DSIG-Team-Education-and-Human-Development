@@ -1,0 +1,9 @@
+{
+  "skillId": "s3",
+  "slug": "report-test-findings",
+  "label": "report test findings",
+  "todo": true,
+  "_note": "TODO: team content. Needs 5 recall items with hints and 5 mastery questions with an answer key.",
+  "items": [],
+  "mastery": []
+}

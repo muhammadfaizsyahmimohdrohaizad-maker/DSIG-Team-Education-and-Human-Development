@@ -1,0 +1,75 @@
+{
+  "skillId": "t-int",
+  "slug": "execute-integration-testing",
+  "label": "execute integration testing",
+  "_note": "Two recall items are written. TODO: team content for the other three. The mastery check has all five questions.",
+  "items": [
+    {
+      "id": "eit-1",
+      "question": "What is the difference between a unit test and an integration test? Give one example of each from a web app.",
+      "modelAnswer": "A unit test checks one component on its own, with the parts it depends on replaced by fakes. An integration test checks that real components work together.\n\nExample: a unit test calls validateEmail() with a bad address and expects false. An integration test submits the sign-up form and checks that a new row appears in the users table."
+    },
+    {
+      "id": "eit-2",
+      "question": "What is a stub, and why would you use one when you test two modules together?",
+      "modelAnswer": "A stub is a simple stand-in for a module that is not built yet, or that you do not want to call for real. In top-down integration testing, stubs take the place of the lower-level modules so you can test the module above them.\n\nExample: you test the checkout page before the payment service exists, using a stub that always replies \"payment accepted\"."
+    }
+  ],
+  "mastery": [
+    {
+      "id": "m1",
+      "text": "Which kind of test checks that the login form and the user database work together?",
+      "options": [
+        "Unit test",
+        "Integration test",
+        "Usability test",
+        "Load test"
+      ],
+      "key": 1
+    },
+    {
+      "id": "m2",
+      "text": "In top-down integration testing, what stands in for lower-level modules that are not built yet?",
+      "options": [
+        "Drivers",
+        "Stubs",
+        "Screenshots of the interface",
+        "Test reports"
+      ],
+      "key": 1
+    },
+    {
+      "id": "m3",
+      "text": "Which bug is an integration test most likely to catch?",
+      "options": [
+        "A typo in a button label",
+        "A total that is wrong for an empty cart",
+        "A date sent as DD-MM-YYYY to a service that expects YYYY-MM-DD",
+        "A page that loads slowly on a phone"
+      ],
+      "key": 2
+    },
+    {
+      "id": "m4",
+      "text": "What does big-bang integration mean?",
+      "options": [
+        "Adding one module at a time",
+        "Combining all modules at once and testing them together",
+        "Testing only the user interface",
+        "Running every test overnight"
+      ],
+      "key": 1
+    },
+    {
+      "id": "m5",
+      "text": "A shared API changes. When should its integration tests run?",
+      "options": [
+        "Before the change is merged",
+        "Only before a major release",
+        "After a user reports a bug",
+        "Once a semester"
+      ],
+      "key": 0
+    }
+  ]
+}

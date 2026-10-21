@@ -1,0 +1,34 @@
+{
+  "_note": "Recorded feedback for LLM_PROVIDER=recorded. Keyed by occupation:question. No score or grade, by design.",
+  "2519-01:q1": {
+    "star": [
+      {
+        "part": "Situation",
+        "present": true,
+        "note": "A checkout form for an online shop, in your QA project."
+      },
+      {
+        "part": "Task",
+        "present": true,
+        "note": "You were in charge of testing it."
+      },
+      {
+        "part": "Action",
+        "present": true,
+        "note": "Listed the fields, used boundary values, wrote 14 cases, started with quantity."
+      },
+      {
+        "part": "Result",
+        "present": false,
+        "note": "You don't say what the tests found or what changed because of them."
+      }
+    ],
+    "evidence": "Good detail: you named the feature, the technique and the number of test cases. Add one real defect you found and what happened to it. Interviewers remember a specific bug far longer than a count.",
+    "technicalAccuracy": "Boundary value analysis is used correctly. One slip: checking that a single field rejects 0 and 100 is a unit test, not an integration test. An integration test would check that the quantity reaches the cart and changes the total.",
+    "nextStep": "Rewrite your last two sentences so they end with a result: what your tests caught, and what the team changed because of it.",
+    "weakArea": {
+      "label": "unit test or integration test?",
+      "itemId": "eit-1"
+    }
+  }
+}

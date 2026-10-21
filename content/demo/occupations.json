@@ -1,0 +1,205 @@
+{
+  "_note": "Nine MVP occupations from docs/02-methodology.md. Skill lists are placeholders; percentages are computed, never typed.",
+  "occupations": [
+    {
+      "code": "2519-01",
+      "titleMs": "Penguji Sistem",
+      "titleEn": "System Tester",
+      "role": "primary",
+      "essential": [
+        "s1",
+        "s2",
+        "s6",
+        "s7",
+        "s8",
+        "s9",
+        "s3",
+        "t-int",
+        "t-auto"
+      ],
+      "optional": [
+        "s4",
+        "s5"
+      ]
+    },
+    {
+      "code": "2512-01",
+      "titleMs": "Pembangun Perisian",
+      "titleEn": "Software Developer",
+      "role": "secondary",
+      "essential": [
+        "s4",
+        "s6",
+        "s7",
+        "s8",
+        "s9",
+        "s1",
+        "x-debug",
+        "x-unit",
+        "x-vcs",
+        "x-lib"
+      ],
+      "optional": [
+        "s5",
+        "s2"
+      ]
+    },
+    {
+      "code": "2514-01",
+      "titleMs": "Pengaturcara Komputer",
+      "titleEn": "Computer Programmer",
+      "role": "secondary",
+      "essential": [
+        "s4",
+        "s5",
+        "s6",
+        "s8",
+        "s9",
+        "s2",
+        "x-debug",
+        "x-script",
+        "x-vcs",
+        "x-lib",
+        "x-deploy"
+      ],
+      "optional": [
+        "s7",
+        "s1"
+      ]
+    },
+    {
+      "code": "2512-04",
+      "titleMs": "Pembangun Sistem",
+      "titleEn": "System Developer",
+      "role": "secondary",
+      "essential": [
+        "s4",
+        "s6",
+        "s7",
+        "s8",
+        "s9",
+        "s1",
+        "x-debug",
+        "x-unit",
+        "x-vcs",
+        "x-deploy",
+        "x-patterns",
+        "x-dbadmin"
+      ],
+      "optional": [
+        "s2",
+        "s5"
+      ]
+    },
+    {
+      "code": "2514-02",
+      "titleMs": "Pengaturcara Sistem",
+      "titleEn": "System Programmer",
+      "role": "secondary",
+      "essential": [
+        "s4",
+        "s8",
+        "s9",
+        "s2",
+        "s5",
+        "s1",
+        "x-debug",
+        "x-script",
+        "x-vcs",
+        "x-lib",
+        "x-deploy",
+        "x-dbadmin"
+      ],
+      "optional": [
+        "s7",
+        "s6",
+        "x-patterns"
+      ]
+    },
+    {
+      "code": "2513-01",
+      "titleMs": "Pembangun Laman Web",
+      "titleEn": "Website Developer",
+      "role": "secondary",
+      "essential": [
+        "s6",
+        "s9",
+        "s7",
+        "s4",
+        "x-access",
+        "x-script",
+        "x-vcs",
+        "x-deploy",
+        "x-lib"
+      ],
+      "optional": [
+        "s8",
+        "x-patterns"
+      ]
+    },
+    {
+      "code": "3514",
+      "titleMs": "Juruteknik Web",
+      "titleEn": "Web Technician (unit group)",
+      "role": "entry-level",
+      "essential": [
+        "s6",
+        "s9",
+        "x-access",
+        "x-script",
+        "x-vcs",
+        "x-deploy",
+        "x-lib",
+        "x-debug"
+      ],
+      "optional": [
+        "s4",
+        "s7",
+        "x-patterns"
+      ]
+    },
+    {
+      "code": "3512",
+      "titleMs": "Juruteknik Sokongan Pengguna TMK",
+      "titleEn": "ICT User Support Technician (unit group)",
+      "role": "entry-level",
+      "essential": [
+        "s2",
+        "x-diag",
+        "x-help",
+        "x-install",
+        "x-debug",
+        "x-vcs",
+        "x-deploy",
+        "x-hw"
+      ],
+      "optional": [
+        "s1",
+        "s4",
+        "x-script"
+      ]
+    },
+    {
+      "code": "3513",
+      "titleMs": "Juruteknik Rangkaian dan Sistem Komputer",
+      "titleEn": "Computer Network and Systems Technician (unit group)",
+      "role": "entry-level",
+      "essential": [
+        "s2",
+        "x-net",
+        "x-netsec",
+        "x-netmon",
+        "x-cabling",
+        "x-servers",
+        "x-backup",
+        "x-diag",
+        "x-hw"
+      ],
+      "optional": [
+        "x-install",
+        "x-script",
+        "x-help"
+      ]
+    }
+  ]
+}
