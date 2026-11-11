@@ -9,7 +9,9 @@ const schema = z.object({
   SITE_URL: z.string().url().default("http://localhost:3000"),
   STAFF_CODE_HASHES: z.string().default(""),
   CRON_SECRET: z.string().min(16).optional(),
-  LLM_PROVIDER: z.enum(["gemini", "stub"]).default("stub"),
+  // AI is off unless this is "gemini" with GEMINI_API_KEY set. "stub" (fixed text) is for tests and local work
+  // only and is treated as off when NODE_ENV is production (server/llm/core.ts chooseProvider).
+  LLM_PROVIDER: z.enum(["off", "gemini", "stub"]).default("off"),
   GEMINI_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().default("gemini-2.5-flash-lite"),
   // AI calls per student per Malaysian day; blank means the default of 20, 0 turns AI off for everyone.

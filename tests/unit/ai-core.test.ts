@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aiAllowed, createAi, parseCards, startOfDayMyt, stubProvider, validateFeedback, STUB_FEEDBACK, type AiBudget, type AiCallLog } from "@/server/llm/core.ts";
+import { aiAllowed, chooseProvider, createAi, parseCards, startOfDayMyt, stubProvider, validateFeedback, STUB_FEEDBACK, type AiBudget, type AiCallLog } from "@/server/llm/core.ts";
 
 const adult = { id: "u1", isUnder18: false, aiConsent: true, fullName: "Aina Rahman" };
 const budget = (used = 0): AiBudget & { seen: Date[] } => {
@@ -32,6 +32,55 @@ describe("aiAllowed gate (Gemini terms: no under-18s)", () => {
     const provider = stubProvider();
     const r = await createAi({ provider, budget: budget() }).feedback({ ...adult, aiConsent: false }, input);
     expect(r.ok).toBe(false);
+    expect(provider.calls).toHaveLength(0);
+  });
+});
+
+describe("provider choice (no stub text in production)", () => {
+  it("is off by default, and off for gemini without a key", () => {
+    expect(chooseProvider({ provider: "off", hasKey: true, production: true })).toBe("off");
+    expect(chooseProvider({ provider: "gemini", hasKey: false, production: true })).toBe("off");
+    expect(chooseProvider({ provider: "gemini", hasKey: true, production: true })).toBe("gemini");
+  });
+  it("refuses the stub in production and allows it elsewhere", () => {
+    expect(chooseProvider({ provider: "stub", hasKey: false, production: true })).toBe("off");
+    expect(chooseProvider({ provider: "stub", hasKey: false, production: false })).toBe("stub");
+  });
+  it("refuses every call when no provider is configured, before the budget", async () => {
+    const b = budget();
+    const ai = createAi({ provider: null, budget: b });
+    const r = await ai.feedback(adult, input);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.error.code).toBe("FORBIDDEN");
+      expect(r.error.message).toMatch("isn't available");
+    }
+    expect((await ai.cards(adult, "# A\nb")).ok).toBe(false);
+    expect(b.seen).toHaveLength(0);
+  });
+});
+
+describe("rate limit", () => {
+  it("refuses with a retryable error when the short-window limit is hit", async () => {
+    const provider = stubProvider();
+    const kinds: string[] = [];
+    const r = await createAi({ provider, budget: budget(), rateLimit: async (_id, kind) => { kinds.push(kind); return false; } }).feedback(adult, input);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.error.code).toBe("AI_ERROR");
+      expect(r.error.message).toMatch("Wait a minute");
+    }
+    expect(kinds).toEqual(["interview_feedback"]);
+    expect(provider.calls).toHaveLength(0);
+  });
+  it("fails closed when the limit can't be checked, and is not consulted past the budget", async () => {
+    const provider = stubProvider();
+    let asked = 0;
+    const broken = createAi({ provider, budget: budget(), rateLimit: async () => { asked++; throw new Error("no fn"); } });
+    expect((await broken.feedback(adult, input)).ok).toBe(false);
+    const spent = createAi({ provider, budget: budget(9), dailyLimit: 9, rateLimit: async () => { asked++; return true; } });
+    expect((await spent.feedback(adult, input)).ok).toBe(false);
+    expect(asked).toBe(1);
     expect(provider.calls).toHaveLength(0);
   });
 });

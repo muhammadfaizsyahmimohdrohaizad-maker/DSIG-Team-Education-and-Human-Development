@@ -5,11 +5,11 @@
 // only for 18+ students with AI consent, and are labelled AI-generated for the student to check before saving.
 import { err, ok, type Result } from "@/lib/result";
 import { addCardsInput, importNotesInput, rateCardInput } from "@/lib/schemas";
-import { latestConsent } from "@/server/data/consents";
 import { getInterviewee } from "@/server/data/interview";
 import { addNoteCards, dueCards, getCard, nextDueAfter, saveSchedule, skillLabels } from "@/server/data/review";
 import { endOfTodayMyt, newCard, next, type ReviewRating } from "@/server/engines/schedule";
-import { ai, aiAllowed } from "@/server/llm/adapter";
+import { ai } from "@/server/llm/adapter";
+import { aiStatusFor, type AiStatus } from "@/features/interview/ai-status";
 import { asStudent, invalid } from "@/features/interview/run";
 import { cardsFromNotes, notesKind, type DraftCard } from "./notes";
 
@@ -66,6 +66,15 @@ export async function rateCard(input: unknown): Promise<Result<{ cardId: string;
 
 export type NotesPreview = { cards: DraftCard[]; aiGenerated: boolean };
 
+/** Whether the "Write questions with AI" option can be offered, and if not, why. */
+export async function getImportSetup(): Promise<Result<{ ai: AiStatus }>> {
+  return asStudent("getImportSetup", async (userId) => {
+    const student = await getInterviewee(userId);
+    if (!student) return err("NOT_FOUND", "We couldn't find your profile. Log in again.");
+    return ok({ ai: await aiStatusFor(userId, student.isUnder18) });
+  });
+}
+
 /**
  * Turns notes into draft cards for the student to check. Nothing is saved and the file text is not kept;
  * the kept cards are saved by addNoteCardsToReview. The browser reads the file and sends its text.
@@ -88,12 +97,11 @@ export async function importNotes(input: unknown): Promise<Result<NotesPreview>>
 
     const student = await getInterviewee(userId);
     if (!student) return err("NOT_FOUND", "We couldn't find your profile. Log in again.");
-    // Under-18: no consent lookup and no AI call, whatever the browser asked for.
-    if (student.isUnder18) return err("FORBIDDEN", "AI cards are off for accounts under 18. Use your headings and bold words instead.");
-    const consent = await latestConsent(userId, "ai_processing");
-    if (!aiAllowed({ isUnder18: student.isUnder18, aiConsent: consent })) {
-      return err("FORBIDDEN", "AI is off for your account. Turn it on in Settings and privacy, or use your headings and bold words.");
-    }
+    // Whatever the browser asked for: no AI call unless the status is on (age first, then setup, then consent).
+    const status = await aiStatusFor(userId, student.isUnder18);
+    if (status === "off_under_18") return err("FORBIDDEN", "AI cards are off for accounts under 18. Use your headings and bold words instead.");
+    if (status === "off_unavailable") return err("FORBIDDEN", "AI cards aren't available. Use your headings and bold words instead.");
+    if (status === "off_no_consent") return err("FORBIDDEN", "AI is off for your account. Turn it on in Settings and privacy, or use your headings and bold words.");
     const r = await ai().cards({ id: userId, isUnder18: false, aiConsent: true, fullName: student.fullName }, text);
     return r.ok ? ok({ cards: r.value, aiGenerated: true }) : r;
   });

@@ -7,17 +7,16 @@
 import { err, ok, type Result } from "@/lib/result";
 import { answerIdInput, interviewAnswer, startInterviewInput } from "@/lib/schemas";
 import type { InterviewRound, Marks } from "@/lib/types";
-import { latestConsent } from "@/server/data/consents";
 import {
   addAiFeedback, getAnswer, getInterviewee, getQuestion, occupationTitle, questionsFor, recordAnswer, RpcRefused,
   type Interviewee, type Question,
 } from "@/server/data/interview";
 import { checklist, explain, SKIPPED, total, type Explained } from "@/server/engines/feedback";
-import { ai, aiAllowed } from "@/server/llm/adapter";
+import { ai } from "@/server/llm/adapter";
+import { aiStatusFor, type AiStatus } from "./ai-status";
 import { asStudent, invalid } from "./run";
 
-/** Why AI is off, so the screen can say so plainly. */
-export type AiStatus = "on" | "off_under_18" | "off_no_consent";
+export type { AiStatus } from "./ai-status";
 
 /** What the feedback screen shows under the checklist marks. */
 export type AiFeedback =
@@ -42,14 +41,8 @@ export type MarkedAnswer = Explained & {
   ai: AiFeedback;
 };
 
-async function aiStatus(userId: string, student: Interviewee): Promise<AiStatus> {
-  if (student.isUnder18) return "off_under_18"; // checked first: no consent lookup is needed to say no
-  const consent = await latestConsent(userId, "ai_processing");
-  return aiAllowed({ isUnder18: student.isUnder18, aiConsent: consent }) ? "on" : "off_no_consent";
-}
-
 async function askAi(userId: string, student: Interviewee, question: Question, answerId: string, text: string, notes: Explained): Promise<AiFeedback> {
-  const status = await aiStatus(userId, student);
+  const status = await aiStatusFor(userId, student.isUnder18);
   if (status !== "on") return { state: "off", status };
   const r = await ai().feedback(
     { id: userId, isUnder18: student.isUnder18, aiConsent: true, fullName: student.fullName },
@@ -77,7 +70,7 @@ export async function getInterviewSetup(): Promise<Result<InterviewSetup>> {
     const student = await getInterviewee(userId);
     if (!student) return err("NOT_FOUND", "We couldn't find your profile. Log in again.");
     if (!student.target) return err("CONFLICT", "Pick a target job on your Map first. The interview asks questions for that job.");
-    const [title, status] = await Promise.all([occupationTitle(student.target), aiStatus(userId, student)]);
+    const [title, status] = await Promise.all([occupationTitle(student.target), aiStatusFor(userId, student.isUnder18)]);
     return ok({ jobCode: student.target, jobTitle: title ?? student.target, ai: status });
   });
 }
@@ -93,7 +86,7 @@ export async function startInterview(input: unknown): Promise<Result<InterviewSt
     const [questions, title, status] = await Promise.all([
       questionsFor(student.target, parsed.data.round),
       occupationTitle(student.target),
-      aiStatus(userId, student),
+      aiStatusFor(userId, student.isUnder18),
     ]);
     if (questions.length !== 3) return err("NOT_FOUND", "Interview questions for this job aren't ready yet. Try the other round.");
     return ok({

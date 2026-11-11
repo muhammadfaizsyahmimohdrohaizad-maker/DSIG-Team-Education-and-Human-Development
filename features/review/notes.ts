@@ -20,6 +20,11 @@ export function notesKind(fileName: string): { ok: true; kind: NotesKind } | { o
   return { ok: false, message: "Choose a Markdown (.md) or text (.txt) file." };
 }
 
+/** For pasted notes: Markdown if it has headings or bold text, plain text otherwise. */
+export function guessKind(text: string): NotesKind {
+  return /^\s{0,3}#{1,6}\s|\*\*[^*]+\*\*|__[^_]+__/m.test(text) ? "markdown" : "text";
+}
+
 /** Inline Markdown to plain text: links, images, code, emphasis, HTML tags. */
 export function plain(s: string): string {
   return s

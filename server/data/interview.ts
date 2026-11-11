@@ -145,6 +145,26 @@ export async function logAiCall(userId: string, kind: "interview_feedback" | "no
   if (error) console.error(`interview: log ai call: ${error.message}`);
 }
 
+/** Short-window AI limit per student, on top of the daily budget: AI_RATE_MAX calls per AI_RATE_WINDOW_S seconds. */
+export const AI_RATE_MAX = 6;
+export const AI_RATE_WINDOW_S = 60;
+
+type UntypedRpc = (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+
+/**
+ * True if one more AI call is allowed now. Uses the DBA's hit_rate_limit (team/db, in progress); the call is
+ * untyped until lib/database.types.ts lists it, then this cast goes. Assumed signature:
+ * hit_rate_limit(p_key text, p_limit int, p_window_seconds int) returns boolean (true = allowed). Errors throw,
+ * and the AI gate treats a throw as a refusal.
+ */
+export async function hitAiRateLimit(userId: string): Promise<boolean> {
+  const client = adminDb();
+  const rpc = client.rpc.bind(client) as unknown as UntypedRpc;
+  const { data, error } = await rpc("hit_rate_limit", { p_key: `ai:${userId}`, p_limit: AI_RATE_MAX, p_window_seconds: AI_RATE_WINDOW_S });
+  if (error) fail("rate limit", error);
+  return data === true;
+}
+
 export async function occupationTitle(code: string): Promise<string | null> {
   const { data, error } = await (await db()).schema("ref").from("occupations").select("title_en").eq("code", code).maybeSingle();
   if (error) fail("occupation", error);

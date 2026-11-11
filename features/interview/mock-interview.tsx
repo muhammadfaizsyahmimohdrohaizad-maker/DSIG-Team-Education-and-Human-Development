@@ -234,6 +234,9 @@ function AiNotice({ status }: { status: AiStatus }) {
       </InfoMessage>
     );
   }
+  if (status === "off_unavailable") {
+    return <InfoMessage><b>Checklist marks only.</b> AI feedback isn&apos;t available at the moment. Every answer still gets marks and a tip.</InfoMessage>;
+  }
   if (status === "off_under_18") {
     return <InfoMessage><b>Checklist marks only.</b> AI feedback is not available for accounts under 18. Every answer still gets marks and a tip.</InfoMessage>;
   }

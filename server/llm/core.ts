@@ -2,8 +2,10 @@
 // injected provider and budget, so it runs in unit tests with the stub provider and no environment.
 //
 // Every call goes through the same steps, in this order:
+//   0. a provider must be configured (chooseProvider): otherwise AI is off for everyone;
 //   1. aiAllowed: never for under-18 accounts (Gemini API terms), never without AI consent;
-//   2. budget: at most `dailyLimit` calls per student per Malaysian day, counting every logged attempt;
+//   2. budget: at most `dailyLimit` calls per student per Malaysian day, counting every logged attempt,
+//      then the short-window rate limit;
 //   3. redact: names, emails, phones, IC numbers and links are removed before anything leaves the server;
 //   4. a fixed prompt that asks for short plain feedback and forbids marks and grades;
 //   5. a timeout (8 s by default), and every provider call is logged (ok or not) for the budget;
@@ -20,6 +22,20 @@ export const NOTES_MAX_CHARS = 12_000;
 export const MAX_AI_CARDS = 15;
 
 export type AiUser = { id: string; isUnder18: boolean; aiConsent: boolean; fullName?: string };
+
+export const UNAVAILABLE = "AI feedback isn't available. Your checklist marks and tips still work.";
+
+export type ProviderChoice = "gemini" | "stub" | "off";
+
+/**
+ * Which provider runs. "off" unless Gemini has a key; the stub is for tests and local work only and is refused
+ * in production, so production never shows stub text (owner decision 4).
+ */
+export function chooseProvider(cfg: { provider: "off" | "gemini" | "stub"; hasKey: boolean; production: boolean }): ProviderChoice {
+  if (cfg.provider === "gemini") return cfg.hasKey ? "gemini" : "off";
+  if (cfg.provider === "stub") return cfg.production ? "off" : "stub";
+  return "off";
+}
 
 /** Gemini terms bar users under 18, so AI is off for them whatever their consent says. */
 export function aiAllowed(user: { isUnder18: boolean; aiConsent: boolean }): boolean {
@@ -43,8 +59,14 @@ export type AiCallKind = "interview_feedback" | "notes_cards";
 /** Records one provider call, successful or not, so the budget counts attempts (ai_calls). */
 export type AiCallLog = (userId: string, kind: AiCallKind, ok: boolean) => Promise<void>;
 
+/** Allows or refuses one more AI call for a student right now (short-window rate limit). Throwing refuses. */
+export type AiRateLimit = (userId: string, kind: AiCallKind) => Promise<boolean>;
+
 export type AiDeps = {
-  provider: AiProvider;
+  /** null when AI is not configured: every call is refused and nothing leaves the server. */
+  provider: AiProvider | null;
+  /** Checked after the daily budget, before the provider. */
+  rateLimit?: AiRateLimit;
   budget: AiBudget;
   /** Called after every provider call. A failure to log is reported by the logger, never to the student. */
   log?: AiCallLog;
@@ -194,8 +216,8 @@ export function createAi(deps: AiDeps) {
   const timeoutMs = deps.timeoutMs ?? AI_TIMEOUT_MS;
   const now = deps.now ?? (() => new Date());
 
-  async function call(userId: string, kind: AiCallKind, prompt: Prompt): Promise<Result<string>> {
-    const raw = await withTimeout(deps.provider, prompt, timeoutMs);
+  async function call(provider: AiProvider, userId: string, kind: AiCallKind, prompt: Prompt): Promise<Result<string>> {
+    const raw = await withTimeout(provider, prompt, timeoutMs);
     try {
       await deps.log?.(userId, kind, raw.ok);
     } catch {
@@ -204,7 +226,8 @@ export function createAi(deps: AiDeps) {
     return raw;
   }
 
-  async function gate(user: AiUser): Promise<Result<true>> {
+  async function gate(user: AiUser, kind: AiCallKind): Promise<Result<AiProvider>> {
+    if (!deps.provider) return err("FORBIDDEN", UNAVAILABLE);
     if (!aiAllowed(user)) {
       return user.isUnder18
         ? err("FORBIDDEN", "AI feedback is off for accounts under 18.")
@@ -219,12 +242,21 @@ export function createAi(deps: AiDeps) {
     }
     // FORBIDDEN, not AI_ERROR: retrying today would not help, so the screens offer no retry for it.
     if (used >= limit) return err("FORBIDDEN", `You've used today's ${limit} AI requests. The checklist marks still work, and AI comes back tomorrow.`);
-    return ok(true);
+    if (deps.rateLimit) {
+      let allowed: boolean;
+      try {
+        allowed = await deps.rateLimit(user.id, kind);
+      } catch {
+        return err("AI_ERROR", "AI feedback isn't available right now.");
+      }
+      if (!allowed) return err("AI_ERROR", "Too many AI requests in a short time. Wait a minute, then try again.");
+    }
+    return ok(deps.provider);
   }
 
   return {
     async feedback(user: AiUser, input: FeedbackInput): Promise<Result<string>> {
-      const allowed = await gate(user);
+      const allowed = await gate(user, "interview_feedback");
       if (!allowed.ok) return allowed;
       const names = user.fullName ? [user.fullName] : [];
       const prompt = feedbackPrompt({
@@ -232,15 +264,15 @@ export function createAi(deps: AiDeps) {
         question: redact(input.question, names),
         answer: redact(input.answer, names),
       });
-      const raw = await call(user.id, "interview_feedback", prompt);
+      const raw = await call(allowed.value, user.id, "interview_feedback", prompt);
       return raw.ok ? validateFeedback(raw.value) : raw;
     },
 
     async cards(user: AiUser, notes: string): Promise<Result<AiCard[]>> {
-      const allowed = await gate(user);
+      const allowed = await gate(user, "notes_cards");
       if (!allowed.ok) return allowed;
       const clipped = redact(notes, user.fullName ? [user.fullName] : []).slice(0, NOTES_MAX_CHARS);
-      const raw = await call(user.id, "notes_cards", cardsPrompt(clipped));
+      const raw = await call(allowed.value, user.id, "notes_cards", cardsPrompt(clipped));
       if (!raw.ok) return raw;
       const cards = parseCards(raw.value);
       return cards.length ? ok(cards) : err("AI_ERROR", "AI couldn't make cards from these notes. Try the headings method.");
