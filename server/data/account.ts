@@ -1,4 +1,5 @@
 import "server-only";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ConsentKind, EducationLevel, Role } from "../../lib/types.ts";
 import { err, fromDb, ok, unexpected, type KnownDbErrors, type Result } from "../../lib/result.ts";
 import { authErrorFor } from "../../features/auth/rules.ts";
@@ -253,7 +254,9 @@ export async function insertParentConsent(userId: string, given: boolean, notice
  */
 export async function exportRows(userId: string): Promise<Result<Record<string, unknown>>> {
   const c = await db();
-  const own = (table: string, column = "user_id") => c.from(table).select("*").eq(column, userId);
+  // The export walks many tables by name, so it uses the untyped view of the same RLS-bound client.
+  const u = c as unknown as SupabaseClient;
+  const own = (table: string, column = "user_id") => u.from(table).select("*").eq(column, userId);
   const [profile, sessions, projects, consents, undertakings, saved, skills, lessons, checks, cards, answers, bookings, slots, blocked] =
     await Promise.all([
       own("profiles"), own("profile_sessions"), own("projects"), own("consents"), own("staff_undertakings", "adviser_id"),
