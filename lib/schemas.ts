@@ -142,3 +142,26 @@ export const parentAgreeInput = parentDecisionInput.extend({
   isParent: z.literal(true, { error: "Tick this box to agree" }),
   agreesToUse: z.literal(true, { error: "Tick this box to agree" }),
 });
+
+// Mock interview and review (ai area, sprint 1)
+export const startInterviewInput = z.object({ round: z.enum(["technical", "behavioural"]) });
+
+export const answerIdInput = z.object({ answerId: z.string().uuid() });
+
+export const rateCardInput = z.object({
+  cardId: z.string().uuid(),
+  rating: z.enum(["again", "hard", "good", "easy"]),
+});
+
+export const importNotesInput = z.object({
+  fileName: z.string().trim().min(1, "Choose a file first").max(200),
+  text: z.string().max(200_000, "Use a file under 200 KB of text"),
+  method: z.enum(["headings", "ai"]),
+});
+
+export const addCardsInput = z.object({
+  cards: z.array(z.object({
+    front: z.string().trim().min(1).max(300),
+    back: z.string().trim().min(1).max(600),
+  })).min(1, "Keep at least one card").max(50),
+});

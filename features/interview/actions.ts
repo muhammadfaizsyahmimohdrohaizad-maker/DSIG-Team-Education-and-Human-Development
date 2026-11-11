@@ -1,20 +1,130 @@
 "use server";
 
-// interview: server actions. Each validates input with Zod, calls server/data and server/engines,
-// and returns a Result. See System Design 2.2 for the logic each one needs.
-import { notBuilt, err, type Result } from "@/lib/result";
-import { interviewAnswer } from "@/lib/schemas";
+// Mock interview (FR-INT-01 to FR-INT-04, System Design 2.2 and A5).
+// The checklist marks every answer first and its marks are final. AI feedback is extra: only for 18+ students
+// with AI consent, labelled AI-generated, and if it times out or fails the student keeps the checklist marks
+// and gets a retry button.
+import { err, ok, type Result } from "@/lib/result";
+import { answerIdInput, interviewAnswer, startInterviewInput } from "@/lib/schemas";
+import type { InterviewRound, Marks } from "@/lib/types";
+import { latestConsent } from "@/server/data/consents";
+import {
+  addAiFeedback, getAnswer, getInterviewee, getQuestion, occupationTitle, questionsFor, recordAnswer, RpcRefused,
+  type Interviewee, type Question,
+} from "@/server/data/interview";
+import { checklist, explain, SKIPPED, total, type Explained } from "@/server/engines/feedback";
+import { ai, aiAllowed } from "@/server/llm/adapter";
+import { asStudent, invalid } from "./run";
 
-export async function startInterview(): Promise<Result<never>> {
-  return notBuilt("Starting a mock interview");
+/** Why AI is off, so the screen can say so plainly. */
+export type AiStatus = "on" | "off_under_18" | "off_no_consent";
+
+/** What the feedback screen shows under the checklist marks. */
+export type AiFeedback =
+  | { state: "shown"; text: string }
+  | { state: "off"; status: Exclude<AiStatus, "on"> }
+  | { state: "skipped" }
+  | { state: "failed"; message: string; canRetry: boolean };
+
+export type InterviewStart = {
+  round: InterviewRound;
+  jobCode: string;
+  jobTitle: string;
+  ai: AiStatus;
+  questions: { id: string; position: number; prompt: string; why: string }[];
+};
+
+export type MarkedAnswer = Explained & {
+  answerId: string;
+  questionId: string;
+  marks: Marks;
+  total: number;
+  ai: AiFeedback;
+};
+
+async function aiStatus(userId: string, student: Interviewee): Promise<AiStatus> {
+  if (student.isUnder18) return "off_under_18"; // checked first: no consent lookup is needed to say no
+  const consent = await latestConsent(userId, "ai_processing");
+  return aiAllowed({ isUnder18: student.isUnder18, aiConsent: consent }) ? "on" : "off_no_consent";
 }
 
-export async function submitAnswer(input: unknown): Promise<Result<never>> {
+async function askAi(userId: string, student: Interviewee, question: Question, answerId: string, text: string, notes: Explained): Promise<AiFeedback> {
+  const status = await aiStatus(userId, student);
+  if (status !== "on") return { state: "off", status };
+  const r = await ai().feedback(
+    { id: userId, isUnder18: student.isUnder18, aiConsent: true, fullName: student.fullName },
+    { question: question.prompt, answer: text, missingPoints: notes.missingPoints, missingParts: notes.missingParts },
+  );
+  if (!r.ok) {
+    const canRetry = r.error.code === "AI_TIMEOUT" || r.error.code === "AI_ERROR";
+    return { state: "failed", message: `${r.error.message} Your checklist marks are saved.`, canRetry };
+  }
+  try {
+    await addAiFeedback(answerId, r.value);
+  } catch (e) {
+    // The database re-checks age and consent; if consent was withdrawn meanwhile, show nothing from the AI.
+    if (e instanceof RpcRefused && e.token === "ai_not_allowed") return { state: "off", status: "off_no_consent" };
+    throw e;
+  }
+  return { state: "shown", text: r.value };
+}
+
+/** The three questions of the chosen round for the student's target job. */
+export async function startInterview(input: unknown): Promise<Result<InterviewStart>> {
+  const parsed = startInterviewInput.safeParse(input);
+  if (!parsed.success) return invalid(parsed.error);
+  return asStudent("startInterview", async (userId) => {
+    const student = await getInterviewee(userId);
+    if (!student) return err("NOT_FOUND", "We couldn't find your profile. Log in again.");
+    if (!student.target) return err("CONFLICT", "Pick a target job on your Map first. The interview asks questions for that job.");
+    const [questions, title, status] = await Promise.all([
+      questionsFor(student.target, parsed.data.round),
+      occupationTitle(student.target),
+      aiStatus(userId, student),
+    ]);
+    if (questions.length !== 3) return err("NOT_FOUND", "Interview questions for this job aren't ready yet. Try the other round.");
+    return ok({
+      round: parsed.data.round,
+      jobCode: student.target,
+      jobTitle: title ?? student.target,
+      ai: status,
+      questions: questions.map((q) => ({ id: q.id, position: q.position, prompt: q.prompt, why: q.why })),
+    });
+  });
+}
+
+/** Marks one answer with the checklist, saves it, then adds AI feedback if allowed. */
+export async function submitAnswer(input: unknown): Promise<Result<MarkedAnswer>> {
   const parsed = interviewAnswer.safeParse(input);
-  if (!parsed.success) return err("VALIDATION", "Check the highlighted fields.", Object.fromEntries(parsed.error.issues.map((i) => [i.path.join("."), i.message])));
-  return notBuilt("Marking an answer");
+  if (!parsed.success) return invalid(parsed.error);
+  const { questionId, skipped } = parsed.data;
+  const text = skipped ? "" : (parsed.data.text ?? "").trim();
+  return asStudent("submitAnswer", async (userId) => {
+    const [student, question] = await Promise.all([getInterviewee(userId), getQuestion(questionId)]);
+    if (!student) return err("NOT_FOUND", "We couldn't find your profile. Log in again.");
+    if (!question) return err("NOT_FOUND", "That question no longer exists. Start the interview again.");
+
+    const marks = skipped ? SKIPPED : checklist(text, question.rubric, student.projectNames);
+    const notes = explain(text, question.rubric, marks, skipped);
+    const answerId = await recordAnswer(question.id, skipped ? null : text, skipped, marks);
+
+    const aiResult: AiFeedback = skipped ? { state: "skipped" } : await askAi(userId, student, question, answerId, text, notes);
+    return ok({ ...notes, answerId, questionId: question.id, marks, total: total(marks), ai: aiResult });
+  });
 }
 
-export async function retryAiFeedback(): Promise<Result<never>> {
-  return notBuilt("AI feedback retry");
+/** Tries AI feedback again for a saved answer whose AI call timed out or failed. The marks do not change. */
+export async function retryAiFeedback(input: unknown): Promise<Result<AiFeedback>> {
+  const parsed = answerIdInput.safeParse(input);
+  if (!parsed.success) return invalid(parsed.error);
+  return asStudent("retryAiFeedback", async (userId) => {
+    const answer = await getAnswer(userId, parsed.data.answerId);
+    if (!answer) return err("NOT_FOUND", "That answer no longer exists.");
+    if (answer.skipped || !answer.text) return err("VALIDATION", "A skipped question has no answer to give feedback on.");
+    if (answer.aiUsed) return err("CONFLICT", "This answer already has AI feedback.");
+    const [student, question] = await Promise.all([getInterviewee(userId), getQuestion(answer.questionId)]);
+    if (!student || !question) return err("NOT_FOUND", "That question no longer exists.");
+    const notes = explain(answer.text, question.rubric, answer.marks);
+    return ok(await askAi(userId, student, question, answer.id, answer.text, notes));
+  });
 }
