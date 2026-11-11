@@ -1,0 +1,22 @@
+{
+  "occupation": "2514-02",
+  "title": "System Programmer",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2514), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "questions": [
+    {
+      "id": "2514-02-q1",
+      "text": "Tell us about a time you improved an existing program so it ran faster or used fewer resources. What did you change?",
+      "source": "eMASCO 2514, task 2: Menyemak, membaik pulih atau mengembangkan program sedia ada untuk meningkatkan kecekapan operasi atau menyesuaikannya dengan keperluan baharu."
+    },
+    {
+      "id": "2514-02-q2",
+      "text": "Describe how you would test a program that runs in the background, such as a service or a scheduled job.",
+      "source": "eMASCO 2514, task 3: Menjalankan percubaan runs dan aplikasi perisian untuk mengesahkan ia akan menghasilkan maklumat yang dikehendaki."
+    },
+    {
+      "id": "2514-02-q3",
+      "text": "Tell us about a problem with a process or tool your team used. How did you raise it and what changed?",
+      "source": "eMASCO 2514, task 5: Mengenal pasti dan membincangkan masalah teknikal, proses dan penyelesaian."
+    }
+  ]
+}

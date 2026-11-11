@@ -1,0 +1,92 @@
+# ---- Secrets and environment ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+id_rsa*
+id_ed25519*
+config.local.json
+settings.local.*
+*.local.json
+.aws/
+.gcp/
+gcloud/
+.azure/
+.netrc
+.vercel/
+supabase/.temp/
+supabase/.branches/
+
+# ---- Dependencies ----
+node_modules/
+.pnpm-store/
+vendor/
+venv/
+.venv/
+env/
+
+# ---- Build output ----
+.next/
+out/
+dist/
+build/
+target/
+bin/
+obj/
+*.tsbuildinfo
+next-env.d.ts
+*.class
+*.o
+*.obj
+*.dll
+*.so
+*.exe
+*.pyc
+__pycache__/
+
+# ---- Tests ----
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+coverage/
+
+# ---- Logs, caches, temp files ----
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.cache/
+.eslintcache
+.terser-cache/
+.pytest_cache/
+.mypy_cache/
+*.tmp
+*.swp
+*.swo
+*~
+
+# ---- OS ----
+.DS_Store
+._*
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# ---- Editors ----
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+nbproject/
+
+# ---- Project data that must stay local ----
+pipeline/data/raw/

@@ -1,0 +1,22 @@
+{
+  "occupation": "2513-01",
+  "title": "Website Developer",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2513), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "questions": [
+    {
+      "id": "2513-01-q1",
+      "text": "Walk us through a website you designed and built. How did you decide on the layout and the user's path through it?",
+      "source": "eMASCO 2513, task 1: Menganalisis, mereka bentuk dan membangunkan laman Internet dengan menggunakan hasil seni dan kreativiti…"
+    },
+    {
+      "id": "2513-01-q2",
+      "text": "Tell us how you connected a web page to data or a back end, for example a form that saves to a database.",
+      "source": "eMASCO 2513, task 4: Mereka bentuk, membangunkan dan menyepadukan kod komputer dengan input khusus lain…"
+    },
+    {
+      "id": "2513-01-q3",
+      "text": "Describe a time a website problem turned out to be about hosting, the network or the server rather than your code. How did you work it out?",
+      "source": "eMASCO 2513, task 3: Berhubung dengan pakar rangkaian berkenaan dengan isu yang berkaitan dengan web…"
+    }
+  ]
+}

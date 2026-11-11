@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* Tokens from the UI kit board (System Design 4.3). Components use these names, never raw hex. */
+@theme {
+  --color-navy: #1B365D;
+  --color-maroon: #8B263E;
+  --color-ink: #2C3E50;
+  --color-muted: #5C6672;
+  --color-control: #8F8B84;   /* input and outline borders, 3.4:1 on white */
+  --color-hairline: #E5DFD3;  /* card borders and dividers only */
+  --color-cream: #F4F1EA;
+  --color-white: #FFFFFF;
+
+  --font-display: var(--font-jakarta), system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  --radius-control: 8px;
+  --radius-button: 12px;
+  --radius-card: 16px;
+  --radius-hero: 24px;
+
+  --breakpoint-tablet: 641px;
+  --breakpoint-desktop: 1024px;
+}
+
+html { color: var(--color-ink); background: var(--color-white); }
+body { font-family: var(--font-sans); font-size: 16px; line-height: 1.6; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; color: var(--color-navy); text-wrap: balance; }
+p, li { text-wrap: pretty; }
+a { color: var(--color-maroon); }
+
+/* Focus: 3px maroon ring, 2px offset; on navy surfaces a white halo sits inside it. */
+:focus-visible { outline: 3px solid var(--color-maroon); outline-offset: 2px; }
+.on-navy :focus-visible { outline: 3px solid var(--color-maroon); box-shadow: 0 0 0 2px var(--color-white); }
+
+.skip-link { position: absolute; left: 12px; top: -80px; z-index: 50; min-height: 44px; padding: 10px 16px; border-radius: 10px; background: var(--color-navy); color: var(--color-white); font-weight: 600; }
+.skip-link:focus { top: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

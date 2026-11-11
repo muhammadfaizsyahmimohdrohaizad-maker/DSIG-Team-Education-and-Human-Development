@@ -1,0 +1,47 @@
+import { NextResponse, type NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+
+// Refreshes the Supabase session on every request and keeps each role on its own pages.
+const STUDENT = ["/dashboard", "/about-you", "/map", "/skill-gap", "/plan", "/book", "/settings"];
+const ADVISER = ["/adviser"];
+const STAFF_SETUP = ["/staff"];
+
+export async function middleware(req: NextRequest) {
+  let res = NextResponse.next({ request: req });
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return res;
+
+  const supabase = createServerClient(url, key, {
+    cookies: {
+      getAll: () => req.cookies.getAll(),
+      setAll: (list) => {
+        for (const { name, value } of list) req.cookies.set(name, value);
+        res = NextResponse.next({ request: req });
+        for (const { name, value, options } of list) res.cookies.set(name, value, options);
+      },
+    },
+  });
+
+  const { data } = await supabase.auth.getUser();
+  const path = req.nextUrl.pathname;
+  const needsAuth = [...STUDENT, ...ADVISER, ...STAFF_SETUP].some((p) => path === p || path.startsWith(`${p}/`));
+
+  if (needsAuth && !data.user) {
+    const to = req.nextUrl.clone();
+    to.pathname = "/sign-in";
+    to.searchParams.set("next", path);
+    return NextResponse.redirect(to);
+  }
+
+  // Role comes from the custom access-token hook (System Design 5.2); RLS enforces it again.
+  const role = (data.user?.app_metadata as { role?: string } | undefined)?.role;
+  if (role === "student" && ADVISER.some((p) => path.startsWith(p))) return NextResponse.redirect(new URL("/dashboard", req.url));
+  if (role === "adviser" && STUDENT.some((p) => path.startsWith(p))) return NextResponse.redirect(new URL("/adviser/requests", req.url));
+
+  return res;
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|api/cron).*)"],
+};

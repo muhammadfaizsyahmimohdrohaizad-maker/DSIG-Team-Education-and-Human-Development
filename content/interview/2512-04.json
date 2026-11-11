@@ -1,0 +1,22 @@
+{
+  "occupation": "2512-04",
+  "title": "System Developer",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2512), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "questions": [
+    {
+      "id": "2512-04-q1",
+      "text": "Describe a system you designed with more than one part, such as a front end, a back end and a database. How did the parts talk to each other?",
+      "source": "eMASCO 2512, task 2: Menyelidik, mereka bentuk dan membangunkan sistem perisian komputer."
+    },
+    {
+      "id": "2512-04-q2",
+      "text": "How did you test a system you built before you handed it over? What did you check, and why?",
+      "source": "eMASCO 2512, task 4: Membangun dan mengarahkan pengujian perisian dan pengesahan prosedur."
+    },
+    {
+      "id": "2512-04-q3",
+      "text": "Tell us about a time a user or client asked for a change to something you built. How did you handle it?",
+      "source": "eMASCO 2512, task 8: Merujuk pelanggan berhubung dengan penyelenggaraan sistem perisian."
+    }
+  ]
+}
