@@ -1,6 +1,11 @@
 # Local development only (supabase start). Production settings live in the Supabase dashboard.
 project_id = "careerprep"
 
+[api]
+# ref holds the read-only reference data (D3). Also add "ref" under Exposed schemas in the dashboard (API settings).
+schemas = ["public", "graphql_public", "ref"]
+extra_search_path = ["public", "extensions"]
+
 [auth]
 site_url = "http://localhost:3000"
 additional_redirect_urls = ["http://localhost:3000/auth/callback"]

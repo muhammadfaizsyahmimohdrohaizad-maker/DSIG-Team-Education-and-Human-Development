@@ -1,0 +1,56 @@
+-- Checks that supabase/seed.sql produces what the mockup boards show, read through the same functions the
+-- app uses. Run by run.sh against the "demo" database. Avoids checks that depend on today's date.
+begin;
+select plan(24);
+
+select is((select count(*)::int from public.profiles where role = 'student'), 22, '22 demo students');
+select is((select count(*)::int from public.profiles where role = 'adviser'), 3, '3 demo advisers');
+select ok((select bool_and(encrypted_password = extensions.crypt('CareerPrep-demo-2026', encrypted_password)) from auth.users),
+  'every demo account uses the documented password');
+select ok((select bool_and(raw_app_meta_data ->> 'role' = p.role::text) from auth.users u join public.profiles p on p.user_id = u.id),
+  'app_metadata.role matches profiles.role');
+select is((select programme || ', sem ' || semester || ', ' || target_occupation from public.profiles where full_name = 'Aina Rahman'),
+  'Software Engineering, sem 5, 2512-AI', 'Aina: Software Engineering, semester 5, target AI engineer');
+
+-- Pn. Nurul Huda
+set local request.jwt.claims to '{"sub":"a0000000-0000-4000-8000-000000000001","role":"authenticated","app_metadata":{"role":"adviser"}}';
+set local role authenticated;
+select is((select count(*)::int from public.bookings b join public.availability_slots s on s.id = b.slot_id
+            where s.slot_start between '2026-11-09' and '2026-11-21'), 5, 'Availability board: 5 booked or requested times on 9-20 Nov');
+select is((select count(*)::int from public.adviser_students()), 14, 'Students board: 14 students linked');
+select is((select skills_ready || ' of ' || skills_total from public.adviser_students() where full_name = 'Aina Rahman'), '4 of 9', 'Aina: 4 of 9 job skills ready');
+select is((select skills_ready || ' of ' || skills_total from public.adviser_students() where full_name = 'Daniel Lim'), '6 of 10', 'Daniel: 6 of 10');
+select is((select skills_ready || ' of ' || skills_total from public.adviser_students() where full_name = 'Hafiz Ahmad'), '7 of 9', 'Hafiz: 7 of 9');
+select is((select skills_ready || ' of ' || skills_total from public.adviser_students() where full_name = 'Kumaran Raj'), '3 of 8', 'Kumaran: 3 of 8');
+select is((select sharing from public.adviser_students() where full_name = 'Siti Aisyah'), false, 'Siti: not shared');
+select is((select last_session from public.adviser_students() where full_name = 'Nur Iman'), null::timestamptz, 'Nur Iman: no sessions yet');
+select is((select r -> 'target' ->> 'title' from public.open_request(md5('booking:b0000000-0000-4000-8000-000000000001:' || extract(epoch from timestamptz '2026-11-19 14:00+08')::bigint)::uuid) r),
+  'AI engineer', 'Aina''s 19 Nov request shares the target job');
+select is((select jsonb_array_length(r -> 'plan') from public.open_request(md5('booking:b0000000-0000-4000-8000-000000000001:' || extract(epoch from timestamptz '2026-11-19 14:00+08')::bigint)::uuid) r),
+  2, 'and her two saved degrees');
+select is((select count(*)::int from jsonb_array_elements(
+            (select r -> 'gaps' from public.open_request(md5('booking:b0000000-0000-4000-8000-000000000001:' || extract(epoch from timestamptz '2026-11-19 14:00+08')::bigint)::uuid) r)) g
+           where g ->> 'state' not in ('have','mastered')), 5, 'and five gap skills still to learn');
+select is((select students from public.cohort_rows('Software Engineering') where metric = 'target' and label = 'Software developer'), 5::bigint,
+  'Cohort: Software developer shown (5)');
+select ok(not exists (select 1 from public.cohort_rows('Software Engineering') where label = 'AI engineer'), 'Cohort: AI engineer (1 student) hidden');
+select is((select count(*)::int from public.cohort_rows('Mechatronic Engineering')), 0, 'Cohort: Mechatronic Engineering too small to show');
+reset role;
+
+-- Aina
+set local request.jwt.claims to '{"sub":"b0000000-0000-4000-8000-000000000001","role":"authenticated","app_metadata":{"role":"student"}}';
+set local role authenticated;
+select is((select count(*)::int from public.my_bookings()), 4, 'Book board: Aina has 4 bookings');
+select is((select count(*)::int from public.my_bookings() where feedback_text is not null), 2, 'with feedback on 2 past sessions');
+select is((select count(*)::int from public.review_cards where card_due_at <= '2026-11-11 23:59:59+08'), 6, 'Dashboard: 6 review cards due on 11 Nov');
+select is((select count(*)::int from ref.check_questions q join ref.lessons l on l.id = q.lesson_id
+            where l.skill_uri = 'urn:careerprep:demo:skill:git'), 5, 'Git has a 5-question check');
+select is((select r ->> 'passed' from public.submit_mastery_check('urn:careerprep:demo:skill:git', (
+            select jsonb_object_agg(q.id::text, case q.prompt when 'Which command creates a new branch called "fix-header"?' then 'b'
+                                                              when 'When does a merge conflict happen?' then 'b' else 'a' end)
+              from ref.check_questions q join ref.lessons l on l.id = q.lesson_id where l.skill_uri = 'urn:careerprep:demo:skill:git')) r),
+  'true', 'Aina can take and pass the Git check');
+reset role;
+
+select * from finish();
+rollback;
