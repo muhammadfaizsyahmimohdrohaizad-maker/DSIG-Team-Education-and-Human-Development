@@ -1,0 +1,172 @@
+{
+  "occupation": "2511-01",
+  "title": "Management information systems analyst",
+  "_note": "Technical round built from the Management information systems analyst tasks in content/reference/occupations.json, which the team wrote from the eMASCO title (emasco.mohr.gov.my/masco/2511-01) and has not yet checked against the eMASCO task list. Behavioural round: behavioural.json. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "2511-01-t1",
+      "round": "technical",
+      "position": 1,
+      "text": "A manager says the current system doesn't give them the information they need. How would you find out what is missing?",
+      "why": "MIS analysts start from the decision a manager needs to make.",
+      "source": "2511-01 task 1 (content/reference/occupations.json): Find out what information managers need and how the current system provides it. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "ask what decisions they need to make",
+            "words": [
+              "decision",
+              "what they need",
+              "asked the manager",
+              "interview",
+              "which report"
+            ]
+          },
+          {
+            "point": "study how the current system works",
+            "words": [
+              "current system",
+              "existing",
+              "how it works",
+              "walked through",
+              "observed",
+              "process"
+            ]
+          },
+          {
+            "point": "compare needs against what exists",
+            "words": [
+              "gap",
+              "missing",
+              "compare",
+              "doesn't show",
+              "does not show"
+            ]
+          },
+          {
+            "point": "write down and confirm findings",
+            "words": [
+              "wrote",
+              "document",
+              "list",
+              "confirm",
+              "agreed",
+              "summary"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2511-01-t2",
+      "round": "technical",
+      "position": 2,
+      "text": "How do you write requirements for a change to an information system so that developers build the right thing?",
+      "why": "unclear requirements cost the most to fix later.",
+      "source": "2511-01 task 2 (content/reference/occupations.json): Write requirements and design changes to information systems. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "write clear, testable requirements",
+            "words": [
+              "requirement",
+              "user stor",
+              "use case",
+              "testable",
+              "acceptance"
+            ]
+          },
+          {
+            "point": "show the design with diagrams or mock-ups",
+            "words": [
+              "diagram",
+              "flowchart",
+              "erd",
+              "mock-up",
+              "mockup",
+              "wireframe",
+              "dfd"
+            ]
+          },
+          {
+            "point": "prioritise the changes",
+            "words": [
+              "priorit",
+              "must have",
+              "must-have",
+              "most important",
+              "phase"
+            ]
+          },
+          {
+            "point": "get sign-off from users",
+            "words": [
+              "sign off",
+              "signed off",
+              "approve",
+              "agreed",
+              "confirm",
+              "review"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2511-01-t3",
+      "round": "technical",
+      "position": 3,
+      "text": "Tell us about a report or dashboard you produced from business data. How did you make sure the numbers were right?",
+      "why": "a wrong number in a management report leads to a wrong decision.",
+      "source": "2511-01 task 3 (content/reference/occupations.json): Produce reports and dashboards from business data. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "know where the data comes from",
+            "words": [
+              "source",
+              "database",
+              "table",
+              "export",
+              "query"
+            ]
+          },
+          {
+            "point": "clean and check the data",
+            "words": [
+              "clean",
+              "duplicate",
+              "missing",
+              "checked",
+              "error"
+            ]
+          },
+          {
+            "point": "cross-check totals against another source",
+            "words": [
+              "cross-check",
+              "cross check",
+              "reconcile",
+              "matched",
+              "compare",
+              "manual count",
+              "by hand"
+            ]
+          },
+          {
+            "point": "show it clearly for managers",
+            "words": [
+              "chart",
+              "dashboard",
+              "power bi",
+              "excel",
+              "tableau",
+              "summary",
+              "clear"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "occupation": "2523-01",
+  "title": "Network specialist",
+  "_note": "Technical round built from the Network specialist tasks in content/reference/occupations.json, which the team wrote from the eMASCO title (emasco.mohr.gov.my/masco/2523-01) and has not yet checked against the eMASCO task list. Behavioural round: behavioural.json. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "2523-01-t1",
+      "round": "technical",
+      "position": 1,
+      "text": "How would you design the network for a small office of 30 staff with Wi-Fi, printers and a server?",
+      "why": "network specialists plan networks that work on day one and grow later.",
+      "source": "2523-01 task 1 (content/reference/occupations.json): Design and set up computer networks for an organisation. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "work out needs and devices",
+            "words": [
+              "how many",
+              "users",
+              "devices",
+              "requirement",
+              "bandwidth",
+              "needs"
+            ]
+          },
+          {
+            "point": "choose the equipment",
+            "words": [
+              "router",
+              "switch",
+              "access point",
+              "firewall",
+              "cable"
+            ]
+          },
+          {
+            "point": "plan addressing and segments",
+            "words": [
+              "ip address",
+              "subnet",
+              "vlan",
+              "dhcp",
+              "segment",
+              "guest"
+            ]
+          },
+          {
+            "point": "document the design",
+            "words": [
+              "diagram",
+              "document",
+              "topology",
+              "label"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2523-01-t2",
+      "round": "technical",
+      "position": 2,
+      "text": "Users in one department say the network keeps dropping. How would you find and fix the fault?",
+      "why": "network faults stop everyone working.",
+      "source": "2523-01 task 2 (content/reference/occupations.json): Monitor network performance and fix faults. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "find the scope of the problem",
+            "words": [
+              "which users",
+              "one department",
+              "everyone",
+              "when",
+              "how often",
+              "pattern"
+            ]
+          },
+          {
+            "point": "check the physical layer and devices",
+            "words": [
+              "cable",
+              " port",
+              "switch",
+              "access point",
+              "power",
+              "link light"
+            ]
+          },
+          {
+            "point": "use monitoring tools and logs",
+            "words": [
+              "ping",
+              "traceroute",
+              "tracert",
+              "monitor",
+              "logs",
+              "snmp",
+              "wireshark"
+            ]
+          },
+          {
+            "point": "fix it and confirm",
+            "words": [
+              "replaced",
+              "fixed",
+              "changed",
+              "confirm",
+              "tested",
+              "stable"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2523-01-t3",
+      "round": "technical",
+      "position": 3,
+      "text": "How do you keep a network secure, and how would you plan for it to grow, including cloud services?",
+      "why": "networks must stay safe as the organisation grows.",
+      "source": "2523-01 task 3 (content/reference/occupations.json): Keep networks secure and plan for growth, including cloud services. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "control access with a firewall and rules",
+            "words": [
+              "firewall",
+              "access control",
+              "acl",
+              "rules",
+              " port"
+            ]
+          },
+          {
+            "point": "separate networks and use strong Wi-Fi security",
+            "words": [
+              "vlan",
+              "segment",
+              "guest network",
+              "wpa2",
+              "wpa3",
+              "separate"
+            ]
+          },
+          {
+            "point": "keep devices patched and monitored",
+            "words": [
+              "update",
+              "patch",
+              "firmware",
+              "monitor",
+              "logs"
+            ]
+          },
+          {
+            "point": "plan capacity and cloud links",
+            "words": [
+              "growth",
+              "capacity",
+              "cloud",
+              "vpn",
+              "bandwidth",
+              "scale",
+              "future"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

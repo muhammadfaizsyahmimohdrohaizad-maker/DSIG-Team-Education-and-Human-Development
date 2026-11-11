@@ -1,0 +1,174 @@
+{
+  "occupation": "2144-06",
+  "title": "Robotics technologist",
+  "_note": "Technical round built from the Robotics technologist tasks in content/reference/occupations.json, which the team wrote from the eMASCO title (emasco.mohr.gov.my/masco/2144-06) and has not yet checked against the eMASCO task list. Behavioural round: behavioural.json. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "2144-06-t1",
+      "round": "technical",
+      "position": 1,
+      "text": "Tell us about a robot or automated machine you built or programmed. How did you test that it worked?",
+      "why": "robotics technologists build machines that must work safely and reliably.",
+      "source": "2144-06 task 1 (content/reference/occupations.json): Build, program and test robots and automated machines. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "name the hardware",
+            "words": [
+              "arduino",
+              "raspberry pi",
+              "motor",
+              "sensor",
+              "servo",
+              "microcontroller",
+              "esp32"
+            ]
+          },
+          {
+            "point": "describe the control code",
+            "words": [
+              "code",
+              "program",
+              "loop",
+              "python",
+              "c++",
+              "pid",
+              "logic"
+            ]
+          },
+          {
+            "point": "test step by step",
+            "words": [
+              "tested",
+              "test each",
+              "step by step",
+              "one at a time",
+              "first the"
+            ]
+          },
+          {
+            "point": "measure it works and is safe",
+            "words": [
+              "measured",
+              "accuracy",
+              "safe",
+              "emergency stop",
+              "limit",
+              "reliable",
+              "times"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2144-06-t2",
+      "round": "technical",
+      "position": 2,
+      "text": "A robot arm stops moving partway through a task. How would you find whether the fault is in a sensor, the circuit or the code?",
+      "why": "faults can hide in hardware or software, so method matters.",
+      "source": "2144-06 task 2 (content/reference/occupations.json): Find and fix faults in sensors, circuits and control code. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "reproduce the fault",
+            "words": [
+              "reproduce",
+              "same task",
+              "happen again",
+              "every time",
+              "when it stops"
+            ]
+          },
+          {
+            "point": "check sensors and readings",
+            "words": [
+              "sensor",
+              "reading",
+              "serial monitor",
+              "value",
+              "calibrat"
+            ]
+          },
+          {
+            "point": "check power and wiring",
+            "words": [
+              "power",
+              "battery",
+              "voltage",
+              "wire",
+              "wiring",
+              "connection",
+              "multimeter",
+              "loose"
+            ]
+          },
+          {
+            "point": "check the code and logs",
+            "words": [
+              "code",
+              "logic",
+              "debug",
+              "print",
+              "log",
+              "condition"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2144-06-t3",
+      "round": "technical",
+      "position": 3,
+      "text": "How do you make sure a fix to a robot's control code doesn't break something else?",
+      "why": "a fix that creates a new fault can damage equipment.",
+      "source": "2144-06 task 2 (content/reference/occupations.json): Find and fix faults in sensors, circuits and control code. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "change one thing at a time",
+            "words": [
+              "one thing",
+              "one change",
+              "small change",
+              "only changed"
+            ]
+          },
+          {
+            "point": "use version control",
+            "words": [
+              "git",
+              "version",
+              "commit",
+              "backup",
+              "old version"
+            ]
+          },
+          {
+            "point": "re-test the whole task",
+            "words": [
+              "re-test",
+              "retest",
+              "tested again",
+              "whole task",
+              "full run",
+              "regression"
+            ]
+          },
+          {
+            "point": "test safely before full speed",
+            "words": [
+              "slow",
+              "low speed",
+              "simulat",
+              "safe",
+              "emergency stop",
+              "supervised"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

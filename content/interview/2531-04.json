@@ -1,0 +1,171 @@
+{
+  "occupation": "2531-04",
+  "title": "Cybersecurity analyst",
+  "_note": "Technical round built from the Cybersecurity analyst tasks in content/reference/occupations.json, which the team wrote from the eMASCO title (emasco.mohr.gov.my/masco/2531-04) and has not yet checked against the eMASCO task list. Behavioural round: behavioural.json. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "2531-04-t1",
+      "round": "technical",
+      "position": 1,
+      "text": "What signs would make you think a system or network is under attack, and how would you watch for them?",
+      "why": "attacks found early do far less damage.",
+      "source": "2531-04 task 1 (content/reference/occupations.json): Watch systems and networks for signs of attack. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "name signs of attack",
+            "words": [
+              "failed login",
+              "many login",
+              "unusual traffic",
+              "strange",
+              "spike",
+              "unknown process",
+              "phishing",
+              "malware"
+            ]
+          },
+          {
+            "point": "collect and read logs",
+            "words": [
+              "logs",
+              "log file",
+              "siem",
+              "event"
+            ]
+          },
+          {
+            "point": "set up alerts or monitoring",
+            "words": [
+              "alert",
+              "monitor",
+              "intrusion detection",
+              "dashboard"
+            ]
+          },
+          {
+            "point": "check against a normal baseline",
+            "words": [
+              "baseline",
+              "normal",
+              "usual",
+              "compare"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2531-04-t2",
+      "round": "technical",
+      "position": 2,
+      "text": "A staff member clicked a phishing link and entered their password. What would you do, step by step?",
+      "why": "fast, calm incident response limits the harm.",
+      "source": "2531-04 task 2 (content/reference/occupations.json): Investigate security incidents and help the organisation recover. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "contain it quickly",
+            "words": [
+              "reset the password",
+              "reset their password",
+              "disable",
+              "lock the account",
+              "disconnect",
+              "isolate",
+              "contain"
+            ]
+          },
+          {
+            "point": "find out what happened",
+            "words": [
+              "logs",
+              "investigate",
+              "what was accessed",
+              "which systems",
+              "check the account"
+            ]
+          },
+          {
+            "point": "remove the threat and recover",
+            "words": [
+              "remove",
+              "scan",
+              "clean",
+              "restore",
+              "recover",
+              "mfa",
+              "two-factor"
+            ]
+          },
+          {
+            "point": "report and learn from it",
+            "words": [
+              "report",
+              "inform",
+              "told",
+              "lessons",
+              "training",
+              "awareness",
+              "document"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2531-04-t3",
+      "round": "technical",
+      "position": 3,
+      "text": "How would you find weaknesses in a system before attackers do, and how would you report them?",
+      "why": "fixing weaknesses first is cheaper than recovering from an attack.",
+      "source": "2531-04 task 3 (content/reference/occupations.json): Find weaknesses and recommend fixes before they are exploited. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "scan for vulnerabilities",
+            "words": [
+              "scan",
+              "nmap",
+              "vulnerability",
+              "nessus",
+              "openvas",
+              "burp"
+            ]
+          },
+          {
+            "point": "check configuration and updates",
+            "words": [
+              "update",
+              "patch",
+              "default password",
+              "misconfig",
+              "configuration",
+              "open port"
+            ]
+          },
+          {
+            "point": "rank by risk",
+            "words": [
+              "risk",
+              "severity",
+              "critical",
+              "priorit",
+              "impact"
+            ]
+          },
+          {
+            "point": "report clear fixes",
+            "words": [
+              "report",
+              "recommend",
+              "fix",
+              "remediat",
+              "steps"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "occupation": "2524-03",
+  "title": "Data analyst",
+  "_note": "Technical round built from the Data analyst tasks in content/reference/occupations.json, which the team wrote from the eMASCO title (emasco.mohr.gov.my/masco/2524-03) and has not yet checked against the eMASCO task list. Behavioural round: behavioural.json. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "2524-03-t1",
+      "round": "technical",
+      "position": 1,
+      "text": "You get a spreadsheet of sales data from three branches. How would you check it for errors before you analyse it?",
+      "why": "wrong data gives confident but wrong answers.",
+      "source": "2524-03 task 1 (content/reference/occupations.json): Gather data from databases and spreadsheets and check it for errors. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "look for missing or blank values",
+            "words": [
+              "missing",
+              "blank",
+              "empty",
+              "null"
+            ]
+          },
+          {
+            "point": "find duplicate rows",
+            "words": [
+              "duplicate",
+              "same row",
+              "twice",
+              "repeated"
+            ]
+          },
+          {
+            "point": "check formats and units are consistent",
+            "words": [
+              "format",
+              "date",
+              "unit",
+              "currency",
+              "text instead of",
+              "consistent",
+              "data type"
+            ]
+          },
+          {
+            "point": "check for outliers or impossible values",
+            "words": [
+              "outlier",
+              "negative",
+              "impossible",
+              "too high",
+              "too large",
+              "range",
+              "typo"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2524-03-t2",
+      "round": "technical",
+      "position": 2,
+      "text": "A manager asks why sales dropped last month. Walk us through how you would answer with data.",
+      "why": "analysts turn a vague question into a clear answer.",
+      "source": "2524-03 task 2 (content/reference/occupations.json): Analyse data to answer questions from managers and teams. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "make the question specific",
+            "words": [
+              "clarif",
+              "which product",
+              "which branch",
+              "compared to",
+              "define",
+              "specific",
+              "exactly"
+            ]
+          },
+          {
+            "point": "compare against a baseline",
+            "words": [
+              "last year",
+              "previous month",
+              "same month",
+              "baseline",
+              "compared",
+              "trend"
+            ]
+          },
+          {
+            "point": "break the data down to find the cause",
+            "words": [
+              "by branch",
+              "by product",
+              "by region",
+              "break down",
+              "breakdown",
+              "group by",
+              "pivot",
+              "segment",
+              "filter"
+            ]
+          },
+          {
+            "point": "check the result before reporting",
+            "words": [
+              "double-check",
+              "double check",
+              "checked",
+              "verify",
+              "confirm",
+              "sanity"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2524-03-t3",
+      "round": "technical",
+      "position": 3,
+      "text": "Tell us about a chart or dashboard you made. How did you choose what to show and how to show it?",
+      "why": "a finding only helps if people understand it quickly.",
+      "source": "2524-03 task 3 (content/reference/occupations.json): Present findings in reports, charts and dashboards. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "start from the audience and their question",
+            "words": [
+              "audience",
+              "manager",
+              "lecturer",
+              "who would",
+              "decision"
+            ]
+          },
+          {
+            "point": "pick the right chart type",
+            "words": [
+              "bar chart",
+              "bar graph",
+              "line chart",
+              "line graph",
+              "pie chart",
+              "scatter",
+              "table"
+            ]
+          },
+          {
+            "point": "keep it simple and labelled",
+            "words": [
+              "label",
+              "title",
+              "axis",
+              "simple",
+              "clear",
+              "colour",
+              "color",
+              "legend"
+            ]
+          },
+          {
+            "point": "say what the chart shows",
+            "words": [
+              "insight",
+              "showed",
+              "shows",
+              "key message",
+              "highlight",
+              "takeaway"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

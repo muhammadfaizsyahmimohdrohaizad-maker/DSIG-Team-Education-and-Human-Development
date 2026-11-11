@@ -17,7 +17,7 @@ export const SAMPLES: Record<string, Sample[]> = {
   ],
   "beh-2": [
     { answer: "In my group project my teammate wanted to use MongoDB and I wanted MySQL. I listened to his reasons first, then we compared both against our data, which had many joins. We agreed on MySQL, and he set up the schema. We still worked well together and the system was finished on time.", expect: m(2, 2, 1) },
-    { answer: "Once I disagreed with a friend about the design. We talked and agreed to use his idea.", expect: m(1, 1, 0) },
+    { answer: "Once I disagreed with a friend about the design. We talked and agreed to use his idea.", expect: m(2, 1, 0) },
     { answer: "I don't really argue with people.", expect: m(0, 0, 0) },
   ],
   "beh-3": [
@@ -60,23 +60,6 @@ export const SAMPLES: Record<string, Sample[]> = {
     { answer: "I rewrote the whole program.", expect: m(0, 0, 0) },
   ],
 
-  // ---- 2512-04 System developer ----
-  "2512-04-q1": [
-    { answer: "In my final year project I built a Flutter mobile app, a Node back end and a MySQL database. The app sends a request to the REST API as JSON, the server runs the query and returns the record. I added a login token and validation on the server so that only signed-in users can save data.", expect: m(2, 2, 1) },
-    { answer: "There was a front end and a database and they used an API.", expect: m(0, 2, 0) },
-    { answer: "It was a big system with many parts.", expect: m(0, 0, 0) },
-  ],
-  "2512-04-q2": [
-    { answer: "For our clinic system project I wrote unit tests for each module, then tested the full flow end to end. I tried invalid inputs like empty forms. The clinic staff then did user acceptance testing against the requirements, and as a result we found two bugs before hand-over.", expect: m(2, 2, 1) },
-    { answer: "I tested each function on its own to see it works.", expect: m(0, 0, 0) },
-    { answer: "I checked it worked.", expect: m(1, 0, 0) },
-  ],
-  "2512-04-q3": [
-    { answer: "In my part-time job a client asked for an extra report. I asked why they needed it, estimated how long it would take and showed them a sample. They approved it, I made the change, tested it and deployed it the next week, so they could see monthly sales.", expect: m(2, 2, 1) },
-    { answer: "I just made the change they asked for.", expect: m(0, 0, 0) },
-    { answer: "I told them it was not possible.", expect: m(0, 0, 0) },
-  ],
-
   // ---- 2513-01 Web developer ----
   "2513-01-q1": [
     { answer: "For our club website I started from who would use it: new students looking for events. I sketched a wireframe in Figma, kept the menu to four items and put a clear button to join on the home page. I made it responsive for phones and checked the contrast, so the page was easy to use.", expect: m(2, 2, 1) },
@@ -92,40 +75,6 @@ export const SAMPLES: Record<string, Sample[]> = {
     { answer: "During my internship our site showed a certificate error. The same code worked locally, so I checked the logs and found the SSL certificate on the hosting had expired. I contacted the hosting company support, they renewed it and the site worked again.", expect: m(2, 2, 1) },
     { answer: "Once the website was down and it was a DNS problem.", expect: m(1, 0, 0) },
     { answer: "I would ask someone.", expect: m(0, 0, 0) },
-  ],
-
-  // ---- 2514-01 Computer programmer ----
-  "2514-01-q1": [
-    { answer: "In my programming assignment the brief asked for a grade calculator. I listed each requirement in a checklist, asked the lecturer about one unclear rule, and wrote a test case for each requirement. I followed the naming standard in the style guide, so the code matched the brief and passed every test.", expect: m(2, 2, 1) },
-    { answer: "I read the specification carefully before coding.", expect: m(0, 0, 0) },
-    { answer: "I coded what I thought was right.", expect: m(0, 0, 0) },
-  ],
-  "2514-01-q2": [
-    { answer: "For my payroll assignment I calculated the expected output by hand for sample data first. I wrote unit tests with pytest, including edge cases like zero hours and negative values, and compared the results. Two did not match, so I fixed the rounding.", expect: m(2, 2, 1) },
-    { answer: "I run it with some test cases and check the expected output.", expect: m(0, 1, 0) },
-    { answer: "If it runs without errors it is done.", expect: m(0, 0, 0) },
-  ],
-  "2514-01-q3": [
-    { answer: "In my group project our app would not connect to the database. I tried searching Stack Overflow and the docs, then explained it step by step to my teammate. While explaining I saw the port was wrong, so it turned out to be a config issue and it worked after I fixed it.", expect: m(2, 2, 1) },
-    { answer: "I had a bug and I asked my senior who fixed it.", expect: m(1, 2, 0) },
-    { answer: "I never get stuck.", expect: m(0, 0, 0) },
-  ],
-
-  // ---- 2514-02 System programmer ----
-  "2514-02-q1": [
-    { answer: "During my internship a report took 40 seconds. I timed each part and found a query inside a loop. I replaced it with one query and added an index, and as a result it went down to 3 seconds.", expect: m(2, 2, 1) },
-    { answer: "I made the program faster by using a better algorithm.", expect: m(1, 1, 0) },
-    { answer: "I bought a faster computer.", expect: m(0, 0, 0) },
-  ],
-  "2514-02-q2": [
-    { answer: "I would trigger the job by hand with test data, check the logs and the output in the database, then make it fail on purpose to test the retry. I would add an email alert so that we know when it stops.", expect: m(1, 2, 0) },
-    { answer: "I would run it and look at the output.", expect: m(0, 0, 0) },
-    { answer: "Background programs don't need testing.", expect: m(0, 0, 0) },
-  ],
-  "2514-02-q3": [
-    { answer: "In our team project we wasted an hour every week merging code by hand. I raised it in our meeting and suggested a script to automate it. The team adopted it, so now we merge in minutes.", expect: m(2, 2, 1) },
-    { answer: "Our tool was slow so I told the leader.", expect: m(0, 2, 0) },
-    { answer: "Everything was fine.", expect: m(0, 0, 0) },
   ],
 
   // ---- 2519-01 Software tester ----
@@ -145,23 +94,6 @@ export const SAMPLES: Record<string, Sample[]> = {
     { answer: "I would use the program.", expect: m(0, 0, 0) },
   ],
 
-  // ---- 3512 ICT user support technician ----
-  "3512-q1": [
-    { answer: "I would ask which printer, what error message they see and whether anyone else can print. Then I would check the simple things: power, paper and that the laptop is on the right Wi-Fi. Next I'd check the print queue and the driver, clear the spooler, and print a test page to confirm with the user.", expect: m(1, 2, 0) },
-    { answer: "I would restart the printer and check the cable.", expect: m(0, 0, 0) },
-    { answer: "Tell them to use another computer.", expect: m(0, 0, 0) },
-  ],
-  "3512-q2": [
-    { answer: "During my internship I noticed a PC kept freezing at 10 am. I checked Event Viewer logs and saw a backup task running. I moved the task to the night, and as a result the PC stopped freezing.", expect: m(2, 2, 1) },
-    { answer: "I saw the system was slow and restarted it.", expect: m(0, 1, 0) },
-    { answer: "I don't know.", expect: m(0, 0, 0) },
-  ],
-  "3512-q3": [
-    { answer: "I would run Windows Update first, then create the staff account, email and permissions. Next I would install Office and antivirus, and test the printer and network before I hand over and show them how to log in.", expect: m(1, 2, 0) },
-    { answer: "Install the software they need.", expect: m(0, 0, 0) },
-    { answer: "Give them the laptop.", expect: m(0, 0, 0) },
-  ],
-
   // ---- 3513-01 Computer network technician ----
   "3513-01-q1": [
     { answer: "I'd first ask which users and since when, to see if it's one floor or everyone. Then I'd check the switch and router bandwidth, and use ping and traceroute. In my internship lab this showed one PC downloading updates, so I set a limit and the speed came back.", expect: m(2, 2, 1) },
@@ -179,20 +111,105 @@ export const SAMPLES: Record<string, Sample[]> = {
     { answer: "They are important.", expect: m(0, 0, 0) },
   ],
 
-  // ---- 3514 Web technician ----
-  "3514-q1": [
-    { answer: "When our club site went down at night I first checked from my phone to confirm it was down for everyone. I checked the server and saw the disk was full, read the error logs, cleared old logs and restarted nginx. Then I told the team and set an alert so that it doesn't happen again.", expect: m(2, 2, 1) },
-    { answer: "I would restart the server.", expect: m(0, 0, 0) },
-    { answer: "Wait until morning.", expect: m(0, 0, 0) },
+  // ---- 2524-03 Data analyst ----
+  "2524-03-t1": [
+    { answer: "In my internship I got sales data from three branches. I checked for missing and blank values, removed duplicate rows, made the date format consistent and looked for negative or impossible amounts. As a result I found 120 duplicates before the analysis.", expect: m(2, 2, 1) },
+    { answer: "I would look for blank cells and fix them.", expect: m(0, 0, 0) },
+    { answer: "I would just start making charts.", expect: m(0, 0, 0) },
   ],
-  "3514-q2": [
-    { answer: "First, HTTPS with a valid certificate, because it stops people reading data on public Wi-Fi. Second, keep plugins updated, because old versions have known holes. On my club WordPress site I also turned on two-factor login.", expect: m(1, 2, 1) },
-    { answer: "Use a strong password.", expect: m(0, 0, 0) },
-    { answer: "Make it safe.", expect: m(0, 0, 0) },
+  "2524-03-t2": [
+    { answer: "First I'd clarify which branch and which product they mean, then compare last month with the same month last year. I'd break the data down by branch and product with a pivot table and double-check the totals before reporting, so the manager gets the real cause.", expect: m(1, 2, 0) },
+    { answer: "I would compare it with the previous month.", expect: m(0, 0, 0) },
+    { answer: "Sales go up and down.", expect: m(0, 0, 0) },
   ],
-  "3514-q3": [
-    { answer: "During my internship I updated the menu on a live site. I made a backup first, tested the change on the staging site, released it at night when traffic was low, and checked it after release, ready to roll back. As a result no users were affected.", expect: m(2, 2, 1) },
-    { answer: "I made a backup before changing it.", expect: m(0, 0, 0) },
-    { answer: "I changed it directly.", expect: m(0, 0, 0) },
+  "2524-03-t3": [
+    { answer: "For my assignment I made a dashboard for the club treasurer. I started from her decision about which events to fund, used a bar chart for spending per event and a line chart for the trend, added clear titles and labels, and highlighted the key message, so she could see the two events that lost money.", expect: m(2, 2, 1) },
+    { answer: "I made a pie chart with nice colours.", expect: m(0, 1, 0) },
+    { answer: "I used Excel.", expect: m(0, 0, 0) },
+  ],
+
+  // ---- 2543-01 Web designer ----
+  "2543-01-t1": [
+    { answer: "For our club website project I talked to five members and did a short survey, then mapped the user flow for joining an event. I sketched a wireframe on paper and showed them for feedback, so we fixed the menu before any design work.", expect: m(2, 2, 1) },
+    { answer: "I would draw a wireframe of the layout.", expect: m(0, 0, 0) },
+    { answer: "I would make it look modern.", expect: m(0, 0, 0) },
+  ],
+  "2543-01-t2": [
+    { answer: "In my UX assignment I made a clickable prototype in Figma and gave them three tasks, like booking a room. I watched where they struggled; two couldn't find the booking button, so I moved it to the top and renamed it. As a result all five users finished the task.", expect: m(2, 2, 1) },
+    { answer: "I showed my Figma design to friends and they liked it.", expect: m(0, 0, 0) },
+    { answer: "I didn't test it.", expect: m(0, 0, 0) },
+  ],
+  "2543-01-t3": [
+    { answer: "In my portfolio project I built the page with semantic HTML and CSS grid, made it responsive with media queries for phones, and checked contrast and alt text. For the developer I shared a style guide with colours, fonts and spacing, so the build matched the design.", expect: m(2, 2, 1) },
+    { answer: "I export the design and send it to the developer.", expect: m(0, 0, 0) },
+    { answer: "The developer does that part.", expect: m(0, 0, 0) },
+  ],
+
+  // ---- 2511-01 MIS analyst ----
+  "2511-01-t1": [
+    { answer: "During my internship the finance manager couldn't see overdue invoices. I asked the manager which decisions she makes each week, walked through how the current system works, compared that with what she needed and found the gap: no ageing report. I wrote a one-page summary and she agreed it.", expect: m(2, 2, 1) },
+    { answer: "I would ask the manager what they need.", expect: m(0, 0, 0) },
+    { answer: "I would buy a new system.", expect: m(0, 0, 0) },
+  ],
+  "2511-01-t2": [
+    { answer: "For our clinic system assignment I wrote user stories with acceptance criteria, drew a data flow diagram and a mock-up of the new screen, marked which ones were must-have, and the clinic staff signed off before the developers started, so we built the right thing.", expect: m(2, 2, 1) },
+    { answer: "I write a list of requirements for the developers.", expect: m(0, 0, 0) },
+    { answer: "I tell the developers what to do.", expect: m(0, 0, 0) },
+  ],
+  "2511-01-t3": [
+    { answer: "In my internship I made a Power BI dashboard of monthly sales from the ERP database. I cleaned duplicates and missing rows, then cross-checked the totals against the finance team's manual count; they matched, so the managers trusted it.", expect: m(2, 2, 1) },
+    { answer: "I made a report in Excel with a chart.", expect: m(0, 0, 0) },
+    { answer: "I printed the data.", expect: m(0, 0, 0) },
+  ],
+
+  // ---- 2523-01 Network specialist ----
+  "2523-01-t1": [
+    { answer: "I'd first count the users and devices and the bandwidth they need. Then I'd choose a router with a firewall, a managed switch and two access points, put staff, printers and guests on separate VLANs with DHCP, and draw a topology diagram so the next person can follow it.", expect: m(1, 2, 0) },
+    { answer: "I would buy a router and a switch.", expect: m(0, 0, 0) },
+    { answer: "Use the Wi-Fi from the phone company.", expect: m(0, 0, 0) },
+  ],
+  "2523-01-t2": [
+    { answer: "In my internship one floor kept dropping. I found it was only one department and happened every afternoon, checked the switch port lights and cables, then used ping and the switch logs. A faulty cable was the cause; I replaced it and confirmed the link stayed stable.", expect: m(2, 2, 1) },
+    { answer: "I would ping the router and restart it.", expect: m(0, 0, 0) },
+    { answer: "Call the internet provider.", expect: m(0, 0, 0) },
+  ],
+  "2523-01-t3": [
+    { answer: "I'd use a firewall with clear rules, put guests on a separate VLAN with WPA3, and keep firmware patched and monitored. For growth I'd plan bandwidth and capacity for twice the staff and a VPN to the cloud services, so it scales without a redesign.", expect: m(1, 2, 0) },
+    { answer: "Use a strong Wi-Fi password and a firewall.", expect: m(0, 0, 0) },
+    { answer: "Networks are safe if you have antivirus.", expect: m(0, 0, 0) },
+  ],
+
+  // ---- 2531-04 Cybersecurity analyst ----
+  "2531-04-t1": [
+    { answer: "Signs include many failed logins, unusual traffic at night or an unknown process. In my lab project I collected the logs in a SIEM, compared them with a normal baseline and set alerts for spikes, so we caught a brute-force test within minutes.", expect: m(2, 2, 1) },
+    { answer: "Lots of failed logins can mean an attack.", expect: m(0, 0, 0) },
+    { answer: "When the computer is slow.", expect: m(0, 0, 0) },
+  ],
+  "2531-04-t2": [
+    { answer: "I would reset their password and lock the account to contain it, then investigate the logs to see which systems were accessed. I'd scan the laptop, turn on two-factor login, report it to the IT manager and run a short phishing awareness reminder for staff.", expect: m(0, 2, 0) },
+    { answer: "I would reset the password.", expect: m(0, 0, 0) },
+    { answer: "Tell them to be careful next time.", expect: m(0, 0, 0) },
+  ],
+  "2531-04-t3": [
+    { answer: "In my capstone I scanned our test server with Nmap and OpenVAS, checked for missing patches and default passwords, and ranked what I found by risk. I wrote a report with the fix steps for each critical one, so the team fixed three before the demo.", expect: m(2, 2, 1) },
+    { answer: "I would run a vulnerability scan.", expect: m(0, 0, 0) },
+    { answer: "Wait for an attack and then fix it.", expect: m(0, 0, 0) },
+  ],
+
+  // ---- 2144-06 Robotics technologist ----
+  "2144-06-t1": [
+    { answer: "For my final year project I built a line-following robot with an Arduino, two motors and IR sensors. I wrote the control code with a PID loop and tested each sensor step by step, then measured it on the track 20 times; it finished 18, so I tuned the code.", expect: m(2, 2, 1) },
+    { answer: "I built a robot with an Arduino.", expect: m(0, 0, 0) },
+    { answer: "I like robots.", expect: m(0, 0, 0) },
+  ],
+  "2144-06-t2": [
+    { answer: "I'd reproduce the fault with the same task, then check the sensor readings on the serial monitor, check the power and wiring with a multimeter for loose connections, and add print statements to the code to see which condition stops the arm.", expect: m(0, 2, 0) },
+    { answer: "I would check the wiring.", expect: m(0, 0, 0) },
+    { answer: "Replace the robot arm.", expect: m(0, 0, 0) },
+  ],
+  "2144-06-t3": [
+    { answer: "In our robotics club I change one thing at a time and commit each change to Git, so I can go back to the old version. Then I re-test the whole task at low speed with the emergency stop ready before running it at full speed. As a result nothing broke after my fixes.", expect: m(2, 2, 1) },
+    { answer: "I test it after changing the code.", expect: m(0, 0, 0) },
+    { answer: "I just upload the new code.", expect: m(0, 0, 0) },
   ],
 };

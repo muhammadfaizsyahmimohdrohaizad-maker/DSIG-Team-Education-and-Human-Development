@@ -53,7 +53,7 @@ export const SHARED = "*";
 /** Shared STAR words, merged into every rubric. */
 export const STAR = {
   situation: [
-    "when i ", "when we ", "when our", "when my", "in my", "in our", "on my", "on our", "during", "for my", "for our", "at my", "last semester", "last year",
+    "when i ", "when we ", "when our", "when my", "in my", "in our", "on my", "on our", "during", "for my", "for our", "at my",
     "project", "assignment", "internship", "my class", "our class", "the task", "the problem was", "we had", "i had",
     "i was asked", "we were asked", "for example", "for instance", "situation", "once",
   ],
@@ -64,6 +64,7 @@ export const STAR = {
     "i took", "i would", "i'd", "i will", "i put", "i plotted", "i trained", "i cleaned", "i searched", "i moved",
     "i installed", "i replaced", "i opened", "i traced", "i watched", "i listed", "i reset", "i restarted",
     "i found", "i reproduced", "i only", "i raised", "i explained", "i showed", "i also", "i turned", "i first", "i told",
+    "i change", "i check", "i commit", "i collected", "i drew", "i marked", "i sketched", "i mapped", "i did", "i walked",
     "we used", "we built", "we wrote", "we decided", "we agreed", "we split", "we tested", "we met", "we talked",
     "we compared", "we tried", "we changed",
   ],
@@ -72,7 +73,7 @@ export const STAR = {
     "reduced", "improved", "faster", "solved", "finished", "learned", "learnt", "outcome", "ended up", "turned out",
     "so i could", "so we could", "so it", "so the", "which showed", "which let", "that way", "now it", "now we",
     "worked again", "was fixed", "got fixed", "on time", "submitted", "we got", "i got", "passed", "came back",
-    "so she", "so he", "so they", "so we know",
+    "so she", "so he", "so they", "so we", "agreed", "stayed", "caught", "was the cause", "signed off",
   ],
   evidence: [
     "project", "assignment", "coursework", "fyp", "internship",

@@ -1,0 +1,174 @@
+{
+  "occupation": "2543-01",
+  "title": "Web designer",
+  "_note": "Technical round built from the Web designer tasks in content/reference/occupations.json, which the team wrote from the eMASCO title (emasco.mohr.gov.my/masco/2543-01) and has not yet checked against the eMASCO task list. Behavioural round: behavioural.json. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "2543-01-t1",
+      "round": "technical",
+      "position": 1,
+      "text": "How would you plan the layout and user flow for a new website with the people who will use it?",
+      "why": "designers who skip users end up redesigning later.",
+      "source": "2543-01 task 1 (content/reference/occupations.json): Plan page layouts and user flows with the people who will use a site. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "talk to the users first",
+            "words": [
+              "interview",
+              "survey",
+              "asked users",
+              "asked the",
+              "talked to",
+              "spoke to",
+              "stakeholder"
+            ]
+          },
+          {
+            "point": "map the main tasks or user flow",
+            "words": [
+              "user flow",
+              "flow",
+              "journey",
+              "task",
+              "steps",
+              "sitemap"
+            ]
+          },
+          {
+            "point": "sketch the layout before designing",
+            "words": [
+              "sketch",
+              "wireframe",
+              "paper",
+              "low-fidelity",
+              "layout"
+            ]
+          },
+          {
+            "point": "check the plan with users",
+            "words": [
+              "feedback",
+              "showed them",
+              "checked with",
+              "test",
+              "review"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2543-01-t2",
+      "round": "technical",
+      "position": 2,
+      "text": "Tell us about a prototype you tested with users. What did you learn and what did you change?",
+      "why": "testing with real users finds problems early and cheaply.",
+      "source": "2543-01 task 2 (content/reference/occupations.json): Design screens, wireframes and prototypes, then test them with users. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "make a clickable prototype",
+            "words": [
+              "prototype",
+              "figma",
+              "adobe xd",
+              "clickable",
+              "mock-up",
+              "mockup"
+            ]
+          },
+          {
+            "point": "give users real tasks to do",
+            "words": [
+              "gave them",
+              "asked them to",
+              "scenario",
+              "tasks"
+            ]
+          },
+          {
+            "point": "watch where they struggle",
+            "words": [
+              "watched",
+              "observed",
+              "struggled",
+              "confused",
+              "stuck",
+              "couldn't find",
+              "could not find"
+            ]
+          },
+          {
+            "point": "change the design because of it",
+            "words": [
+              "changed",
+              "moved",
+              "renamed",
+              "redesigned",
+              "made it bigger",
+              "simplified",
+              "updated"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2543-01-t3",
+      "round": "technical",
+      "position": 3,
+      "text": "How do you turn a design into a page, or hand it over so a developer can build it?",
+      "why": "a design only matters once it is built correctly.",
+      "source": "2543-01 task 3 (content/reference/occupations.json): Turn designs into pages with HTML and CSS, or hand them over to developers. Task written by the team from the eMASCO title; not yet checked against the eMASCO task list.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "use semantic HTML and CSS",
+            "words": [
+              "html",
+              "css",
+              "semantic",
+              "flexbox",
+              "grid"
+            ]
+          },
+          {
+            "point": "make it responsive",
+            "words": [
+              "responsive",
+              "mobile",
+              "phone",
+              "media query",
+              "breakpoint"
+            ]
+          },
+          {
+            "point": "share specs or a design system",
+            "words": [
+              "spec",
+              "spacing",
+              "design system",
+              "style guide",
+              "tokens",
+              "colours",
+              "colors",
+              "font"
+            ]
+          },
+          {
+            "point": "check accessibility",
+            "words": [
+              "accessib",
+              "contrast",
+              "alt text",
+              "keyboard",
+              "screen reader",
+              "label"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

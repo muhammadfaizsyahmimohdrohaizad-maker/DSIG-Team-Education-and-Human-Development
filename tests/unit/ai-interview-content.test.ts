@@ -22,12 +22,12 @@ describe("interview content", () => {
     }
   });
   it("gives the AI engineer a technical and a behavioural round of three", () => {
-    const { rows, noTechnical } = expandSets(files, ["2519-03", "2524-03"]);
+    const { rows, noTechnical } = expandSets(files, ["2519-03", "9999-99"]);
     const ai = rows.filter((r) => r.code === "2519-03");
     expect(ai.filter((r) => r.round === "technical").map((r) => r.position)).toEqual([1, 2, 3]);
     expect(ai.filter((r) => r.round === "behavioural").map((r) => r.position)).toEqual([1, 2, 3]);
     expect(ai[0]!.prompt).toMatch("INNER JOIN");
-    expect(noTechnical).toEqual(["2524-03"]);
+    expect(noTechnical).toEqual(["9999-99"]);
   });
   it("carries why and source in the rubric column for the import", () => {
     const row = importRow(expandSets(files, ["2519-03"]).rows[0]!);
@@ -35,8 +35,12 @@ describe("interview content", () => {
     expect(row.rubric.why).toMatch("database queries");
     expect(row.rubric.keyPoints.length).toBeGreaterThanOrEqual(2);
   });
-  it("reports files whose occupation is not in the reference", () => {
-    expect(expandSets(files, ["2519-03"]).unknownCodes).toContain("3514");
+  it("covers every reference job with both rounds and has no files for other codes", () => {
+    const codes = (JSON.parse(readFileSync(fileURLToPath(new URL("../../content/reference/occupations.json", import.meta.url)), "utf8")) as { code: string }[]).map((o) => o.code);
+    const { rows, noTechnical, unknownCodes } = expandSets(files, codes);
+    expect(noTechnical).toEqual([]);
+    expect(unknownCodes).toEqual([]);
+    expect(rows).toHaveLength(codes.length * 6);
   });
 });
 
