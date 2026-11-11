@@ -1,22 +1,197 @@
 {
   "occupation": "2513-01",
-  "title": "Website Developer",
-  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2513), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "title": "Web developer",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2513), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from. Rubric format: content/interview/sets.ts.",
   "questions": [
     {
       "id": "2513-01-q1",
+      "round": "technical",
+      "position": 1,
       "text": "Walk us through a website you designed and built. How did you decide on the layout and the user's path through it?",
-      "source": "eMASCO 2513, task 1: Menganalisis, mereka bentuk dan membangunkan laman Internet dengan menggunakan hasil seni dan kreativiti…"
+      "why": "web developers turn what users need into pages that are easy to use.",
+      "source": "eMASCO 2513, task 1: Menganalisis, mereka bentuk dan membangunkan laman Internet dengan menggunakan hasil seni dan kreativiti…",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "start from who uses it and what they need",
+            "words": [
+              "user",
+              "visitor",
+              "audience",
+              "customer",
+              "who would use",
+              "target"
+            ]
+          },
+          {
+            "point": "plan the layout before coding",
+            "words": [
+              "wireframe",
+              "sketch",
+              "figma",
+              "mock-up",
+              "mockup",
+              "layout",
+              "prototype"
+            ]
+          },
+          {
+            "point": "make the main path short and clear",
+            "words": [
+              "navigation",
+              "menu",
+              "button",
+              "few clicks",
+              "clear",
+              "home page",
+              "landing",
+              "call to action"
+            ]
+          },
+          {
+            "point": "make it work on phones and for everyone",
+            "words": [
+              "mobile",
+              "responsive",
+              "phone",
+              "accessib",
+              "contrast",
+              "screen reader",
+              "alt text"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "2513-01-q2",
+      "round": "technical",
+      "position": 2,
       "text": "Tell us how you connected a web page to data or a back end, for example a form that saves to a database.",
-      "source": "eMASCO 2513, task 4: Mereka bentuk, membangunkan dan menyepadukan kod komputer dengan input khusus lain…"
+      "why": "most websites read or save data somewhere.",
+      "source": "eMASCO 2513, task 4: Mereka bentuk, membangunkan dan menyepadukan kod komputer dengan input khusus lain…",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "the page sends the data",
+            "words": [
+              "form",
+              "post",
+              "fetch",
+              "submit",
+              "request",
+              "ajax",
+              "axios"
+            ]
+          },
+          {
+            "point": "a back end or API receives it",
+            "words": [
+              "an api",
+              "the api",
+              "back end",
+              "backend",
+              "server",
+              "php",
+              "node",
+              "express",
+              "endpoint",
+              "route",
+              "firebase",
+              "supabase"
+            ]
+          },
+          {
+            "point": "it is stored in a database",
+            "words": [
+              "database",
+              "mysql",
+              "table",
+              "insert",
+              "saved",
+              "firestore",
+              "postgres",
+              "sql"
+            ]
+          },
+          {
+            "point": "inputs are checked on the server",
+            "words": [
+              "validat",
+              "check the input",
+              "sanitiz",
+              "sanitis",
+              "required field",
+              "prepared statement",
+              "sql injection"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "2513-01-q3",
+      "round": "technical",
+      "position": 3,
       "text": "Describe a time a website problem turned out to be about hosting, the network or the server rather than your code. How did you work it out?",
-      "source": "eMASCO 2513, task 3: Berhubung dengan pakar rangkaian berkenaan dengan isu yang berkaitan dengan web…"
+      "why": "web developers work with network and hosting people to keep sites up.",
+      "source": "eMASCO 2513, task 3: Berhubung dengan pakar rangkaian berkenaan dengan isu yang berkaitan dengan web…",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "rule out your own code first",
+            "words": [
+              "my code",
+              "locally",
+              "on my laptop",
+              "localhost",
+              "worked locally",
+              "same code"
+            ]
+          },
+          {
+            "point": "check the server, DNS or hosting",
+            "words": [
+              "dns",
+              "hosting",
+              "server",
+              "domain",
+              "ssl",
+              "certificate",
+              "port",
+              "firewall",
+              "cpanel"
+            ]
+          },
+          {
+            "point": "use logs or tools to find it",
+            "words": [
+              "logs",
+              "the log",
+              "console",
+              "network tab",
+              "ping",
+              "status code",
+              "404",
+              "500",
+              "error page",
+              "devtools"
+            ]
+          },
+          {
+            "point": "work with the people who own it",
+            "words": [
+              "support",
+              "hosting company",
+              "network team",
+              "admin",
+              "ticket",
+              "contacted",
+              "told the"
+            ]
+          }
+        ]
+      }
     }
   ]
 }

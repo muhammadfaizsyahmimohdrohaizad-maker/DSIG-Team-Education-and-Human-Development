@@ -1,0 +1,227 @@
+{
+  "occupation": "*",
+  "title": "Behavioural round (all jobs)",
+  "_note": "The behavioural round for every job without one of its own (as on the Mock interview board). These are common employer questions, not built from one eMASCO task. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "beh-1",
+      "round": "behavioural",
+      "position": 1,
+      "text": "Tell me about a time a project did not go to plan. What did you do?",
+      "why": "employers want to know how you handle setbacks.",
+      "source": "Common employer question about setbacks; not tied to one eMASCO task.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "say what went wrong",
+            "words": [
+              "went wrong",
+              "did not go",
+              "didn't go",
+              "behind schedule",
+              "late",
+              "delay",
+              "broke",
+              "failed",
+              "problem",
+              "crashed",
+              "missed"
+            ]
+          },
+          {
+            "point": "take responsibility for your part",
+            "words": [
+              "my part",
+              "my fault",
+              "my mistake",
+              "i should have",
+              "i realised",
+              "i realized",
+              "i owned",
+              "responsib"
+            ]
+          },
+          {
+            "point": "say what you changed to recover",
+            "words": [
+              "tried to fix",
+              "fixed it",
+              "stayed up",
+              "re-plan",
+              "replan",
+              "new plan",
+              "cut the scope",
+              "smaller scope",
+              "priorit",
+              "asked for help",
+              "asked my",
+              "extra time",
+              "rescheduled",
+              "split the work",
+              "daily check"
+            ]
+          },
+          {
+            "point": "say what you learned for next time",
+            "words": [
+              "learned",
+              "learnt",
+              "next time",
+              "now i",
+              "lesson",
+              "from then on",
+              "since then"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "beh-2",
+      "round": "behavioural",
+      "position": 2,
+      "text": "Describe a time you disagreed with a teammate. How was it resolved?",
+      "why": "developers work closely with others.",
+      "source": "Common employer question about teamwork; not tied to one eMASCO task.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "explain the disagreement",
+            "words": [
+              "disagree",
+              "didn't agree",
+              "did not agree",
+              "different idea",
+              "different view",
+              "argued",
+              "conflict",
+              "wanted to use",
+              "wanted to"
+            ]
+          },
+          {
+            "point": "listen to their side",
+            "words": [
+              "listened",
+              "their side",
+              "their reason",
+              "their point",
+              "understand why",
+              "asked why",
+              "heard"
+            ]
+          },
+          {
+            "point": "settle it with facts or a fair process",
+            "words": [
+              "tested both",
+              "compared",
+              "prototype",
+              "data",
+              "evidence",
+              "vote",
+              "lecturer",
+              "supervisor",
+              "pros and cons",
+              "trial",
+              "benchmark"
+            ]
+          },
+          {
+            "point": "keep the working relationship",
+            "words": [
+              "agreed",
+              "compromise",
+              "still friends",
+              "worked well",
+              "together",
+              "respect",
+              "thanked",
+              "moved on"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "beh-3",
+      "round": "behavioural",
+      "position": 3,
+      "text": "What have you learned on your own in the last six months?",
+      "why": "technology changes fast in this job.",
+      "source": "Common employer question about self-learning; not tied to one eMASCO task.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "name a specific skill or tool",
+            "words": [
+              "python",
+              "sql",
+              "git",
+              "docker",
+              "react",
+              "machine learning",
+              "pandas",
+              "excel",
+              "figma",
+              "linux",
+              "cloud",
+              "api",
+              "javascript",
+              "typescript",
+              "flutter",
+              "network",
+              "security",
+              "testing",
+              "power bi",
+              "tableau"
+            ]
+          },
+          {
+            "point": "say how you learned it",
+            "words": [
+              "course",
+              "tutorial",
+              "documentation",
+              "docs",
+              "youtube",
+              "book",
+              "coursera",
+              "udemy",
+              "freecodecamp",
+              "kaggle",
+              "practice",
+              "practised",
+              "practiced",
+              "online"
+            ]
+          },
+          {
+            "point": "show you used it",
+            "words": [
+              "built",
+              "made",
+              "used it",
+              "applied",
+              "project",
+              "wrote",
+              "deployed",
+              "finished"
+            ]
+          },
+          {
+            "point": "say why you chose it",
+            "words": [
+              "because",
+              "wanted to",
+              "needed",
+              "job ads",
+              "so that i",
+              "interested"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

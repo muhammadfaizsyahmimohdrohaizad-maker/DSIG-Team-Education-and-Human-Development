@@ -1,0 +1,239 @@
+{
+  "occupation": "2519-03",
+  "title": "AI engineer",
+  "_note": "Technical round from the Mock interview board. MASCO 2020 lists no tasks for 2519-03 yet, so questions cite the closest group, eMASCO 2512 (fetched 21 Oct 2026), as the board does. Behavioural round: behavioural.json. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "2519-03-t1",
+      "round": "technical",
+      "position": 1,
+      "text": "Explain the difference between an INNER JOIN and a LEFT JOIN, with an example.",
+      "why": "developers write and test database queries (MASCO 2512).",
+      "source": "MASCO 2512 task (closest group to AI engineer): write and maintain program code. ESCO skill: SQL.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "INNER JOIN keeps only rows that match in both tables",
+            "words": [
+              "only rows that match",
+              "only matching",
+              "match in both",
+              "matches in both",
+              "both tables",
+              "only the rows",
+              "only returns rows"
+            ]
+          },
+          {
+            "point": "LEFT JOIN keeps every row from the left table",
+            "words": [
+              "every row from the left",
+              "all rows from the left",
+              "all the rows from the left",
+              "every row in the left",
+              "all rows in the left",
+              "everything from the left",
+              "all records from the left",
+              "every module",
+              "all the modules",
+              "every student",
+              "all students"
+            ]
+          },
+          {
+            "point": "unmatched columns come back as NULL",
+            "words": [
+              "null",
+              "empty",
+              "blank",
+              "no value"
+            ]
+          },
+          {
+            "point": "an example with two named tables",
+            "words": [
+              "table",
+              "for example",
+              "e.g.",
+              "such as"
+            ]
+          }
+        ],
+        "result": [
+          "to list",
+          "to show",
+          "even ones",
+          "even if",
+          "so every",
+          "which gave",
+          "returned"
+        ]
+      }
+    },
+    {
+      "id": "2519-03-t2",
+      "round": "technical",
+      "position": 2,
+      "text": "Walk me through how you use Git branches when working in a team.",
+      "why": "teams change the same code base every day.",
+      "source": "MASCO 2512 task (closest group to AI engineer): maintain software. ESCO skill: Git.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "make a branch for each feature or fix",
+            "words": [
+              "new branch",
+              "feature branch",
+              "a branch for",
+              "git branch",
+              "git switch -c",
+              "git checkout -b",
+              "own branch",
+              "each feature",
+              "create a branch",
+              "make a branch",
+              "branch for each",
+              "branch per"
+            ]
+          },
+          {
+            "point": "keep main working",
+            "words": [
+              "main",
+              "master",
+              "stable",
+              "never push",
+              "don't push",
+              "do not push"
+            ]
+          },
+          {
+            "point": "merge through a pull request and review",
+            "words": [
+              "pull request",
+              "merge request",
+              "opened a pr",
+              "review",
+              "reviewed",
+              "code review",
+              "approve"
+            ]
+          },
+          {
+            "point": "handle merge conflicts",
+            "words": [
+              "conflict",
+              "same lines",
+              "resolve",
+              "rebase",
+              "pull first",
+              "git pull",
+              "fetch"
+            ]
+          }
+        ],
+        "action": [
+          "i create",
+          "i make",
+          "i open",
+          "i push",
+          "i pull",
+          "i switch",
+          "we create",
+          "we open",
+          "we review",
+          "we merge",
+          "each of us"
+        ],
+        "result": [
+          "merged",
+          "so main",
+          "so nobody",
+          "so no one",
+          "keeps main",
+          "without breaking",
+          "stays working"
+        ]
+      }
+    },
+    {
+      "id": "2519-03-t3",
+      "round": "technical",
+      "position": 3,
+      "text": "What is overfitting, and how would you check for it in a model you trained?",
+      "why": "an AI engineer has to show a model works on new data, not only the data it learned from.",
+      "source": "MASCO 2512 task (closest group to AI engineer): test and debug software. ESCO skill: machine learning.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "the model learns the training data too closely, noise included",
+            "words": [
+              "memoris",
+              "memoriz",
+              "too closely",
+              "learns the noise",
+              "noise",
+              "fits the training data too",
+              "too well on the training",
+              "too good on the training",
+              "too complex"
+            ]
+          },
+          {
+            "point": "it does badly on new, unseen data",
+            "words": [
+              "new data",
+              "unseen",
+              "doesn't generalise",
+              "does not generalise",
+              "generaliz",
+              "generalis",
+              "poorly on test",
+              "badly on test",
+              "new examples"
+            ]
+          },
+          {
+            "point": "compare training and validation or test results",
+            "words": [
+              "validation",
+              "test set",
+              "held-out",
+              "hold-out",
+              "holdout",
+              "train and test",
+              "training and test",
+              "cross-validation",
+              "cross validation",
+              "k-fold",
+              "split the data",
+              "train/test"
+            ]
+          },
+          {
+            "point": "a way to reduce it",
+            "words": [
+              "regulari",
+              "dropout",
+              "more data",
+              "simpler model",
+              "early stopping",
+              "prune",
+              "fewer features",
+              "augment"
+            ]
+          }
+        ],
+        "result": [
+          "accuracy dropped",
+          "gap",
+          "much lower",
+          "much higher",
+          "showed",
+          "so i knew",
+          "which told me"
+        ]
+      }
+    }
+  ]
+}

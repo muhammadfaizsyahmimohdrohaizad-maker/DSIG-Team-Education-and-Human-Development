@@ -1,22 +1,207 @@
 {
   "occupation": "2512-01",
-  "title": "Software Developer",
-  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2512), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "title": "Software developer",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2512), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from. Rubric format: content/interview/sets.ts.",
   "questions": [
     {
       "id": "2512-01-q1",
+      "round": "technical",
+      "position": 1,
       "text": "Tell us about a time you worked out what a piece of software needed to do before you built it. How did you find out the requirements?",
-      "source": "eMASCO 2512, task 1: Menyelidik, menganalisis dan menilai keperluan aplikasi perisian dan sistem operasi."
+      "why": "developers build the wrong thing if they skip this step.",
+      "source": "eMASCO 2512, task 1: Menyelidik, menganalisis dan menilai keperluan aplikasi perisian dan sistem operasi.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "talk to the users or client",
+            "words": [
+              "interview",
+              "asked the user",
+              "asked users",
+              "talked to",
+              "spoke to",
+              "met the",
+              "survey",
+              "questionnaire",
+              "the client",
+              "the lecturer",
+              "stakeholder"
+            ]
+          },
+          {
+            "point": "write the requirements down",
+            "words": [
+              "wrote down",
+              "listed",
+              "list of",
+              "requirement",
+              "user stor",
+              "use case",
+              "document",
+              "spec"
+            ]
+          },
+          {
+            "point": "confirm them before building",
+            "words": [
+              "confirm",
+              "agreed",
+              "sign off",
+              "signed off",
+              "checked with",
+              "showed them",
+              "mock-up",
+              "mockup",
+              "wireframe",
+              "prototype",
+              "sketch"
+            ]
+          },
+          {
+            "point": "prioritise what matters most",
+            "words": [
+              "priorit",
+              "must have",
+              "must-have",
+              "most important",
+              "first version",
+              "mvp"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "2512-01-q2",
+      "round": "technical",
+      "position": 2,
       "text": "Walk us through how you designed a program or app you built. Why did you structure it that way?",
-      "source": "eMASCO 2512, task 2: Menyelidik, mereka bentuk dan membangunkan sistem perisian komputer."
+      "why": "employers want to see you plan before you code.",
+      "source": "eMASCO 2512, task 2: Menyelidik, mereka bentuk dan membangunkan sistem perisian komputer.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "split it into parts or layers",
+            "words": [
+              "front end",
+              "frontend",
+              "back end",
+              "backend",
+              "database",
+              "module",
+              "layer",
+              "component",
+              "separate",
+              "split"
+            ]
+          },
+          {
+            "point": "say how the parts connect",
+            "words": [
+              "an api",
+              "the api",
+              "apis",
+              "request",
+              "calls",
+              "connects",
+              "talks to",
+              "sends",
+              "fetch",
+              "query"
+            ]
+          },
+          {
+            "point": "give a reason for the structure",
+            "words": [
+              "because",
+              "so that",
+              "easier to",
+              "reason",
+              "why i",
+              "maintain",
+              "reuse",
+              "test each"
+            ]
+          },
+          {
+            "point": "show the design was planned",
+            "words": [
+              "diagram",
+              "flowchart",
+              "erd",
+              "sketch",
+              "wireframe",
+              "planned",
+              "class diagram",
+              "design"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "2512-01-q3",
+      "round": "technical",
+      "position": 3,
       "text": "Describe a time you fixed a bug in code that already existed. How did you find the cause without breaking anything else?",
-      "source": "eMASCO 2512, task 5: Mengubahsuai perisian sedia ada untuk membetulkan ralat dan menyesuaikannya dengan perkakasan baru…"
+      "why": "most developer time goes into changing code that already works.",
+      "source": "eMASCO 2512, task 5: Mengubahsuai perisian sedia ada untuk membetulkan ralat dan menyesuaikannya dengan perkakasan baru…",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "reproduce the bug first",
+            "words": [
+              "reproduce",
+              "repeat the",
+              "same steps",
+              "made it happen",
+              "happen again",
+              "every time"
+            ]
+          },
+          {
+            "point": "narrow down the cause",
+            "words": [
+              "debug",
+              "breakpoint",
+              "console.log",
+              "print",
+              "logs",
+              "the log",
+              "stack trace",
+              "error message",
+              "traced",
+              "step through",
+              "narrowed"
+            ]
+          },
+          {
+            "point": "make a small, targeted change",
+            "words": [
+              "small change",
+              "one line",
+              "only changed",
+              "only that",
+              "minimal",
+              "targeted"
+            ]
+          },
+          {
+            "point": "re-test so nothing else breaks",
+            "words": [
+              "tested again",
+              "re-test",
+              "retest",
+              "ran the tests",
+              "unit test",
+              "regression",
+              "checked the other",
+              "other features",
+              "still worked"
+            ]
+          }
+        ]
+      }
     }
   ]
 }

@@ -1,22 +1,174 @@
 {
   "occupation": "2514-01",
-  "title": "Computer Programmer",
-  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2514), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "title": "Computer programmer",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2514), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from. Rubric format: content/interview/sets.ts. Not in content/reference yet, so not imported.",
   "questions": [
     {
       "id": "2514-01-q1",
+      "round": "technical",
+      "position": 1,
       "text": "Tell us about a program you wrote from a specification or brief. How did you make sure the code matched what was asked?",
-      "source": "eMASCO 2514, task 1: Menulis dan menjaga code outline yang digariskan dalam panduan dan spesifikasi menurut standard akreditasi kualiti."
+      "why": "programmers are judged on whether the code does what was specified.",
+      "source": "eMASCO 2514, task 1: Menulis dan menjaga code outline yang digariskan dalam panduan dan spesifikasi menurut standard akreditasi kualiti.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "read the brief and list each requirement",
+            "words": [
+              "brief",
+              "specification",
+              "spec",
+              "requirement",
+              "checklist",
+              "listed"
+            ]
+          },
+          {
+            "point": "ask when something is unclear",
+            "words": [
+              "asked",
+              "clarif",
+              "unclear",
+              "not sure"
+            ]
+          },
+          {
+            "point": "test each requirement",
+            "words": [
+              "tested",
+              "test case",
+              "each requirement",
+              "checked each",
+              "ticked"
+            ]
+          },
+          {
+            "point": "follow the coding standard",
+            "words": [
+              "standard",
+              "naming",
+              "comment",
+              "style guide",
+              "format",
+              "clean code"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "2514-01-q2",
+      "round": "technical",
+      "position": 2,
       "text": "How do you check that a program produces the right output before you call it done?",
-      "source": "eMASCO 2514, task 3: Menjalankan percubaan runs dan aplikasi perisian untuk mengesahkan ia akan menghasilkan maklumat yang dikehendaki."
+      "why": "wrong output that looks right is the most expensive kind of bug.",
+      "source": "eMASCO 2514, task 3: Menjalankan percubaan runs dan aplikasi perisian untuk mengesahkan ia akan menghasilkan maklumat yang dikehendaki.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "work out the expected output first",
+            "words": [
+              "expected",
+              "by hand",
+              "calculated",
+              "known answer",
+              "sample data"
+            ]
+          },
+          {
+            "point": "run test cases including edge cases",
+            "words": [
+              "test case",
+              "edge case",
+              "empty",
+              "zero",
+              "negative",
+              "boundary",
+              "invalid"
+            ]
+          },
+          {
+            "point": "automate the tests",
+            "words": [
+              "unit test",
+              "automated",
+              "pytest",
+              "junit",
+              "jest",
+              "assert"
+            ]
+          },
+          {
+            "point": "compare and fix differences",
+            "words": [
+              "compare",
+              "matched",
+              "didn't match",
+              "did not match",
+              "difference",
+              "fixed"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "2514-01-q3",
+      "round": "technical",
+      "position": 3,
       "text": "Describe a technical problem you got stuck on. How did you explain it to someone else and solve it?",
-      "source": "eMASCO 2514, task 5: Mengenal pasti dan membincangkan masalah teknikal, proses dan penyelesaian."
+      "why": "programmers discuss problems with their team every day.",
+      "source": "eMASCO 2514, task 5: Mengenal pasti dan membincangkan masalah teknikal, proses dan penyelesaian.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "name the problem clearly",
+            "words": [
+              "error",
+              "bug",
+              "problem was",
+              "issue",
+              "crash",
+              "wouldn't",
+              "would not"
+            ]
+          },
+          {
+            "point": "say what you tried first",
+            "words": [
+              "tried",
+              "searched",
+              "stack overflow",
+              "documentation",
+              "docs",
+              "debug"
+            ]
+          },
+          {
+            "point": "explain it simply to someone",
+            "words": [
+              "explained",
+              "showed",
+              "drew",
+              "step by step",
+              "lecturer",
+              "senior",
+              "teammate",
+              "rubber duck"
+            ]
+          },
+          {
+            "point": "say what solved it",
+            "words": [
+              "solved",
+              "fixed",
+              "the cause",
+              "turned out",
+              "worked"
+            ]
+          }
+        ]
+      }
     }
   ]
 }

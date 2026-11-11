@@ -1,22 +1,175 @@
 {
   "occupation": "3512",
-  "title": "ICT User Support Technician",
-  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/3512), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "title": "ICT user support technician",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/3512), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from. Rubric format: content/interview/sets.ts. Not in content/reference yet, so not imported.",
   "questions": [
     {
       "id": "3512-q1",
+      "round": "technical",
+      "position": 1,
       "text": "A user says their laptop can't print. Walk us through the questions you would ask and the checks you would make.",
-      "source": "eMASCO 3512, task 1: Menjawab pertanyaan pengguna berhubung dengan operasi perisian dan perkakasan untuk menyelesaikan masalah."
+      "why": "support technicians solve everyday problems quickly and calmly.",
+      "source": "eMASCO 3512, task 1: Menjawab pertanyaan pengguna berhubung dengan operasi perisian dan perkakasan untuk menyelesaikan masalah.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "ask questions to narrow it down",
+            "words": [
+              "asked",
+              "error message",
+              "when did",
+              "which printer",
+              "anyone else",
+              "what changed"
+            ]
+          },
+          {
+            "point": "check the simple things first",
+            "words": [
+              "cable",
+              "power",
+              "paper",
+              "turned on",
+              "connected",
+              "wifi",
+              "wi-fi"
+            ]
+          },
+          {
+            "point": "check the print queue and driver",
+            "words": [
+              "queue",
+              "driver",
+              "spooler",
+              "default printer",
+              "settings"
+            ]
+          },
+          {
+            "point": "confirm with a test page and the user",
+            "words": [
+              "test page",
+              "printed",
+              "confirm",
+              "checked with"
+            ]
+          }
+        ],
+        "result": [
+          "to confirm"
+        ]
+      }
     },
     {
       "id": "3512-q2",
+      "round": "technical",
+      "position": 2,
       "text": "Tell us about a time you found an error in a system by watching how it behaved. How did you confirm what was wrong?",
-      "source": "eMASCO 3512, task 2: Memasukkan arahan dan mengesan ralat serta memerhatikan pemfungsian sistem untuk mengesahkan operasi yang betul."
+      "why": "support technicians spot problems before users report them.",
+      "source": "eMASCO 3512, task 2: Memasukkan arahan dan mengesan ralat serta memerhatikan pemfungsian sistem untuk mengesahkan operasi yang betul.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "notice the unusual behaviour",
+            "words": [
+              "noticed",
+              "slow",
+              "strange",
+              "kept",
+              "pattern",
+              "unusual"
+            ]
+          },
+          {
+            "point": "check logs or system tools",
+            "words": [
+              "logs",
+              "the log",
+              "event viewer",
+              "task manager",
+              "error",
+              "monitor"
+            ]
+          },
+          {
+            "point": "test an idea about the cause",
+            "words": [
+              "tested",
+              "tried",
+              "restarted",
+              "isolated",
+              "swapped"
+            ]
+          },
+          {
+            "point": "confirm the fix",
+            "words": [
+              "confirm",
+              "fixed",
+              "worked",
+              "stopped",
+              "back to normal"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "3512-q3",
+      "round": "technical",
+      "position": 3,
       "text": "How would you prepare a new computer for a staff member who starts tomorrow? What would you set up, and in what order?",
-      "source": "eMASCO 3512, task 5: Mempersiapkan peralatan untuk kegunaan kakitangan…"
+      "why": "a new staff member should be able to work on day one.",
+      "source": "eMASCO 3512, task 5: Mempersiapkan peralatan untuk kegunaan kakitangan…",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "update the system first",
+            "words": [
+              "update",
+              "windows update",
+              "patch",
+              "latest"
+            ]
+          },
+          {
+            "point": "create the account and access",
+            "words": [
+              "account",
+              "login",
+              "password",
+              "email",
+              "access",
+              "permission"
+            ]
+          },
+          {
+            "point": "install the software they need",
+            "words": [
+              "install",
+              "office",
+              "antivirus",
+              "software",
+              "apps"
+            ]
+          },
+          {
+            "point": "test it and hand over",
+            "words": [
+              "test",
+              "check",
+              "printer",
+              "network",
+              "hand over",
+              "show them"
+            ]
+          }
+        ],
+        "result": [
+          "before i hand over",
+          "ready for"
+        ]
+      }
     }
   ]
 }

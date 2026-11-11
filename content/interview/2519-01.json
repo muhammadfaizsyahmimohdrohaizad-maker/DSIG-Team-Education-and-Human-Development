@@ -1,23 +1,165 @@
 {
   "occupation": "2519-01",
-  "title": "System Tester",
-  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2519), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from.",
+  "title": "Software tester",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/2519), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from. Rubric format: content/interview/sets.ts.",
   "questions": [
     {
-      "id": "q1",
+      "id": "2519-01-q1",
+      "round": "technical",
+      "position": 1,
       "text": "Tell us about a time you designed test cases for a feature. How did you decide what to test first?",
+      "why": "testers have limited time, so order matters.",
       "source": "eMASCO 2519, task 1: Membangunkan dan mendokumentasikan rancangan pengujian perisian.",
-      "demoAnswer": "In my Quality Assurance & Control project, our team built a checkout form for a small online shop, and I was in charge of testing it. I listed every field first, then used boundary value analysis on the quantity and postcode fields. That gave me 14 test cases. I started with the quantity field because a wrong value there changes the price. I also ran an integration test to check the quantity field rejects 0 and 100."
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "start from the requirements",
+            "words": [
+              "requirement",
+              "user stor",
+              "acceptance",
+              "spec",
+              "what it should do"
+            ]
+          },
+          {
+            "point": "test the riskiest or most used parts first",
+            "words": [
+              "risk",
+              "most used",
+              "most important",
+              "critical",
+              "priorit",
+              "first"
+            ]
+          },
+          {
+            "point": "cover normal, edge and wrong inputs",
+            "words": [
+              "edge",
+              "boundary",
+              "invalid",
+              "wrong input",
+              "empty",
+              "negative"
+            ]
+          },
+          {
+            "point": "write the cases down with expected results",
+            "words": [
+              "expected result",
+              "test case",
+              "steps",
+              "document",
+              "spreadsheet",
+              "test plan"
+            ]
+          }
+        ]
+      }
     },
     {
-      "id": "q2",
+      "id": "2519-01-q2",
+      "round": "technical",
+      "position": 2,
       "text": "Describe a bug you found and how you explained it to the person who wrote the code.",
-      "source": "eMASCO 2519, task 4: Melaksanakan, menganalisis dan mendokumentasikan keputusan pengujian aplikasi perisian serta ujian sistem maklumat dan telekomunikasi."
+      "why": "a bug report is only useful if the developer can act on it.",
+      "source": "eMASCO 2519, task 4: Melaksanakan, menganalisis dan mendokumentasikan keputusan pengujian aplikasi perisian serta ujian sistem maklumat dan telekomunikasi.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "give steps to reproduce",
+            "words": [
+              "steps",
+              "reproduce",
+              "every time"
+            ]
+          },
+          {
+            "point": "say expected versus actual",
+            "words": [
+              "expected",
+              "actual",
+              "instead of",
+              "should have"
+            ]
+          },
+          {
+            "point": "include evidence",
+            "words": [
+              "screenshot",
+              "logs",
+              "the log",
+              "video",
+              "recording",
+              "error message"
+            ]
+          },
+          {
+            "point": "stay factual and kind",
+            "words": [
+              "not blame",
+              "politely",
+              "calmly",
+              "together",
+              "thanked",
+              "without blaming"
+            ]
+          }
+        ]
+      }
     },
     {
-      "id": "q3",
+      "id": "2519-01-q3",
+      "round": "technical",
+      "position": 3,
       "text": "How would you check that a program does what its requirements say it should?",
-      "source": "eMASCO 2519, task 3: Mengesahkan bahawa fungsi atur cara adalah mengikut keperluan pengguna dan garis panduan yang ditetapkan."
+      "why": "testers confirm software meets what users asked for.",
+      "source": "eMASCO 2519, task 3: Mengesahkan bahawa fungsi atur cara adalah mengikut keperluan pengguna dan garis panduan yang ditetapkan.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "map each requirement to a test",
+            "words": [
+              "each requirement",
+              "traceab",
+              "map",
+              "matrix",
+              "every requirement"
+            ]
+          },
+          {
+            "point": "write expected results first",
+            "words": [
+              "expected result",
+              "expected output",
+              "pass criteria",
+              "acceptance"
+            ]
+          },
+          {
+            "point": "run the tests and record results",
+            "words": [
+              "ran",
+              "record",
+              "logs",
+              "the log",
+              "pass",
+              "fail"
+            ]
+          },
+          {
+            "point": "involve the users",
+            "words": [
+              "user acceptance",
+              "uat",
+              "real users",
+              "the user",
+              "the client"
+            ]
+          }
+        ]
+      }
     }
   ]
 }

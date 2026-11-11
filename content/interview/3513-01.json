@@ -1,0 +1,175 @@
+{
+  "occupation": "3513-01",
+  "title": "Computer network technician",
+  "_note": "Tasks from eMASCO (emasco.mohr.gov.my/masco/3513), fetched 21 Oct 2026. Questions are ours; each cites the task it was built from. Rubric format: content/interview/sets.ts.",
+  "questions": [
+    {
+      "id": "3513-01-q1",
+      "round": "technical",
+      "position": 1,
+      "text": "Several users say the network is slow. How would you find the cause?",
+      "why": "network technicians keep everyone else working.",
+      "source": "eMASCO 3513, task 1: Mengendalikan, menyelenggara, dan mengesan masalah sistem rangkaian.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "find out who and what is affected",
+            "words": [
+              "which users",
+              "everyone",
+              "one floor",
+              "how many",
+              "when did",
+              "all users"
+            ]
+          },
+          {
+            "point": "check the devices and links",
+            "words": [
+              "switch",
+              "router",
+              "cable",
+              "access point",
+              "bandwidth",
+              "link"
+            ]
+          },
+          {
+            "point": "use network tools",
+            "words": [
+              "ping",
+              "traceroute",
+              "tracert",
+              "speed test",
+              "monitor",
+              "wireshark",
+              "logs"
+            ]
+          },
+          {
+            "point": "find and fix the cause",
+            "words": [
+              "cause",
+              "download",
+              "update",
+              "loop",
+              "fixed",
+              "limit"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "3513-01-q2",
+      "round": "technical",
+      "position": 2,
+      "text": "Tell us about a time you helped someone with a connection problem. How did you explain the fix so they understood it?",
+      "why": "users need to understand enough to avoid the same problem.",
+      "source": "eMASCO 3513, task 3: Membantu pengguna dengan masalah rangkaian dan komunikasi data.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "find out what they saw",
+            "words": [
+              "asked",
+              "what they saw",
+              "error",
+              "couldn't connect",
+              "no internet"
+            ]
+          },
+          {
+            "point": "fix the connection",
+            "words": [
+              "wifi",
+              "wi-fi",
+              "ip address",
+              "dns",
+              "restart",
+              "forgot the network",
+              "password",
+              "cable"
+            ]
+          },
+          {
+            "point": "explain in plain words",
+            "words": [
+              "explained",
+              "simple",
+              "plain",
+              "showed them",
+              "step by step",
+              "without jargon"
+            ]
+          },
+          {
+            "point": "check they can do it next time",
+            "words": [
+              "next time",
+              "themselves",
+              "on their own",
+              "wrote down",
+              "checked they"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "3513-01-q3",
+      "round": "technical",
+      "position": 3,
+      "text": "Why do backups matter, and how would you check that a backup can really be restored?",
+      "why": "a backup nobody has restored is only a hope.",
+      "source": "eMASCO 3513, task 6: Melaksanakan tugas menghidupkan dan mematikan sistem termasuk sistem sandaran dan operasi pemulihan bencana.",
+      "rubric": {
+        "keyPoints": [
+          {
+            "point": "backups protect against loss",
+            "words": [
+              "lost",
+              "loss",
+              "ransomware",
+              "failure",
+              "deleted",
+              "disaster"
+            ]
+          },
+          {
+            "point": "keep copies in more than one place",
+            "words": [
+              "offsite",
+              "off-site",
+              "cloud",
+              "another place",
+              "3-2-1",
+              "separate"
+            ]
+          },
+          {
+            "point": "do a test restore",
+            "words": [
+              "test restore",
+              "restore",
+              "restored",
+              "recover"
+            ]
+          },
+          {
+            "point": "check the restored data and schedule",
+            "words": [
+              "check the files",
+              "opened",
+              "compare",
+              "schedule",
+              "regular",
+              "every week",
+              "daily"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
