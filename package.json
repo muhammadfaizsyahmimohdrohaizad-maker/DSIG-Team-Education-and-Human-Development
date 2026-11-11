@@ -15,7 +15,8 @@
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
-    "db:types": "supabase gen types typescript --local > lib/database.types.ts"
+    "db:types": "python3 supabase/tests/local/gen_types.py",
+    "ref:import": "node --conditions=react-server --experimental-strip-types --env-file=.env.local scripts/import-reference.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.7.0",

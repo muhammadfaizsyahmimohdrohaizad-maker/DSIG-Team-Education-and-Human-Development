@@ -1,8 +1,21 @@
 # server/data
 
 Typed queries, one file per table group (D1 to D8 in the data dictionary). Both clients are typed with
-`Database` from `lib/database.types.ts` (regenerate it after every migration: see
-`supabase/tests/local/gen_types.py`).
+`Database` from `lib/database.types.ts`. Regenerate it after every migration. Until the Supabase CLI works
+here, use the local runner: `supabase/tests/local/run.sh --keep` prints a socket dir and port, then
+`pnpm -s db:types <socket dir> <port> > lib/database.types.ts`.
+
+| File | Tables (data dictionary) | Owner |
+|---|---|---|
+| `supabase.ts` | `db()`, `adminDb()`, `currentUser()` | db |
+| `consents.ts` | D2 consents (latest choice) | db |
+| `account.ts` | D1 profiles at sign-up, D2 consents, parent approvals, export, deletion, cron reads | backend |
+| `bookings.ts` | D6 bookings through `open_slots`, `my_bookings`, `claim_slot`, `move_booking`, `cancel_booking` | backend |
+| `adviser.ts` | D6 adviser side, D7 feedback, `open_request`, `adviser_requests`, `cohort_rows` | backend |
+| `profiles.ts` | D1 profile, projects, dated profile sessions | fullstack |
+| `learning.ts` | D4 skill and lesson progress, mastery checks (service role insert), review cards, saved study options | fullstack |
+| `reference.ts` | D3 `ref` schema reads, explicit columns only | fullstack |
+| `interview.ts` | D5 interview answers (to add) | ai |
 
 ## Which client
 
