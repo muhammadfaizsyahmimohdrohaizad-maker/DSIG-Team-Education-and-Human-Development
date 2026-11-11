@@ -82,7 +82,7 @@ export async function openRequest(bookingId: string): Promise<Result<SharedSumma
 export type Decision = { bookingId: string; studentId: string; start: string; minutes: number; status: BookingState; changed: boolean };
 
 export async function respondTo(bookingId: string, accept: boolean, note?: string): Promise<Result<Decision>> {
-  const { data, error } = await (await db()).rpc("respond_booking", { p_booking: bookingId, p_accept: accept, p_note: note ?? null });
+  const { data, error } = await (await db()).rpc("respond_booking", { p_booking: bookingId, p_accept: accept, p_note: note ?? "" });
   if (error) return fromDb(error, ADVISER_ERRORS, "respond");
   const r = data as { booking_id: string; student_id: string; slot_start: string; minutes: number; status: BookingState; changed: boolean };
   return ok({ bookingId: r.booking_id, studentId: r.student_id, start: r.slot_start, minutes: r.minutes, status: r.status, changed: r.changed });

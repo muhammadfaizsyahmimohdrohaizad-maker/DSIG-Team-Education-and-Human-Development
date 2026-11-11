@@ -19,7 +19,7 @@ export const BOOKING_ERRORS: KnownDbErrors = {
 export type OpenSlot = { id: string; adviserId: string; adviserName: string; start: string; minutes: number };
 
 export async function openSlots(from: string, to: string, adviserId?: string): Promise<Result<OpenSlot[]>> {
-  const { data, error } = await (await db()).rpc("open_slots", { p_from: from, p_to: to, p_adviser: adviserId ?? null });
+  const { data, error } = await (await db()).rpc("open_slots", { p_from: from, p_to: to, ...(adviserId ? { p_adviser: adviserId } : {}) });
   if (error) return fromDb(error, BOOKING_ERRORS, "openSlots");
   return ok((data as { id: string; adviser_id: string; adviser_name: string; slot_start: string; minutes: number }[])
     .map((r) => ({ id: r.id, adviserId: r.adviser_id, adviserName: r.adviser_name, start: r.slot_start, minutes: r.minutes })));
@@ -62,7 +62,7 @@ export type Claim = { bookingId: string; adviserId: string; start: string; minut
 
 export async function claimSlot(i: { slotId: string; topic: string; note?: string; shared: SharedItem[]; requestId: string }): Promise<Result<Claim>> {
   const { data, error } = await (await db()).rpc("claim_slot", {
-    p_slot: i.slotId, p_topic: i.topic, p_note: i.note ?? null, p_shared: i.shared, p_request_id: i.requestId,
+    p_slot: i.slotId, p_topic: i.topic, p_note: i.note ?? "", p_shared: i.shared, p_request_id: i.requestId,
   });
   if (error) return fromDb(error, BOOKING_ERRORS, "claimSlot");
   const r = data as { booking_id: string; adviser_id: string; slot_start: string; minutes: number; replayed: boolean };
