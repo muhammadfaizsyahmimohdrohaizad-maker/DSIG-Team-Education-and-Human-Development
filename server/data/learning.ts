@@ -58,8 +58,10 @@ export async function getProgress(userId: string): Promise<Map<string, SkillProg
 }
 
 async function upsertSkillState(userId: string, uri: string, state: SkillState, claimed?: boolean): Promise<void> {
-  const row: Record<string, unknown> = { user_id: userId, skill_uri: uri, state, updated_at: new Date().toISOString() };
-  if (claimed !== undefined) row.claimed = claimed;
+  const row = {
+    user_id: userId, skill_uri: uri, state, updated_at: new Date().toISOString(),
+    ...(claimed !== undefined ? { claimed } : {}),
+  };
   const { error } = await (await db()).from("skill_progress").upsert(row, { onConflict: "user_id,skill_uri" });
   if (error) fail("skill state", error);
 }
