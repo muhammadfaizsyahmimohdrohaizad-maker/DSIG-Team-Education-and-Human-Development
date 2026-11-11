@@ -11,6 +11,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { buildPayload, type RawReference } from "./reference-payload.ts";
 import type { LessonFile } from "../content/lessons/types.ts";
+import type { InterviewFile } from "../content/interview/sets.ts";
 
 const root = join(import.meta.dirname, "..");
 const read = <T>(rel: string): T => JSON.parse(readFileSync(join(root, rel), "utf8")) as T;
@@ -26,6 +27,8 @@ function loadRaw(): RawReference {
     modules: read("content/reference/gmi-modules.json"),
     studyOptions: read("content/reference/study-options.json"),
     lessons: readdirSync(lessonDir).filter((f) => f.endsWith(".json")).sort().map((f) => read<LessonFile>(`content/lessons/${f}`)),
+    interviews: readdirSync(join(root, "content/interview")).filter((f) => f.endsWith(".json")).sort()
+      .map((f) => read<InterviewFile>(`content/interview/${f}`)),
   };
 }
 

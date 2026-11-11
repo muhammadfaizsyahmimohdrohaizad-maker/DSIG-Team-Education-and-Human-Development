@@ -3,6 +3,7 @@
 import { createHash } from "node:crypto";
 import { lessonPath, skillUri } from "../content/reference/keys.ts";
 import { lessonFileProblems, type LessonFile } from "../content/lessons/types.ts";
+import { checkFiles, expandSets, importRow, type InterviewFile } from "../content/interview/sets.ts";
 
 type Status = "verified" | "unverified";
 
@@ -18,6 +19,8 @@ export type RawReference = {
   modules: { programme: string; modules: { id: string; title: string; skills: string[] }[] };
   studyOptions: { options: { key: string; code: string; level: string; kind: string; institution: string; programme: string; duration: string | null; award: string | null; source_url: string; status: Status }[] };
   lessons: LessonFile[];
+  /** content/interview/*.json. Optional so older callers keep working; without it the import leaves interview questions alone. */
+  interviews?: InterviewFile[];
 };
 
 export type ImportPayload = {
@@ -32,6 +35,8 @@ export type ImportPayload = {
   study_options: { id: string; code: string; level: string; kind: string; institution: string; programme: string; duration: string | null; award: string | null; source_url: string; verified: boolean }[];
   lessons: { id: string; skill_uri: string; lesson_no: number; title: string; content_path: string }[];
   check_questions: { id: string; lesson_id: string; position: number; prompt: string; options: { id: string; text: string }[]; answer_key: string }[];
+  /** ref.interview_questions rows; the database derives each id as md5('iq:' || key)::uuid. why and source sit in rubric. */
+  interview_questions?: ReturnType<typeof importRow>[];
 };
 
 const LEVELS = new Set(["spm", "pre_university", "diploma", "degree"]);
@@ -116,5 +121,11 @@ export function buildPayload(raw: RawReference): { payload: ImportPayload; probl
       prompt: q.prompt, options: q.options, answer_key: q.answer,
     }))),
   };
+  if (raw.interviews) {
+    problems.push(...checkFiles(raw.interviews).map((p) => `content/interview: ${p}`));
+    // Occupations without a technical round, and files for codes not in the reference, are content gaps,
+    // not errors: the interview page shows only the rounds that exist.
+    payload.interview_questions = expandSets(raw.interviews, raw.occupations.map((o) => o.code)).rows.map(importRow);
+  }
   return { payload, problems };
 }

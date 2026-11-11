@@ -157,7 +157,7 @@ insert into public.interview_answers (user_id, question_id, answer_text, skipped
    '{"structure":2,"accuracy":1,"evidence":1}', true,
    'Clear on unit testing. Give a number when you talk about results.', '2026-11-02 20:00+08');
 insert into public.interview_answers (user_id, question_id, answer_text, skipped, marks, created_at)
-select p.id, md5('iq:' || p.target || ':technical:1')::uuid, 'Practice answer.', false,
+select p.id, md5('iq:' || p.target || ':behavioural:1')::uuid, 'Practice answer.', false,
        '{"structure":1,"accuracy":1,"evidence":0}', timestamptz '2026-11-04 20:00+08' + (row_number() over (order by p.id)) * interval '1 day'
 from _people p
 where p.id in ('b0000000-0000-4000-8000-000000000101', 'b0000000-0000-4000-8000-000000000103', 'b0000000-0000-4000-8000-000000000105',
