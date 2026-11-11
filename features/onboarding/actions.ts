@@ -2,8 +2,7 @@
 
 // onboarding: parent or guardian approval for under-18 accounts (FR-CON-02, System Design 5.3).
 import { err, invalid, ok, unexpected, type Result } from "@/lib/result";
-import { parentApprovalRequest, parentTokenInput } from "@/lib/schemas";
-import { parentDecisionInput } from "./schemas";
+import { parentApprovalRequest, parentDecisionInput, parentTokenInput } from "@/lib/schemas";
 import {
   claimParentDecision, findParentRequest, insertParentConsent, ownProfile, parentEmailFor, setLocked, undoParentDecision,
 } from "@/server/data/account";

@@ -1,14 +1,14 @@
 "use client";
 // The parent's decision (ParentConsent board, "The page the parent opens"). Agree needs both boxes ticked;
-// Decline needs nothing. Validates with parentDecisionInput and calls recordParentDecision.
+// Decline needs nothing. Checks the boxes with parentAgreeInput and calls recordParentDecision.
 import { useState } from "react";
 import { AlertMessage, Button, CheckboxRow, ChoiceGroup } from "@/components/ui";
 import { zodFieldErrors, type FieldErrors } from "@/components/ui/use-action-form";
 import type { Result } from "@/lib/result";
-import { parentDecisionInput } from "@/lib/schemas";
+import { parentAgreeInput, type parentDecisionInput } from "@/lib/schemas";
 import type { z } from "zod";
 
-type DecisionInput = z.input<typeof parentDecisionInput>;
+type DecisionInput = z.input<typeof parentDecisionInput> | z.input<typeof parentAgreeInput>;
 
 export function ParentDecisionForm({
   token,
@@ -31,7 +31,7 @@ export function ParentDecisionForm({
   async function send(input: DecisionInput) {
     if (pending) return;
     if (input.decision === "agree") {
-      const errs = zodFieldErrors(parentDecisionInput.safeParse(input));
+      const errs = zodFieldErrors(parentAgreeInput.safeParse(input));
       setErrors(errs);
       if (Object.keys(errs).length > 0) {
         setAlert("Tick both boxes to agree, or choose Decline.");

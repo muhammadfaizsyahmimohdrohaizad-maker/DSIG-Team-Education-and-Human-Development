@@ -4,8 +4,7 @@
 // Each action validates with Zod, calls server/data, and returns a Result.
 import { err, invalid, ok, unexpected, type Result } from "@/lib/result";
 import type { Role } from "@/lib/types";
-import { newPasswordInput } from "@/lib/schemas";
-import { logInInput, passwordResetInput, signUpForm } from "./schemas";
+import { logInInput, newPasswordInput, passwordResetInput, signUpInput } from "@/lib/schemas";
 import {
   authSendPasswordReset, authSignIn, authSignOut, authSignUp, authUpdatePassword, deleteAuthUser,
   hasCurrentUndertaking, insertAccountRows, ownProfile, refreshSession, setAuthRole, touchLastLogin,
@@ -27,7 +26,7 @@ export type SignUpResult = {
 };
 
 export async function signUp(input: unknown): Promise<Result<SignUpResult>> {
-  const parsed = signUpForm.safeParse(input);
+  const parsed = signUpInput.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
   const v = parsed.data;
 

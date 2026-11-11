@@ -5,6 +5,12 @@ export const email = z.string().trim().toLowerCase().email("Enter an email like 
 export const password = z.string().min(8, "Use at least 8 characters");
 export const fullName = z.string().trim().min(2, "Enter your full name").max(100);
 
+const TICK = "Tick this box to create an account";
+
+/**
+ * Sign-up form and the signUp action. storeUse is required for students only: advisers are not shown
+ * that box (it is about a student's modules and skills). The parent email is asked of under-18 students only.
+ */
 export const signUpInput = z.object({
   role: z.enum(["student", "adviser"]),
   fullName,
@@ -14,13 +20,14 @@ export const signUpInput = z.object({
   parentEmail: email.optional(),
   staffCode: z.string().trim().optional(),
   consents: z.object({
-    termsPrivacy: z.literal(true, { error: "Tick this box to create an account" }),
-    storeUse: z.literal(true, { error: "Tick this box to create an account" }),
-    aiProcessing: z.boolean(),
-    adviserVisibility: z.boolean(),
+    termsPrivacy: z.literal(true, { error: TICK }),
+    storeUse: z.boolean().optional(),
+    aiProcessing: z.boolean().default(false),
+    adviserVisibility: z.boolean().default(false),
   }),
-}).refine((v) => !v.isUnder18 || !!v.parentEmail, { path: ["parentEmail"], message: "Enter a parent or guardian's email" })
-  .refine((v) => v.role !== "adviser" || !!v.staffCode, { path: ["staffCode"], message: "Enter your staff code" });
+}).refine((v) => v.role !== "student" || !v.isUnder18 || !!v.parentEmail, { path: ["parentEmail"], message: "Enter a parent or guardian's email" })
+  .refine((v) => v.role !== "adviser" || !!v.staffCode, { path: ["staffCode"], message: "Enter your staff code" })
+  .refine((v) => v.role !== "student" || v.consents.storeUse === true, { path: ["consents", "storeUse"], message: TICK });
 
 export const profileInput = z.object({
   educationLevel: z.enum(["spm", "pre_university", "diploma", "degree"]),
@@ -115,7 +122,7 @@ export const completeLessonInput = z.object({
 /** Live ranking runs before the form is complete, so the education level may still be empty. */
 export const rankInput = profileInput.partial({ educationLevel: true });
 
-// Added by frontend (sprint 1): log-in, password reset and the parent's decision, for the forms in app/(public).
+// Log-in, password reset and the parent's decision: used by the forms in app/(public) and the auth and onboarding actions.
 export const logInInput = z.object({
   email,
   password: z.string().min(1, "Enter your password"),
@@ -123,15 +130,14 @@ export const logInInput = z.object({
 
 export const passwordResetInput = z.object({ email });
 
-export const parentDecisionInput = z.discriminatedUnion("decision", [
-  z.object({
-    token: z.string().min(1),
-    decision: z.literal("agree"),
-    isParent: z.literal(true, { error: "Tick this box to agree" }),
-    agreesToUse: z.literal(true, { error: "Tick this box to agree" }),
-  }),
-  z.object({
-    token: z.string().min(1),
-    decision: z.literal("decline"),
-  }),
-]);
+/** recordParentDecision input. */
+export const parentDecisionInput = z.object({
+  token: parentToken,
+  decision: z.enum(["agree", "decline"], { error: "Choose Agree or Decline" }),
+});
+/** The parent-consent form checks both boxes before it sends an Agree; the action itself needs only parentDecisionInput. */
+export const parentAgreeInput = parentDecisionInput.extend({
+  decision: z.literal("agree"),
+  isParent: z.literal(true, { error: "Tick this box to agree" }),
+  agreesToUse: z.literal(true, { error: "Tick this box to agree" }),
+});
