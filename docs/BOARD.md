@@ -1,5 +1,15 @@
 # Sprint board: UTP CodeFest final
 
+## Prototype handoff · 12 November 2026
+
+The local main checkout now connects profile saving, MASCO matching and target selection to lessons, mastery checks, interview practice and adviser bookings. Student, adviser and institution screens read account data through the existing Supabase actions. The dashboard and account headers no longer use the demo student's identity.
+
+Verified locally with synthetic accounts: mobile profile saving and target persistence, lesson notes export, a five-question mastery check, three marked interview answers, requesting and cancelling a booking, adviser access to shared progress, acceptance visible to the student, and the institution access log. The database checks used PostgreSQL, all eight migrations, and the project's reference and demo seed files.
+
+Hosted signup, actual email delivery and a Vercel deployment still need a production smoke test. The local integration test used a stand-in for Supabase Auth. Real Gemini feedback also requires a configured provider and student consent.
+
+## Sprint 1 historical board
+
 Owner of this file: devops / PM. Each role updates its own rows when it merges. Status is one of
 `todo`, `in progress`, `done`. "Done" means the action and its screen are merged to main and pass the local
 checks (unit tests, SQL tests). "In progress" with "screen to build" means the server action is merged and the

@@ -34,8 +34,7 @@ that calls Supabase fails at request time until step 3 is done.
 
    `db push` only runs migrations the remote has not seen. Never edit a migration that has been pushed;
    add a new file instead.
-3. Reference data and the demo seed are loaded by the db role's import script once it lands
-   (`docs/BOARD.md`, critical path step 2 and 10).
+3. Run `supabase/seed_reference.sql` in the linked project’s SQL editor to load the occupations, lessons and interview content. The import is idempotent. Expose the `ref` schema in the Supabase Data API settings. The example accounts in `supabase/seed.sql` are for isolated local demos.
 
 ## 3. Environment variables (Vercel > Settings > Environment Variables)
 

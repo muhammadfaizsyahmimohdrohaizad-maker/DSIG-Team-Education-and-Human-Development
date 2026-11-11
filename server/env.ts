@@ -6,7 +6,7 @@ const schema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(20).optional(),
-  SITE_URL: z.string().url().default("http://localhost:3000"),
+  SITE_URL: z.string().url().default("http://localhost:3000").transform(value => new URL("/careerprep", value).href),
   STAFF_CODE_HASHES: z.string().default(""),
   CRON_SECRET: z.string().min(16).optional(),
   // AI is off unless this is "gemini" with GEMINI_API_KEY set. "stub" (fixed text) is for tests and local work

@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 // Public pages render, have no sideways scroll and no WCAG 2.1 AA violations (NFR-10, NFR-13).
 for (const path of ["/", "/sign-in", "/sign-up", "/privacy"]) {
   test(`public page ${path}`, async ({ page }) => {
-    await page.goto(path);
+    await page.goto("/careerprep" + path);
     await expect(page.locator("h1")).toBeVisible();
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
     expect(overflow).toBe(false);
@@ -14,6 +14,6 @@ for (const path of ["/", "/sign-in", "/sign-up", "/privacy"]) {
 }
 
 test("student pages need a log-in", async ({ page }) => {
-  await page.goto("/dashboard");
+  await page.goto("/careerprep/dashboard");
   await expect(page).toHaveURL(/\/sign-in/);
 });

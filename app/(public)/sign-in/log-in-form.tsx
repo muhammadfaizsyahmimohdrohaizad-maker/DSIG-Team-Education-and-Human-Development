@@ -14,7 +14,7 @@ export function LogInForm({
   requestPasswordReset,
   next,
 }: {
-  logIn: (input: LogInValues) => Promise<Result<unknown>>;
+  logIn: (input: LogInValues) => Promise<Result<{role:string;redirectTo:string}>>;
   requestPasswordReset: (input: { email: string }) => Promise<Result<unknown>>;
   next: string;
 }) {
@@ -44,7 +44,7 @@ export function LogInForm({
   return (
     <form
       noValidate
-      onSubmit={form.onSubmit(logIn, () => { router.push(next); router.refresh(); })}
+      onSubmit={form.onSubmit(logIn, (account) => { router.push(account.role === "student" ? next : account.redirectTo); router.refresh(); })}
       className="m-0 flex flex-col gap-[18px]"
     >
       <TextInput

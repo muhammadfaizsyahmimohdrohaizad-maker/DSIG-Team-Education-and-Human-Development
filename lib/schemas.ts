@@ -48,14 +48,17 @@ export const checkAnswers = z.object({
   answers: z.array(z.string()).length(5, "Answer all five questions"),
 });
 
+// Reference and demo rows use deterministic PostgreSQL UUIDs, including values without RFC version bits.
+const uuid = z.guid("This link or button is out of date. Reload the page and try again.");
+
 export const interviewAnswer = z.object({
-  questionId: z.string().uuid(),
+  questionId: uuid,
   text: z.string().trim().max(4000).optional(),
   skipped: z.boolean().default(false),
 }).refine((v) => v.skipped || (v.text && v.text.length > 0), { path: ["text"], message: "Write an answer or choose Skip" });
 
 export const bookingRequest = z.object({
-  slotId: z.string().uuid(),
+  slotId: uuid,
   topic: z.string().trim().min(1, "Pick a topic"),
   note: z.string().max(1000).optional(),
   shared: z.array(z.enum(["target_matches", "gap_progress", "study_plan", "interview_feedback"])),
@@ -63,12 +66,12 @@ export const bookingRequest = z.object({
 });
 
 export const adviserFeedback = z.object({
-  bookingId: z.string().uuid(),
+  bookingId: uuid,
   text: z.string().trim().min(1, "Write your feedback first").max(2000),
 });
 
 // ---- Accounts, booking and adviser actions (added by backend, Sprint 1) ----
-const uuid = z.string().uuid("This link or button is out of date. Reload the page and try again.");
+
 
 export const newPasswordInput = z.object({ password });
 
@@ -114,7 +117,7 @@ export const skillRef = z.string().trim().min(1).max(200);
 export const setTargetInput = z.object({ code: occupationCode });
 export const skillInput = z.object({ skill: skillRef });
 export const skillText = z.object({ text: z.string().trim().min(2, "Type at least 2 letters").max(80, "Use 80 characters or fewer") });
-export const studyOptionInput = z.object({ optionId: z.string().uuid() });
+export const studyOptionInput = z.object({ optionId: uuid });
 export const completeLessonInput = z.object({
   skill: skillRef,
   lessonNo: z.number().int().min(1).max(4),
@@ -146,10 +149,10 @@ export const parentAgreeInput = parentDecisionInput.extend({
 // Mock interview and review (ai area, sprint 1)
 export const startInterviewInput = z.object({ round: z.enum(["technical", "behavioural"]) });
 
-export const answerIdInput = z.object({ answerId: z.string().uuid() });
+export const answerIdInput = z.object({ answerId: uuid });
 
 export const rateCardInput = z.object({
-  cardId: z.string().uuid(),
+  cardId: uuid,
   rating: z.enum(["again", "hard", "good", "easy"]),
 });
 

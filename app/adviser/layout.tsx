@@ -1,13 +1,30 @@
 import { AppHeader, ADVISER_NAV } from "@/components/app-header";
-import { getAdviserHeaderSample } from "./sample-account";
+import { currentUser } from "@/server/data/supabase";
+import { hasCurrentUndertaking, ownProfile } from "@/server/data/account";
+import { redirect } from "next/navigation";
 
-// Every adviser page sits behind a current staff undertaking: has_current_undertaking() in RLS,
-// and a redirect to /staff/undertaking here once server/data/adviser.ts exists.
-export default function AdviserLayout({ children }: { children: React.ReactNode }) {
-  const { account, notifications } = getAdviserHeaderSample();
+export default async function AdviserLayout({ children }: { children: React.ReactNode }) {
+  const user = await currentUser();
+  if (!user) redirect("/sign-in");
+  const profile = await ownProfile(user.id);
+  if (profile?.role !== "adviser") redirect("/dashboard");
+  if (!(await hasCurrentUndertaking(user.id))) redirect("/staff/undertaking");
+  const names = profile.fullName.trim().split(/\s+/);
   return (
     <>
-      <AppHeader nav={ADVISER_NAV} home="/adviser/requests" account={account} notifications={notifications} />
+      <AppHeader
+        nav={ADVISER_NAV}
+        home="/adviser/requests"
+        notifications={[]}
+        account={{
+          firstName: names[0] || "Adviser",
+          initials: names
+            .slice(0, 2)
+            .map((n) => n[0])
+            .join(""),
+          links: [{ href: "/staff/undertaking", label: "Staff undertaking" }],
+        }}
+      />
       {children}
     </>
   );

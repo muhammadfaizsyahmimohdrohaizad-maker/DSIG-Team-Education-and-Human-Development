@@ -131,7 +131,7 @@ export function AboutYouForm({ data }: { data: AboutYouData }) {
     setSaveError("");
     const r = await saveSession(payload);
     setSaving(false);
-    if (r.ok) { router.push("/dashboard"); return; }
+    if (r.ok) { router.push("/map"); return; }
     setFieldErrors(r.error.fields ?? {});
     setSaveError(r.error.code === "UNEXPECTED" ? `${r.error.message} (Reference ${r.error.ref})` : r.error.message);
   };
@@ -332,7 +332,7 @@ export function AboutYouForm({ data }: { data: AboutYouData }) {
             <p className="m-0 inline-flex min-h-9 items-center rounded-full bg-cream px-3 text-sm font-semibold text-navy" aria-live="polite">
               {matches.length === 1 ? "1 match" : `${matches.length} matches`}
             </p>
-            <Link href="/map" className="font-semibold text-white">See these jobs on the career map</Link>
+            <button type="button" disabled={saving} onClick={save} className="font-semibold text-white underline">Save and see these jobs on the career map</button>
           </div>
         </section>
 
@@ -368,8 +368,8 @@ export function AboutYouForm({ data }: { data: AboutYouData }) {
           <p className="m-0 text-ink">{summaryLine}</p>
           {saveError && <p role="alert" className="m-0 font-semibold text-maroon">{saveError}</p>}
           <div className="flex flex-wrap items-center gap-4">
-            <button type="button" className={primaryButton} onClick={() => void save()} aria-busy={saving}>
-              {saving ? "Saving…" : "Save and go to dashboard"}
+            <button type="button" className={primaryButton} onClick={() => void save()} disabled={saving} aria-busy={saving}>
+              {saving ? "Saving…" : "Save and open career map"}
             </button>
             <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-navy">Cancel</Link>
           </div>

@@ -3,7 +3,7 @@ import { PublicHeader } from "@/components/public-header";
 import { Kicker, SoftPanel } from "@/components/ui";
 import { recordParentDecision } from "@/features/onboarding/actions";
 import { ParentDecisionForm } from "./parent-decision-form";
-import { getParentRequestSample } from "./sample-data";
+import { checkParentLink } from "@/features/onboarding/actions";
 
 export const metadata: Metadata = { title: "Parent or guardian approval", robots: { index: false } };
 
@@ -11,9 +11,9 @@ const pageTitle = "m-0 text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.15] tracking
 
 export default async function ParentConsentPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const request = getParentRequestSample(token);
+  const result = await checkParentLink({token});
 
-  if (request.status === "expired") {
+  if (!result.ok || result.value.state !== "open") {
     return (
       <>
         <PublicHeader variant="plain" />
@@ -21,7 +21,7 @@ export default async function ParentConsentPage({ params }: { params: Promise<{ 
           <Kicker>Parent or guardian consent</Kicker>
           <h1 className={pageTitle}>This link no longer works</h1>
           <p className="m-0 max-w-[46rem]">
-            Links in our emails work once and for 7 days. If the student still wants to use CareerPrep, they can sign up again and name you, and we will send a new email.
+            Links in our emails work once and for 7 days. If the student still wants to use CareerPrep, they can request a fresh approval link from their account, and we will send a new email.
             Nothing was shared while the account was waiting.
           </p>
         </main>
@@ -29,14 +29,15 @@ export default async function ParentConsentPage({ params }: { params: Promise<{ 
     );
   }
 
-  const name = request.studentFirstName;
+  const request = result.value;
+  const name = request.studentName.split(" ")[0] || request.studentName;
   return (
     <>
       <PublicHeader variant="plain" />
       <main id="main" className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-4 pb-16 pt-5 tablet:px-6 tablet:pt-8">
         <div className="flex flex-col gap-1.5">
           <Kicker>Parent or guardian consent</Kicker>
-          <h1 className={pageTitle}>{request.studentFullName} wants to use CareerPrep</h1>
+          <h1 className={pageTitle}>{request.studentName} wants to use CareerPrep</h1>
           <p className="m-0 max-w-[46rem]">
             {name} signed up for CareerPrep and named you as parent or guardian. Because {name} is under 18, the account stays locked until you agree.
           </p>
@@ -66,7 +67,7 @@ export default async function ParentConsentPage({ params }: { params: Promise<{ 
             <p className="m-0 text-[15px]">
               We delete {name}&apos;s data 12 months after the last log-in, or straight away if {name} or you ask. Read the <a href="/careerprep/privacy">Privacy Notice</a>.
             </p>
-            <ParentDecisionForm token={token} studentFullName={request.studentFullName} studentFirstName={name} recordParentDecision={recordParentDecision} />
+            <ParentDecisionForm token={token} studentFullName={request.studentName} studentFirstName={name} recordParentDecision={recordParentDecision} />
           </section>
 
           <SoftPanel as="aside" aria-labelledby="about-h" className="min-w-0 flex-[1_1_300px]">
@@ -75,7 +76,7 @@ export default async function ParentConsentPage({ params }: { params: Promise<{ 
               CareerPrep matches a student&apos;s studies and skills to official Malaysian jobs and helps them practise for interviews. It is built by students at the German-Malaysian Institute.
             </p>
             <p className="m-0 text-sm text-muted">
-              This link works once, until {request.expiresOn}. If you don&apos;t recognise {request.studentFullName}, close this page and the account will not open.
+              This link works once, until {new Date(request.expiresAt).toLocaleDateString("en-MY",{timeZone:"Asia/Kuala_Lumpur"})}. If you don&apos;t recognise {request.studentName}, close this page and the account will not open.
             </p>
           </SoftPanel>
         </div>

@@ -23,7 +23,7 @@ export default async function Page() {
       <div className="no-print flex flex-wrap items-center justify-between gap-3 rounded-card border border-hairline bg-cream p-4">
         <p className="m-0 text-ink">Choose <strong>Save as PDF</strong> in the print window to download this CV.</p>
         <div className="flex flex-wrap gap-2">
-          <Link href="/plan/cv" className="inline-flex min-h-11 items-center rounded-button border border-control px-5 font-semibold text-navy no-underline">Back to your CV</Link>
+          <Link href="/plan" className="inline-flex min-h-11 items-center rounded-button border border-control px-5 font-semibold text-navy no-underline">Back to my plan</Link>
           <PrintButton />
         </div>
       </div>

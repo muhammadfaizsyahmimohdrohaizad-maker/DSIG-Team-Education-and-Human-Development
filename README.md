@@ -5,8 +5,7 @@ close the skill gap for one target job with lessons, mastery checks and review c
 interview, build a CV and book a career adviser. Built by the DSIG team at GMI for UTP CodeFest,
 Track 2: Education and Human Development.
 
-Status: architecture scaffold. Pure engines are built and tested; screens and server actions are
-placeholders (`grep -rn "notBuilt(" features` lists what is left).
+The student workflow connects the saved profile, career map, skill gap, lessons, mastery checks, mock interview and adviser bookings. Staff can manage availability, review shared records and respond to requests.
 
 ## Stack
 
@@ -23,8 +22,10 @@ pnpm install
 cp .env.example .env.local      # fill in the values; never commit this file
 pnpm db:start                   # local Supabase in Docker (needs the Supabase CLI and Docker)
 pnpm db:reset                   # applies supabase/migrations
-pnpm dev                        # http://localhost:3000
+pnpm dev                        # http://localhost:3000/careerprep
 ```
+
+To run against the hosted CareerPrep project, set the Supabase URL and keys for that project in the ignored `.env.local` file and run `pnpm dev`. The Docker and reset steps above are only for a disposable local database. Run `supabase/seed_reference.sql` to load course and occupation content.
 
 Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm db:test`, `pnpm test:e2e`.
 

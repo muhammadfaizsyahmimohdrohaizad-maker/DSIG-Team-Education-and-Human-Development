@@ -66,3 +66,16 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+@layer components {
+  .workspace-form :is(select, textarea, input:not([type=hidden], [type=checkbox], [type=radio])) {
+    display: block;
+    width: 100%;
+    min-height: 2.75rem;
+    border: 1px solid var(--color-control);
+    border-radius: var(--radius-button);
+    padding: .5rem .75rem;
+    background: white;
+  }
+  .workspace-form label { max-width: 100%; }
+}

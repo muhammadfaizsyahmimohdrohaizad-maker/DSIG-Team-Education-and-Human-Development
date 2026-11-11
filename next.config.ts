@@ -6,7 +6,9 @@ import type { NextConfig } from "next";
 const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  process.env.NODE_ENV === "development"
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+    : "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",

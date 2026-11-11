@@ -3,6 +3,7 @@
 // and calls the signUp server action from features/auth/actions.ts, whose field errors land on the same fields.
 // Under 18: the parent's email is asked for, and the AI box is not shown (AI stays off for under-18 accounts).
 import { useCallback, useState, type ChangeEvent } from "react";
+import type { SignUpResult } from "@/features/auth/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { z } from "zod";
@@ -65,7 +66,7 @@ function toInput(v: Values): SignUpInput {
 
 const idFor = (name: string) => `su-${name.replace(".", "-")}`;
 
-export function SignUpForm({ signUp }: { signUp: (input: SignUpInput) => Promise<Result<unknown>> }) {
+export function SignUpForm({ signUp }: { signUp: (input: SignUpInput) => Promise<Result<SignUpResult>> }) {
   const router = useRouter();
   const validate = useCallback((v: Values): FieldErrors => {
     const errors = zodFieldErrors(signUpInput.safeParse(toInput(v)));
@@ -80,6 +81,11 @@ export function SignUpForm({ signUp }: { signUp: (input: SignUpInput) => Promise
   const student = v.role === "student";
   const under18 = student && v.isUnder18;
 
+  const [confirmEmail, setConfirmEmail] = useState(false);
+  if (confirmEmail) return <div role="status" className="space-y-3"><h2>Confirm your email</h2>
+    <p>Open the CareerPrep confirmation email sent to {v.email} and follow the link to sign in.</p>
+    {waitingFor && <p>Your parent or guardian also needs to approve your account.</p>}
+    <Link href="/sign-in">Go to login</Link></div>;
   if (waitingFor) {
     return (
       <div className="flex flex-col gap-3">
@@ -103,10 +109,10 @@ export function SignUpForm({ signUp }: { signUp: (input: SignUpInput) => Promise
       noValidate
       onSubmit={form.onSubmit(
         (values) => signUp(toInput(values)),
-        () => {
-          if (!student) router.push("/staff/undertaking");
-          else if (under18) setWaitingFor(v.parentEmail.trim());
-          else router.push("/dashboard");
+        (result) => {
+          if (result.nextStep === "parent_approval") setWaitingFor(v.parentEmail.trim());
+          if (result.confirmEmail) setConfirmEmail(true);
+          else if (result.nextStep === "signed_in") router.push(result.redirectTo);
         },
       )}
       className="m-0 flex flex-col gap-[18px]"
