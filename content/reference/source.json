@@ -1,0 +1,9 @@
+{
+  "source_version": "mvp-2026-11-11",
+  "notes": [
+    "Small MVP set for the UTP CodeFest final, not the full MASCO 2020 or ESCO download.",
+    "Occupation codes and Malay titles were checked against eMASCO (emasco.mohr.gov.my) search listings on 11 Nov 2026; the eMASCO pages themselves block automated reading, so task texts are marked per task.",
+    "ESCO: preferred labels are given as the team understands them; no ESCO URI could be checked from the build sandbox, so every esco_uri is null with esco_uri_status 'unverified'. Fill them from the ESCO v1.2 download before the pilot.",
+    "Skill keys (careerprep:skill/...) are the stable primary keys. ESCO URIs are stored beside them so a later ESCO update never breaks a student's progress rows."
+  ]
+}

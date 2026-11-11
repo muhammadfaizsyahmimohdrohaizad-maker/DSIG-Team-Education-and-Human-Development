@@ -1,0 +1,177 @@
+{
+  "skill": "model-evaluation",
+  "title": "Evaluating models",
+  "lessons": [
+    {
+      "no": 1,
+      "title": "Accuracy and its limits",
+      "minutes": 15,
+      "key_points": [
+        "Accuracy is the share of predictions that are right: correct predictions divided by all predictions.",
+        "A confusion matrix shows where the mistakes are. For two classes it has four cells: true positives, false positives, false negatives and true negatives.",
+        "Accuracy misleads on imbalanced data. If 95 of 100 emails are not spam, a model that always says \"not spam\" scores 0.95 and catches no spam at all.",
+        "Always compare accuracy with the share of the most common class, and look at the confusion matrix before trusting a single number.",
+        "In scikit-learn: accuracy_score(y_test, y_pred) and confusion_matrix(y_test, y_pred)."
+      ],
+      "worked_example": {
+        "title": "Read a confusion matrix",
+        "steps": [
+          "A model screens 100 students for risk of failing. 10 are really at risk.",
+          "It flags 8 students: 6 really at risk (true positives) and 2 not (false positives).",
+          "It misses 4 at-risk students (false negatives). The other 86 are correctly left alone (true negatives).",
+          "Accuracy = (6 + 86) / 100 = 0.92. That sounds high, but the model missed 4 of the 10 students it exists to find."
+        ],
+        "code": "from sklearn.metrics import accuracy_score, confusion_matrix\n\ny_pred = model.predict(X_test)\nprint(accuracy_score(y_test, y_pred))\nprint(confusion_matrix(y_test, y_pred))  # rows: true class, columns: predicted"
+      },
+      "mini_project": {
+        "title": "Find where your model is wrong",
+        "brief": "Use the classifier from Machine learning basics, or any classifier you have.",
+        "steps": [
+          "Compute accuracy on the test set.",
+          "Print the confusion matrix and label its rows and columns by hand.",
+          "Find the pair of classes the model confuses most.",
+          "Look at three of those wrong examples and write a guess at why they were hard."
+        ],
+        "done_when": "You can name the model's most common mistake and give one likely reason."
+      }
+    },
+    {
+      "no": 2,
+      "title": "Precision and recall",
+      "minutes": 15,
+      "key_points": [
+        "Precision = TP / (TP + FP): of everything the model flagged, how much was right.",
+        "Recall = TP / (TP + FN): of everything it should have found, how much it found.",
+        "Raising the decision threshold usually raises precision and lowers recall; lowering it does the opposite.",
+        "Choose by the cost of each mistake. Missing a sick patient (a false negative) is worse than an extra test, so favour recall. Wrongly blocking a real email (a false positive) annoys users, so favour precision for a spam filter.",
+        "F1 is the harmonic mean of precision and recall: 2 × P × R / (P + R). It is high only when both are high."
+      ],
+      "worked_example": {
+        "title": "Precision and recall for the at-risk screen",
+        "steps": [
+          "Using lesson 1's numbers: TP = 6, FP = 2, FN = 4.",
+          "Precision = 6 / (6 + 2) = 0.75. Three of every four flagged students were really at risk.",
+          "Recall = 6 / (6 + 4) = 0.60. The model found only 60% of at-risk students.",
+          "F1 = 2 × 0.75 × 0.60 / (0.75 + 0.60) ≈ 0.67.",
+          "Missing a student who needs help is the costly mistake here, so you would lower the threshold to raise recall, accepting a few more false alarms."
+        ],
+        "code": "from sklearn.metrics import precision_score, recall_score, f1_score, classification_report\n\nprint(precision_score(y_test, y_pred), recall_score(y_test, y_pred), f1_score(y_test, y_pred))\nprint(classification_report(y_test, y_pred))"
+      },
+      "mini_project": {
+        "title": "Move the threshold",
+        "brief": "See the trade-off with your own numbers.",
+        "steps": [
+          "Train a LogisticRegression on a two-class dataset (for example scikit-learn's breast cancer dataset).",
+          "Get probabilities with predict_proba and turn them into predictions at thresholds 0.3, 0.5 and 0.7.",
+          "Compute precision and recall at each threshold in a small table.",
+          "Pick a threshold for a stated use and explain your choice in two sentences."
+        ],
+        "done_when": "Your table shows precision rising and recall falling as the threshold goes up, with a justified choice."
+      }
+    },
+    {
+      "no": 3,
+      "title": "Overfitting",
+      "minutes": 15,
+      "key_points": [
+        "Overfitting: the model learns the training data, noise included, so it scores much higher on training data than on new data.",
+        "Underfitting: the model is too simple to capture the pattern, so it scores low on both.",
+        "Compare training and test scores. A large gap (for example 1.00 on training, 0.70 on test) is the usual sign of overfitting.",
+        "Fixes for overfitting: more data, simpler models, fewer features, regularisation, or limits such as a maximum tree depth.",
+        "For regression, measure error with MAE (average absolute error, in the target's own units) or RMSE (penalises large errors more). Lower is better for both."
+      ],
+      "worked_example": {
+        "title": "See overfitting in a decision tree",
+        "steps": [
+          "Train DecisionTreeClassifier() with no depth limit. Training accuracy is 1.00 because the tree can memorise every row.",
+          "Its test accuracy is clearly lower, which shows the gap.",
+          "Train again with max_depth=3. Training accuracy drops a little but test accuracy often rises.",
+          "Keep the depth that gives the best score on held-out data, not on training data."
+        ],
+        "code": "from sklearn.tree import DecisionTreeClassifier\n\nfor depth in [None, 3]:\n    tree = DecisionTreeClassifier(max_depth=depth, random_state=0).fit(X_train, y_train)\n    print(depth, tree.score(X_train, y_train), tree.score(X_test, y_test))"
+      },
+      "mini_project": {
+        "title": "Plot the gap",
+        "brief": "Watch overfitting appear as a model gets more complex.",
+        "steps": [
+          "Train decision trees with max_depth from 1 to 15 on one dataset.",
+          "Record training and test accuracy for each depth.",
+          "Plot both lines on one chart with matplotlib.",
+          "Mark where underfitting ends and overfitting starts, and say which depth you would choose."
+        ],
+        "done_when": "Your chart shows both lines and you have named a depth with a reason."
+      }
+    },
+    {
+      "no": 4,
+      "title": "Cross-validation",
+      "minutes": 20,
+      "key_points": [
+        "One train/test split can be lucky or unlucky. k-fold cross-validation splits the training data into k parts, trains k times and tests on each part once.",
+        "The result is k scores. Report their mean and spread (standard deviation); a large spread means the score depends on which rows you got.",
+        "Use cross-validation on the training set to compare models and choose hyperparameters. Keep the final test set for one last check.",
+        "cross_val_score(model, X_train, y_train, cv=5) runs 5-fold cross-validation. For classification it stratifies the folds by default.",
+        "GridSearchCV tries each setting you list with cross-validation and keeps the best one."
+      ],
+      "worked_example": {
+        "title": "Pick k for k-nearest neighbours",
+        "steps": [
+          "For k in 1, 3, 5, 7 and 9, run 5-fold cross-validation on the training set.",
+          "Print the mean and standard deviation of each set of scores.",
+          "Choose the k with the best mean score; if two are close, prefer the one with the smaller spread or the simpler model.",
+          "Fit that model on the whole training set and score it once on the test set."
+        ],
+        "code": "from sklearn.model_selection import cross_val_score\nfrom sklearn.neighbors import KNeighborsClassifier\n\nfor k in [1, 3, 5, 7, 9]:\n    scores = cross_val_score(KNeighborsClassifier(n_neighbors=k), X_train, y_train, cv=5)\n    print(k, scores.mean().round(3), scores.std().round(3))"
+      },
+      "mini_project": {
+        "title": "Choose a model fairly",
+        "brief": "Compare two models the way a team would.",
+        "steps": [
+          "Pick two models, for example LogisticRegression and a DecisionTreeClassifier with max_depth=5.",
+          "Run 5-fold cross-validation for each on the training set, choosing a metric that fits your problem (accuracy, recall or F1).",
+          "Report mean ± standard deviation for both.",
+          "Fit the winner on the full training set and report its test score once, with one sentence on whether it matches the cross-validation result."
+        ],
+        "done_when": "You have cross-validation results for two models and a single final test score for the winner."
+      }
+    }
+  ],
+  "check": [
+    { "id": "eval-q1", "lesson": 1, "prompt": "99 of 100 transactions are normal. A model always predicts \"normal\". What is its accuracy, and is it useful for finding fraud?", "options": [
+      { "id": "a", "text": "0.99, and yes it is useful" },
+      { "id": "b", "text": "0.99, but it finds no fraud at all" },
+      { "id": "c", "text": "0.50, because there are two classes" },
+      { "id": "d", "text": "0.01, because it never predicts fraud" }
+    ], "answer": "b", "explanation": "It is right on all 99 normal cases, so accuracy is 0.99, yet it misses the one fraud case. This is why accuracy misleads on imbalanced data." },
+    { "id": "eval-q2", "lesson": 2, "prompt": "A model flags 20 items; 15 are truly positive. There were 30 positives in total. What are precision and recall?", "options": [
+      { "id": "a", "text": "Precision 0.75, recall 0.50" },
+      { "id": "b", "text": "Precision 0.50, recall 0.75" },
+      { "id": "c", "text": "Precision 0.75, recall 0.75" },
+      { "id": "d", "text": "Precision 0.67, recall 0.50" }
+    ], "answer": "a", "explanation": "Precision = 15 / 20 = 0.75 (of the flagged items, how many were right). Recall = 15 / 30 = 0.50 (of all positives, how many were found)." },
+    { "id": "eval-q3", "lesson": 2, "prompt": "A clinic screen must miss as few sick patients as possible. Which measure matters most?", "options": [
+      { "id": "a", "text": "Precision" },
+      { "id": "b", "text": "Recall" },
+      { "id": "c", "text": "Training accuracy" },
+      { "id": "d", "text": "The number of features" }
+    ], "answer": "b", "explanation": "Missing a sick patient is a false negative. Recall measures how many real positives are found, so it is the one to keep high." },
+    { "id": "eval-q4", "lesson": 3, "prompt": "Training accuracy is 0.99 and test accuracy is 0.68. What is the most likely problem?", "options": [
+      { "id": "a", "text": "Underfitting" },
+      { "id": "b", "text": "Overfitting" },
+      { "id": "c", "text": "The test set is too easy" },
+      { "id": "d", "text": "The labels are all the same" }
+    ], "answer": "b", "explanation": "A big gap between training and test scores means the model learned the training rows too closely and does not generalise." },
+    { "id": "eval-q5", "lesson": 4, "prompt": "What does 5-fold cross-validation give you that a single split does not?", "options": [
+      { "id": "a", "text": "A model that never overfits" },
+      { "id": "b", "text": "Five scores, so you see the average and how much it varies" },
+      { "id": "c", "text": "A bigger training set for the final model" },
+      { "id": "d", "text": "A way to skip the test set" }
+    ], "answer": "b", "explanation": "Each fold is tested once, so you get five scores. Their mean is steadier than one split, and their spread shows how much the result depends on luck." }
+  ],
+  "review_cards": [
+    { "front": "Precision formula", "back": "TP / (TP + FP): of what the model flagged, the share that was right." },
+    { "front": "Recall formula", "back": "TP / (TP + FN): of what should have been found, the share that was found." },
+    { "front": "Sign of overfitting?", "back": "A high training score with a much lower test score." },
+    { "front": "What is cross-validation used for?", "back": "Comparing models and choosing settings on the training data, with a mean and spread of scores, while the test set stays untouched." }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "_note": "GMI module -> skill links for A1. Module names are the six shown on the approved mockup (NewSession board) for the Diploma in Software Engineering; GMI's official module codes and the full list are not in this file yet (source: GMI Programme Guide, https://www.gmi.edu.my/wp-content/uploads/2026/05/PROGRAMME-GUIDE-May-2026-rev-02.pdf, not read from the sandbox). Skill links are team judgement, marked unverified until a GMI lecturer checks them.",
+  "programme": "Diploma in Software Engineering",
+  "modules": [
+    { "id": "gmi-dse-basic-programming", "title": "Basic of Programming", "skills": ["python"], "status": "unverified", "_check": "Confirm which language the module teaches; change the link if it is not Python." },
+    { "id": "gmi-dse-basic-software-testing", "title": "Basic of Software Testing", "skills": ["software-testing"], "status": "unverified" },
+    { "id": "gmi-dse-modelling-requirements", "title": "Software Modelling & Requirements Engineering", "skills": ["software-design", "requirements"], "status": "unverified" },
+    { "id": "gmi-dse-quality-assurance", "title": "Quality Assurance & Control", "skills": ["software-testing"], "status": "unverified" },
+    { "id": "gmi-dse-android-programming", "title": "Android Programming", "skills": ["mobile-dev", "java"], "status": "unverified", "_check": "Confirm Java (not only Kotlin) is used." },
+    { "id": "gmi-dse-advanced-web-programming", "title": "Advanced Web Programming", "skills": ["web-programming", "html-css", "javascript"], "status": "unverified" }
+  ]
+}

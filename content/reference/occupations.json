@@ -1,0 +1,412 @@
+[
+  {
+    "code": "2519-03",
+    "title_en": "AI engineer",
+    "title_ms": "Jurutera Pembelajaran Mesin/Kecerdasan Buatan (AI)",
+    "source_url": "https://emasco.mohr.gov.my/masco/2519-03",
+    "code_status": "verified",
+    "tasks": [
+      {
+        "en": "Collect, clean and prepare data that a model will learn from.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Build, train and tune machine learning models for a stated problem.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Test models against agreed measures and report how well they work.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Put trained models into software that people use, and watch how they perform.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      }
+    ],
+    "essential_skills": [
+      "python",
+      "sql",
+      "statistics",
+      "data-cleansing",
+      "git",
+      "machine-learning",
+      "model-evaluation",
+      "deep-learning",
+      "model-deployment"
+    ],
+    "interest_areas": [
+      "Artificial intelligence",
+      "Programming",
+      "Data and statistics"
+    ]
+  },
+  {
+    "code": "2512-01",
+    "title_en": "Software developer",
+    "title_ms": null,
+    "source_url": "https://emasco.mohr.gov.my/masco/2512",
+    "code_status": "unverified",
+    "tasks": [
+      {
+        "en": "Research, analyse and evaluate what software applications and operating systems need to do.",
+        "ms": "Menyelidik, menganalisis dan menilai keperluan aplikasi perisian dan sistem operasi.",
+        "status": "verified",
+        "source": "eMASCO 2512, task 1 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Research, design and develop computer software systems.",
+        "ms": "Menyelidik, mereka bentuk dan membangunkan sistem perisian komputer.",
+        "status": "verified",
+        "source": "eMASCO 2512, task 2 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Develop and direct software testing and validation procedures.",
+        "ms": "Membangun dan mengarahkan pengujian perisian dan pengesahan prosedur.",
+        "status": "verified",
+        "source": "eMASCO 2512, task 4 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Modify existing software to correct errors and to adapt it to new hardware.",
+        "ms": "Mengubahsuai perisian sedia ada untuk membetulkan ralat dan menyesuaikannya dengan perkakasan baru…",
+        "status": "verified",
+        "source": "eMASCO 2512, task 5 (read 21 Oct 2026)"
+      }
+    ],
+    "essential_skills": [
+      "java",
+      "javascript",
+      "sql",
+      "git",
+      "software-design",
+      "requirements",
+      "software-testing",
+      "mobile-dev"
+    ],
+    "interest_areas": [
+      "Programming",
+      "Web and app design"
+    ],
+    "_note": "Code 2512-01 comes from the team's 21 Oct eMASCO read (content/interview/2512-01.json); its Malay title and the code were not re-checked on 11 Nov."
+  },
+  {
+    "code": "2524-03",
+    "title_en": "Data analyst",
+    "title_ms": "Juruanalisis Data",
+    "source_url": "https://emasco.mohr.gov.my/masco/2524-03",
+    "code_status": "verified",
+    "tasks": [
+      {
+        "en": "Gather data from databases and spreadsheets and check it for errors.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Analyse data to answer questions from managers and teams.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Present findings in reports, charts and dashboards.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      }
+    ],
+    "essential_skills": [
+      "sql",
+      "spreadsheets",
+      "statistics",
+      "data-cleansing",
+      "data-analysis",
+      "data-visualisation",
+      "python"
+    ],
+    "interest_areas": [
+      "Data and statistics",
+      "Business and management"
+    ]
+  },
+  {
+    "code": "2513-01",
+    "title_en": "Web developer",
+    "title_ms": null,
+    "source_url": "https://emasco.mohr.gov.my/masco/2513",
+    "code_status": "unverified",
+    "tasks": [
+      {
+        "en": "Analyse, design and develop websites, combining creative design with programming.",
+        "ms": "Menganalisis, mereka bentuk dan membangunkan laman Internet dengan menggunakan hasil seni dan kreativiti…",
+        "status": "verified",
+        "source": "eMASCO 2513, task 1 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Liaise with network specialists on web-related issues.",
+        "ms": "Berhubung dengan pakar rangkaian berkenaan dengan isu yang berkaitan dengan web…",
+        "status": "verified",
+        "source": "eMASCO 2513, task 3 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Design, develop and integrate computer code with other specialised inputs.",
+        "ms": "Mereka bentuk, membangunkan dan menyepadukan kod komputer dengan input khusus lain…",
+        "status": "verified",
+        "source": "eMASCO 2513, task 4 (read 21 Oct 2026)"
+      }
+    ],
+    "essential_skills": [
+      "html-css",
+      "javascript",
+      "web-programming",
+      "sql",
+      "git",
+      "ui-design"
+    ],
+    "interest_areas": [
+      "Web and app design",
+      "Programming"
+    ],
+    "_note": "Code 2513-01 comes from the team's 21 Oct eMASCO read (content/interview/2513-01.json); its Malay title and the code were not re-checked on 11 Nov."
+  },
+  {
+    "code": "2519-01",
+    "title_en": "Software tester",
+    "title_ms": null,
+    "source_url": "https://emasco.mohr.gov.my/masco/2519",
+    "code_status": "unverified",
+    "tasks": [
+      {
+        "en": "Develop and document software test plans.",
+        "ms": "Membangunkan dan mendokumentasikan rancangan pengujian perisian.",
+        "status": "verified",
+        "source": "eMASCO 2519, task 1 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Check that programs work as users need and as the agreed guidelines say.",
+        "ms": "Mengesahkan bahawa fungsi atur cara adalah mengikut keperluan pengguna dan garis panduan yang ditetapkan.",
+        "status": "verified",
+        "source": "eMASCO 2519, task 3 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Run, analyse and document the results of software and system tests.",
+        "ms": "Melaksanakan, menganalisis dan mendokumentasikan keputusan pengujian aplikasi perisian serta ujian sistem maklumat dan telekomunikasi.",
+        "status": "verified",
+        "source": "eMASCO 2519, task 4 (read 21 Oct 2026)"
+      }
+    ],
+    "essential_skills": [
+      "software-testing",
+      "requirements",
+      "sql",
+      "git",
+      "python"
+    ],
+    "interest_areas": [
+      "Programming"
+    ],
+    "_note": "Code 2519-01 comes from the team's 21 Oct eMASCO read (content/interview/2519-01.json); its Malay title and the code were not re-checked on 11 Nov."
+  },
+  {
+    "code": "2543-01",
+    "title_en": "Web designer",
+    "title_ms": "Pereka Web",
+    "source_url": "https://emasco.mohr.gov.my/masco/2543-01",
+    "code_status": "verified",
+    "tasks": [
+      {
+        "en": "Plan page layouts and user flows with the people who will use a site.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Design screens, wireframes and prototypes, then test them with users.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Turn designs into pages with HTML and CSS, or hand them over to developers.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      }
+    ],
+    "essential_skills": [
+      "ui-design",
+      "html-css",
+      "javascript",
+      "requirements"
+    ],
+    "interest_areas": [
+      "Web and app design"
+    ]
+  },
+  {
+    "code": "2511-01",
+    "title_en": "Management information systems analyst",
+    "title_ms": "Juruanalisis Sistem Maklumat Pengurusan (MIS)",
+    "source_url": "https://emasco.mohr.gov.my/masco/2511-01",
+    "code_status": "verified",
+    "tasks": [
+      {
+        "en": "Find out what information managers need and how the current system provides it.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Write requirements and design changes to information systems.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Produce reports and dashboards from business data.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      }
+    ],
+    "essential_skills": [
+      "business-analysis",
+      "requirements",
+      "sql",
+      "spreadsheets",
+      "software-design",
+      "data-visualisation"
+    ],
+    "interest_areas": [
+      "Business and management",
+      "Data and statistics"
+    ]
+  },
+  {
+    "code": "2523-01",
+    "title_en": "Network specialist",
+    "title_ms": "Pakar Rangkaian",
+    "source_url": "https://emasco.mohr.gov.my/masco/2523-01",
+    "code_status": "verified",
+    "tasks": [
+      {
+        "en": "Design and set up computer networks for an organisation.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Monitor network performance and fix faults.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Keep networks secure and plan for growth, including cloud services.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      }
+    ],
+    "essential_skills": [
+      "networking",
+      "linux",
+      "network-security",
+      "cloud",
+      "troubleshooting"
+    ],
+    "interest_areas": [
+      "Networks and cloud"
+    ]
+  },
+  {
+    "code": "3513-01",
+    "title_en": "Computer network technician",
+    "title_ms": "Juruteknik Rangkaian Komputer",
+    "source_url": "https://emasco.mohr.gov.my/masco/3513-01",
+    "code_status": "verified",
+    "tasks": [
+      {
+        "en": "Operate, maintain and troubleshoot network systems.",
+        "ms": "Mengendalikan, menyelenggara, dan mengesan masalah sistem rangkaian.",
+        "status": "verified",
+        "source": "eMASCO 3513, task 1 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Help users with network and data communication problems.",
+        "ms": "Membantu pengguna dengan masalah rangkaian dan komunikasi data.",
+        "status": "verified",
+        "source": "eMASCO 3513, task 3 (read 21 Oct 2026)"
+      },
+      {
+        "en": "Start up and shut down systems, including backup and disaster recovery operations.",
+        "ms": "Melaksanakan tugas menghidupkan dan mematikan sistem termasuk sistem sandaran dan operasi pemulihan bencana.",
+        "status": "verified",
+        "source": "eMASCO 3513, task 6 (read 21 Oct 2026)"
+      }
+    ],
+    "essential_skills": [
+      "networking",
+      "troubleshooting",
+      "linux",
+      "network-security"
+    ],
+    "interest_areas": [
+      "Networks and cloud"
+    ]
+  },
+  {
+    "code": "2531-04",
+    "title_en": "Cybersecurity analyst",
+    "title_ms": "Juruanalisis Keselamatan Siber",
+    "source_url": "https://emasco.mohr.gov.my/masco/2531-04",
+    "code_status": "verified",
+    "tasks": [
+      {
+        "en": "Watch systems and networks for signs of attack.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Investigate security incidents and help the organisation recover.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Find weaknesses and recommend fixes before they are exploited.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      }
+    ],
+    "essential_skills": [
+      "network-security",
+      "cyber-defence",
+      "networking",
+      "linux",
+      "python"
+    ],
+    "interest_areas": [
+      "Cybersecurity",
+      "Networks and cloud"
+    ]
+  },
+  {
+    "code": "2144-06",
+    "title_en": "Robotics technologist",
+    "title_ms": "Juruteknologi Robotik",
+    "source_url": "https://emasco.mohr.gov.my/masco/2144-06",
+    "code_status": "verified",
+    "tasks": [
+      {
+        "en": "Build, program and test robots and automated machines.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      },
+      {
+        "en": "Find and fix faults in sensors, circuits and control code.",
+        "status": "unverified",
+        "source": "Written by the team from the eMASCO title; check against the eMASCO task list."
+      }
+    ],
+    "essential_skills": [
+      "robotics",
+      "electronics",
+      "cpp",
+      "python"
+    ],
+    "interest_areas": [
+      "Electronics and robotics"
+    ]
+  }
+]

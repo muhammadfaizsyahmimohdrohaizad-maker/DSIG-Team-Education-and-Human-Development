@@ -98,3 +98,17 @@ export const availabilityInput = z.object({
 
 export const consentUpdate = z.object({ kind: z.enum(["ai_processing", "adviser_visibility"]), given: z.boolean() });
 export const deleteAccountInput = z.object({ confirmation: z.string().max(200) });
+
+// ---- Added by fullstack (sprint 1) ----
+export const occupationCode = z.string().trim().regex(/^\d{4}(-\d{2})?$/, "Pick a job from the list");
+export const skillRef = z.string().trim().min(1).max(200);
+
+export const setTargetInput = z.object({ code: occupationCode });
+export const skillInput = z.object({ skill: skillRef });
+export const skillText = z.object({ text: z.string().trim().min(2, "Type at least 2 letters").max(80, "Use 80 characters or fewer") });
+export const studyOptionInput = z.object({ optionId: z.string().uuid() });
+export const completeLessonInput = z.object({
+  skill: skillRef,
+  lessonNo: z.number().int().min(1).max(4),
+  notes: z.string().max(20000, "Notes can be up to 20,000 characters").optional(),
+});

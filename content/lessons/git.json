@@ -1,0 +1,180 @@
+{
+  "skill": "git",
+  "title": "Version control with Git",
+  "lessons": [
+    {
+      "no": 1,
+      "title": "Commits and history",
+      "minutes": 15,
+      "key_points": [
+        "Git keeps a history of your project as a chain of commits. Each commit is a saved snapshot of every tracked file, with a message and an ID (a hash such as 3f2a9c1).",
+        "Work moves through three places: the working folder (what you edit), the staging area (what the next commit will contain) and the repository (saved commits).",
+        "git add puts a change in the staging area; git commit -m \"message\" saves what is staged as a new commit. Only staged changes go into the commit.",
+        "git status shows which files are changed, staged or untracked. Run it before every commit so nothing surprises you.",
+        "git log --oneline lists commits newest first. A good message says what changed and why, in the present tense: \"Add login form validation\", not \"stuff\"."
+      ],
+      "worked_example": {
+        "title": "Start tracking a small project",
+        "steps": [
+          "Open a terminal in the project folder and run git init. Git creates a hidden .git folder; nothing is tracked yet.",
+          "Run git status. Your files are listed as untracked.",
+          "Run git add README.md main.py, then git status again. Both files now show as changes to be committed.",
+          "Run git commit -m \"Add README and first version of main.py\". Git prints the new commit's short ID.",
+          "Edit main.py, then run git diff to see the exact lines you changed before staging them.",
+          "Stage and commit the edit with a clear message, then run git log --oneline. You see two commits, newest first."
+        ],
+        "code": "git init\ngit add README.md main.py\ngit commit -m \"Add README and first version of main.py\"\ngit diff\ngit add main.py\ngit commit -m \"Read questions from a CSV file\"\ngit log --oneline"
+      },
+      "mini_project": {
+        "title": "Put your own project under Git",
+        "brief": "Take a project you already have (for example your class FAQ chatbot) and give it a clean history.",
+        "steps": [
+          "Run git init in the project folder.",
+          "Commit the current files as the first commit, with a message that says what the project is.",
+          "Make two small, separate improvements and commit each one on its own.",
+          "Run git log --oneline and check that each message would make sense to a classmate."
+        ],
+        "done_when": "git log --oneline shows at least three commits with clear messages."
+      }
+    },
+    {
+      "no": 2,
+      "title": "Working with branches",
+      "minutes": 15,
+      "key_points": [
+        "A branch is a movable name that points at a commit. Work on a branch leaves main untouched until you choose to bring it in.",
+        "git branch name creates a branch; git switch name moves you onto it. git switch -c name does both in one step.",
+        "New commits are added to the branch you are on. git branch with no name lists branches and marks the current one with *.",
+        "Use one branch per piece of work, named for what it does: add-about-page, fix-login-bug.",
+        "Commit or stash your changes before switching, so unfinished edits do not follow you onto another branch."
+      ],
+      "worked_example": {
+        "title": "Add a feature on its own branch",
+        "steps": [
+          "On main, run git switch -c add-about. You are now on a new branch that starts at the same commit as main.",
+          "Create about.html, then git add about.html and git commit -m \"Add About page\".",
+          "Run git switch main. about.html disappears from the folder, because main does not have that commit yet.",
+          "Run git switch add-about again and the file is back. Nothing was lost; each branch shows its own commits."
+        ],
+        "code": "git switch -c add-about\ngit add about.html\ngit commit -m \"Add About page\"\ngit switch main\ngit branch"
+      },
+      "mini_project": {
+        "title": "Two features, two branches",
+        "brief": "Practise keeping separate pieces of work apart.",
+        "steps": [
+          "From main, create a branch called add-help and commit a new help text file on it.",
+          "Switch back to main and create a second branch called fix-typo from main.",
+          "Fix a typo in your README on fix-typo and commit it.",
+          "Run git log --oneline --all --graph and find both branches in the picture."
+        ],
+        "done_when": "The graph shows two branches, each with one commit that the other does not have."
+      }
+    },
+    {
+      "no": 3,
+      "title": "Merging and conflicts",
+      "minutes": 15,
+      "key_points": [
+        "To bring a branch's work into main, switch to main and run git merge branch-name. Git combines the two histories.",
+        "If main has not moved since the branch started, Git does a fast-forward: it simply moves main up to the branch's last commit.",
+        "A merge conflict happens when both branches changed the same lines of the same file. Git stops and marks the lines with <<<<<<<, ======= and >>>>>>>.",
+        "To resolve it, edit the file to the version you want, delete the markers, then git add the file and git commit to finish the merge.",
+        "After a branch is merged, delete it with git branch -d branch-name to keep the list short."
+      ],
+      "worked_example": {
+        "title": "Resolve a conflict in README.md",
+        "steps": [
+          "Both branches started from a README whose first line was \"FAQ Bot\". On branch rename you changed it to \"Class FAQ Chatbot\"; meanwhile someone changed the same line on main to \"FAQ Bot v2\".",
+          "On main, run git merge rename. Git reports CONFLICT (content): Merge conflict in README.md.",
+          "Open README.md. Between <<<<<<< HEAD and ======= is main's line; between ======= and >>>>>>> rename is the branch's line.",
+          "Decide the final text, for example \"Class FAQ Chatbot v2\", and remove all three marker lines.",
+          "Run git add README.md, then git commit. git log --oneline --graph now shows the merge commit joining both lines of history."
+        ],
+        "code": "git switch main\ngit merge rename\n# edit README.md, remove the markers\ngit add README.md\ngit commit\ngit branch -d rename"
+      },
+      "mini_project": {
+        "title": "Cause a conflict on purpose and fix it",
+        "brief": "Conflicts are less scary once you have made one yourself.",
+        "steps": [
+          "Create a branch and change line 1 of a file there; commit.",
+          "Switch to main, change the same line differently; commit.",
+          "Merge the branch into main and read the conflict markers.",
+          "Resolve the conflict, finish the merge and delete the branch."
+        ],
+        "done_when": "git status says the working tree is clean and the graph shows a merge commit."
+      }
+    },
+    {
+      "no": 4,
+      "title": "Pull requests",
+      "minutes": 15,
+      "key_points": [
+        "A remote is a copy of the repository on a server such as GitHub. git clone copies a remote; git push sends your commits; git pull fetches and merges others' commits.",
+        "Teams rarely push straight to main. You push a branch, then open a pull request (PR) asking for it to be reviewed and merged.",
+        "A good PR is small, has a title that says what it does, and a description of why and how you tested it.",
+        "Reviewers comment on lines; you answer by pushing more commits to the same branch. The PR updates by itself.",
+        "Never commit passwords, API keys or .env files. List them in .gitignore before the first commit; a key that was pushed must be changed, even if you delete the commit later."
+      ],
+      "worked_example": {
+        "title": "From branch to merged pull request",
+        "steps": [
+          "Run git switch -c add-search and commit your search feature.",
+          "Run git push -u origin add-search. The -u links your local branch to the remote one, so later pushes need only git push.",
+          "On GitHub, click Compare & pull request. Title: \"Add keyword search to the FAQ bot\". Description: what it does, how you tested it.",
+          "A teammate asks for a test. You add it, commit and git push; the PR shows the new commit.",
+          "After approval the PR is merged. Locally, run git switch main and git pull to get the merged code."
+        ],
+        "code": "git switch -c add-search\ngit commit -am \"Add keyword search\"\ngit push -u origin add-search\n# open the PR on GitHub, respond to review\ngit switch main\ngit pull"
+      },
+      "mini_project": {
+        "title": "Publish your project and open a PR",
+        "brief": "Put your project on GitHub and go through one review cycle.",
+        "steps": [
+          "Create an empty GitHub repository and push your main branch to it.",
+          "Add a .gitignore that excludes .env and any data files you should not share.",
+          "Make a change on a new branch, push it and open a pull request with a clear description.",
+          "Ask a classmate to review it, answer one comment with a new commit, then merge."
+        ],
+        "done_when": "The repository shows a merged pull request with at least one review comment."
+      }
+    }
+  ],
+  "check": [
+    { "id": "git-q1", "lesson": 1, "prompt": "You edited three files but only want two of them in the next commit. What do you do?", "options": [
+      { "id": "a", "text": "Run git commit -a, then undo the third file" },
+      { "id": "b", "text": "git add the two files, then git commit" },
+      { "id": "c", "text": "Delete the third file, then commit everything" },
+      { "id": "d", "text": "Run git push for the two files" }
+    ], "answer": "b", "explanation": "Only staged changes go into a commit, so you stage the two files with git add and commit. The third file stays changed in your working folder." },
+    { "id": "git-q2", "lesson": 1, "prompt": "Which commit message is the most useful?", "options": [
+      { "id": "a", "text": "update" },
+      { "id": "b", "text": "Fixed stuff" },
+      { "id": "c", "text": "Show an error when the email field is empty" },
+      { "id": "d", "text": "asdf" }
+    ], "answer": "c", "explanation": "A good message says what the commit changes, so someone reading the history knows without opening the code." },
+    { "id": "git-q3", "lesson": 2, "prompt": "Which command creates a branch called fix-header and moves you onto it?", "options": [
+      { "id": "a", "text": "git switch -c fix-header" },
+      { "id": "b", "text": "git branch -d fix-header" },
+      { "id": "c", "text": "git merge fix-header" },
+      { "id": "d", "text": "git commit fix-header" }
+    ], "answer": "a", "explanation": "git switch -c creates the branch and switches to it. git branch -d deletes a branch and git merge combines one into the current branch." },
+    { "id": "git-q4", "lesson": 3, "prompt": "When does a merge conflict happen?", "options": [
+      { "id": "a", "text": "When a branch has no commits" },
+      { "id": "b", "text": "When two branches changed the same lines of the same file" },
+      { "id": "c", "text": "When you switch branches too often" },
+      { "id": "d", "text": "When the repository has more than two branches" }
+    ], "answer": "b", "explanation": "Git can combine changes to different lines by itself. It stops only when both sides changed the same lines and it cannot know which version you want." },
+    { "id": "git-q5", "lesson": 4, "prompt": "You pushed a commit that contains your database password. What must you do?", "options": [
+      { "id": "a", "text": "Nothing, the repository is private" },
+      { "id": "b", "text": "Delete the file in a new commit and carry on" },
+      { "id": "c", "text": "Change the password, then remove the file and add it to .gitignore" },
+      { "id": "d", "text": "Rename the file so nobody finds it" }
+    ], "answer": "c", "explanation": "Once pushed, the password is in the history and anyone with access can read it, so the password itself must be changed. Then remove the file and ignore it so it is not committed again." }
+  ],
+  "review_cards": [
+    { "front": "What does git add do?", "back": "Moves a change into the staging area, so the next git commit includes it." },
+    { "front": "How do you create a branch and switch to it in one command?", "back": "git switch -c branch-name" },
+    { "front": "How do you finish a merge after fixing a conflict?", "back": "Remove the <<<<<<< ======= >>>>>>> markers, git add the file, then git commit." },
+    { "front": "What should a pull request description say?", "back": "What the change does, why, and how you tested it." }
+  ]
+}

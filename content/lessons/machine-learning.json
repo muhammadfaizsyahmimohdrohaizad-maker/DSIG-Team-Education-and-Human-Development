@@ -1,0 +1,175 @@
+{
+  "skill": "machine-learning",
+  "title": "Machine learning basics",
+  "lessons": [
+    {
+      "no": 1,
+      "title": "What a model learns",
+      "minutes": 15,
+      "key_points": [
+        "Machine learning finds a rule from examples instead of you writing the rule. The result is a model: a function that takes inputs and returns a prediction.",
+        "Each example has features (the inputs, such as a message's length or words) and, in supervised learning, a label (the answer, such as \"spam\" or \"not spam\").",
+        "Classification predicts a category (pass or fail, which module a question is about). Regression predicts a number (a price, a mark).",
+        "Unsupervised learning has no labels; it looks for structure, for example grouping similar questions with clustering.",
+        "A model only knows what is in its training data. If the data is small, old or one-sided, the predictions will be too."
+      ],
+      "worked_example": {
+        "title": "Frame a problem as machine learning",
+        "steps": [
+          "Problem: the class FAQ chatbot should guess which module a new question is about.",
+          "Each example is one past question. The feature is the question text; the label is the module name, such as \"Android Programming\".",
+          "There are a fixed set of modules, so this is classification, not regression.",
+          "If you only had questions without module names, you could not train this classifier; you could only cluster similar questions (unsupervised)."
+        ]
+      },
+      "mini_project": {
+        "title": "Write three ML problem cards",
+        "brief": "Practise spotting features, labels and the type of task.",
+        "steps": [
+          "Pick three problems from your course or daily life that a model could help with.",
+          "For each, write the features, the label and whether it is classification, regression or unsupervised.",
+          "For each, write one way the training data could be unfair or misleading.",
+          "Swap cards with a classmate and check each other's answers."
+        ],
+        "done_when": "You have three cards, each naming features, a label (or none) and the task type."
+      }
+    },
+    {
+      "no": 2,
+      "title": "Training and test data",
+      "minutes": 15,
+      "key_points": [
+        "You judge a model on data it has never seen. So you split the labelled data: a training set to learn from and a test set kept aside to measure it.",
+        "A common split is 80% training and 20% test, chosen at random. In scikit-learn: train_test_split(X, y, test_size=0.2, random_state=42).",
+        "Setting random_state makes the split the same every run, so results can be compared.",
+        "For classification, stratify=y keeps the same share of each class in both sets, which matters when one class is rare.",
+        "Never tune or train on the test set. If you keep checking the test score while changing the model, it stops being an honest measure."
+      ],
+      "worked_example": {
+        "title": "Split a small dataset",
+        "steps": [
+          "Load the iris dataset: 150 flowers, 4 measurements each (features X), and the species (label y).",
+          "Call train_test_split with test_size=0.2 and stratify=y. You get 120 training rows and 30 test rows.",
+          "Check the class counts in y_test: 10 of each species, because of stratify.",
+          "From now on, y_test is only used once, at the end, to report the score."
+        ],
+        "code": "from sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\n\nX, y = load_iris(return_X_y=True)\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, stratify=y, random_state=42)\nprint(len(X_train), len(X_test))  # 120 30"
+      },
+      "mini_project": {
+        "title": "Split your own data",
+        "brief": "Prepare a labelled dataset for the next lesson.",
+        "steps": [
+          "Pick a small labelled CSV (for example your chatbot questions with their module, or a public dataset).",
+          "Load it with pandas and separate the feature columns from the label column.",
+          "Split it 80/20 with a fixed random_state, using stratify for a classification label.",
+          "Print the class counts of both sets and check they are similar."
+        ],
+        "done_when": "You have X_train, X_test, y_train and y_test, and the class shares match."
+      }
+    },
+    {
+      "no": 3,
+      "title": "Your first classifier",
+      "minutes": 20,
+      "key_points": [
+        "In scikit-learn every model follows the same steps: create it, fit it on training data, predict on new data.",
+        "k-nearest neighbours (KNeighborsClassifier) predicts the label most common among the k closest training examples. It is simple and good for a first try.",
+        "model.fit(X_train, y_train) learns; model.predict(X_test) returns predicted labels; model.score(X_test, y_test) returns accuracy for a classifier.",
+        "Compare with a baseline, such as always predicting the most common class (DummyClassifier). A model is only useful if it clearly beats the baseline.",
+        "Settings you choose before training, like k, are hyperparameters. Choose them with the training data (or cross-validation), not by looking at the test score."
+      ],
+      "worked_example": {
+        "title": "Train k-nearest neighbours on iris",
+        "steps": [
+          "Use the split from lesson 2.",
+          "Create KNeighborsClassifier(n_neighbors=5) and fit it on X_train, y_train.",
+          "Predict on X_test and compute accuracy with model.score. On iris this is usually above 0.9.",
+          "Fit DummyClassifier(strategy=\"most_frequent\") the same way. Its accuracy is about 0.33, so the model has learned something real."
+        ],
+        "code": "from sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.dummy import DummyClassifier\n\nmodel = KNeighborsClassifier(n_neighbors=5).fit(X_train, y_train)\nprint(model.score(X_test, y_test))\n\nbase = DummyClassifier(strategy=\"most_frequent\").fit(X_train, y_train)\nprint(base.score(X_test, y_test))"
+      },
+      "mini_project": {
+        "title": "Beat the baseline",
+        "brief": "Train a classifier on your own split data.",
+        "steps": [
+          "Fit a DummyClassifier and write down its test accuracy.",
+          "Fit a KNeighborsClassifier and a LogisticRegression on the same training set.",
+          "Report the test accuracy of all three in a small table.",
+          "Write two sentences on which model you would keep and why."
+        ],
+        "done_when": "Your table has three accuracies and at least one model beats the baseline."
+      }
+    },
+    {
+      "no": 4,
+      "title": "Choosing features",
+      "minutes": 20,
+      "key_points": [
+        "Models need numbers. Text and categories must be turned into numeric features, for example one-hot encoding for categories or word counts for text.",
+        "Features on very different scales (age 18–25 versus income in thousands) can mislead distance-based models like k-NN. StandardScaler puts them on a similar scale.",
+        "Missing values must be filled (imputed) or removed before most models can train.",
+        "Data leakage is when information from the test set, or from the answer itself, gets into training. Fit scalers and encoders on the training set only, then apply them to the test set.",
+        "A scikit-learn Pipeline joins the preparation steps and the model, so the same steps run in the same order during training and prediction, and leakage is avoided."
+      ],
+      "worked_example": {
+        "title": "Scale features inside a pipeline",
+        "steps": [
+          "Build a Pipeline with StandardScaler followed by KNeighborsClassifier.",
+          "Call pipe.fit(X_train, y_train). The scaler learns the mean and spread from training data only.",
+          "Call pipe.score(X_test, y_test). The test data is scaled with the training statistics, then classified.",
+          "Compare with the unscaled model from lesson 3. On data with mixed scales, the scaled version is usually better."
+        ],
+        "code": "from sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neighbors import KNeighborsClassifier\n\npipe = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=5))\npipe.fit(X_train, y_train)\nprint(pipe.score(X_test, y_test))"
+      },
+      "mini_project": {
+        "title": "Turn text into features",
+        "brief": "Classify short questions by topic.",
+        "steps": [
+          "Collect at least 40 short questions, each labelled with one of 2–4 topics.",
+          "Build a pipeline of CountVectorizer and MultinomialNB (naive Bayes).",
+          "Split, fit and report test accuracy against a DummyClassifier baseline.",
+          "Try predicting three new questions you write yourself and note any wrong answers."
+        ],
+        "done_when": "Your pipeline beats the baseline and you have noted at least one mistake it makes."
+      }
+    }
+  ],
+  "check": [
+    { "id": "ml-q1", "lesson": 1, "prompt": "A model predicts a student's final mark out of 100. What kind of task is this?", "options": [
+      { "id": "a", "text": "Classification" },
+      { "id": "b", "text": "Regression" },
+      { "id": "c", "text": "Clustering" },
+      { "id": "d", "text": "Unsupervised learning" }
+    ], "answer": "b", "explanation": "The output is a number on a continuous scale, so it is regression. Classification predicts a category." },
+    { "id": "ml-q2", "lesson": 2, "prompt": "Why do you keep a test set aside?", "options": [
+      { "id": "a", "text": "To make training faster" },
+      { "id": "b", "text": "To measure the model on data it has not seen" },
+      { "id": "c", "text": "To give the model more examples to learn from" },
+      { "id": "d", "text": "Because scikit-learn needs two files" }
+    ], "answer": "b", "explanation": "A model can memorise its training data. Only data it never saw shows how it will do on new cases." },
+    { "id": "ml-q3", "lesson": 3, "prompt": "Your classifier scores 0.82 accuracy. Always guessing the most common class scores 0.80. What does this tell you?", "options": [
+      { "id": "a", "text": "The model is excellent" },
+      { "id": "b", "text": "The model adds very little over a simple baseline" },
+      { "id": "c", "text": "The test set is too large" },
+      { "id": "d", "text": "Accuracy cannot be used" }
+    ], "answer": "b", "explanation": "0.82 sounds good on its own, but it is only 2 points above guessing the most common class, so the model has learned very little." },
+    { "id": "ml-q4", "lesson": 3, "prompt": "In scikit-learn, which call learns from the training data?", "options": [
+      { "id": "a", "text": "model.predict(X_train)" },
+      { "id": "b", "text": "model.score(X_train, y_train)" },
+      { "id": "c", "text": "model.fit(X_train, y_train)" },
+      { "id": "d", "text": "train_test_split(X, y)" }
+    ], "answer": "c", "explanation": "fit learns from features and labels. predict uses what was learned, and score measures it." },
+    { "id": "ml-q5", "lesson": 4, "prompt": "Where should a StandardScaler learn its mean and spread?", "options": [
+      { "id": "a", "text": "From the whole dataset before splitting" },
+      { "id": "b", "text": "From the test set" },
+      { "id": "c", "text": "From the training set only" },
+      { "id": "d", "text": "It does not matter" }
+    ], "answer": "c", "explanation": "Fitting on the whole dataset leaks information from the test set into training. Fit on training data only, then apply it to the test set; a Pipeline does this for you." }
+  ],
+  "review_cards": [
+    { "front": "Feature or label: the answer the model should predict?", "back": "The label. Features are the inputs." },
+    { "front": "Classification or regression: predicting a house price?", "back": "Regression, because the output is a number." },
+    { "front": "What is a baseline model for?", "back": "A simple reference, such as always guessing the most common class. A real model must clearly beat it." },
+    { "front": "What is data leakage?", "back": "Information from the test set or the answer getting into training, which makes scores look better than they really are." }
+  ]
+}

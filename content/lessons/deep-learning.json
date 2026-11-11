@@ -1,0 +1,176 @@
+{
+  "skill": "deep-learning",
+  "title": "Deep learning with PyTorch",
+  "lessons": [
+    {
+      "no": 1,
+      "title": "Tensors",
+      "minutes": 15,
+      "key_points": [
+        "A tensor is PyTorch's array: numbers arranged in one or more dimensions, like a NumPy array that can also run on a GPU and track gradients.",
+        "Every tensor has a shape (for example [32, 4] for 32 rows of 4 features), a dtype (float32 for most model inputs) and a device (cpu or cuda).",
+        "Create tensors with torch.tensor(data), torch.zeros(shape) or torch.from_numpy(array). Labels for classification are usually int64 (torch.long).",
+        "Operations work element by element (a + b) or as matrix maths (a @ b). Shapes must fit: [32, 4] @ [4, 3] gives [32, 3].",
+        "Most bugs in early PyTorch code are shape or dtype mismatches. Print x.shape and x.dtype whenever something fails."
+      ],
+      "worked_example": {
+        "title": "Turn a small table into tensors",
+        "steps": [
+          "Start with 3 students and 2 features each (hours studied, quizzes done).",
+          "x = torch.tensor([[5., 3.], [1., 0.], [8., 4.]]) has shape [3, 2] and dtype float32.",
+          "Labels y = torch.tensor([1, 0, 1]) have shape [3] and dtype int64.",
+          "A weight matrix w = torch.randn(2, 1) has shape [2, 1], so x @ w has shape [3, 1]: one score per student."
+        ],
+        "code": "import torch\n\nx = torch.tensor([[5., 3.], [1., 0.], [8., 4.]])\ny = torch.tensor([1, 0, 1])\nw = torch.randn(2, 1)\nprint(x.shape, x.dtype, y.dtype)   # torch.Size([3, 2]) torch.float32 torch.int64\nprint((x @ w).shape)               # torch.Size([3, 1])"
+      },
+      "mini_project": {
+        "title": "Tensor warm-up",
+        "brief": "Get comfortable with shapes before building a network.",
+        "steps": [
+          "Load a small CSV with pandas and convert the feature columns to a float32 tensor.",
+          "Convert the label column to an int64 tensor.",
+          "Compute the mean of each feature column with x.mean(dim=0) and print its shape.",
+          "Make one deliberate shape error with @, read the error message, then fix it."
+        ],
+        "done_when": "You can explain the shape of every tensor in your script."
+      }
+    },
+    {
+      "no": 2,
+      "title": "A small neural network",
+      "minutes": 20,
+      "key_points": [
+        "A neural network is layers of simple functions. nn.Linear(in, out) computes x @ W + b; an activation such as ReLU (max(0, x)) adds the non-linearity that lets the network learn curved boundaries.",
+        "In PyTorch you define a network as a class that inherits nn.Module: create layers in __init__ and say how data flows in forward.",
+        "The output layer matches the task: one number per class for classification (raw scores called logits), one number for regression.",
+        "Calling model(x) runs forward. You never call forward directly.",
+        "model.parameters() lists every weight the optimiser will update. Count them to understand the model's size."
+      ],
+      "worked_example": {
+        "title": "A two-layer classifier for 4 features and 3 classes",
+        "steps": [
+          "First layer: nn.Linear(4, 16) turns 4 features into 16 hidden values.",
+          "ReLU sets negative hidden values to 0.",
+          "Second layer: nn.Linear(16, 3) gives 3 logits, one per class.",
+          "Run a batch of 8 rows through it: the output shape is [8, 3]. The predicted class is the index of the largest logit, logits.argmax(dim=1)."
+        ],
+        "code": "import torch\nfrom torch import nn\n\nclass Net(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.hidden = nn.Linear(4, 16)\n        self.out = nn.Linear(16, 3)\n\n    def forward(self, x):\n        return self.out(torch.relu(self.hidden(x)))\n\nmodel = Net()\nlogits = model(torch.randn(8, 4))\nprint(logits.shape, logits.argmax(dim=1))"
+      },
+      "mini_project": {
+        "title": "Design your own network",
+        "brief": "Build the network you will train in the next lesson.",
+        "steps": [
+          "Pick a dataset with numeric features and a class label (iris works).",
+          "Write an nn.Module with one hidden layer sized for your features and classes.",
+          "Pass one batch through it and check the output shape.",
+          "Count the parameters with sum(p.numel() for p in model.parameters()) and check the number by hand for the first layer."
+        ],
+        "done_when": "Your network runs on a batch and you can explain its parameter count."
+      }
+    },
+    {
+      "no": 3,
+      "title": "Training loops",
+      "minutes": 20,
+      "key_points": [
+        "Training repeats five steps for each batch: predict, compute the loss, clear old gradients, backpropagate, update the weights.",
+        "For classification use nn.CrossEntropyLoss, which takes raw logits and int64 class labels. Do not apply softmax first.",
+        "The optimiser changes weights to reduce the loss. torch.optim.Adam(model.parameters(), lr=1e-3) is a common starting point.",
+        "optimizer.zero_grad() must run before loss.backward(), because PyTorch adds new gradients to old ones.",
+        "A DataLoader serves shuffled mini-batches. One pass over all the training data is one epoch; the loss should fall over epochs."
+      ],
+      "worked_example": {
+        "title": "Train the iris network",
+        "steps": [
+          "Wrap the training tensors in a TensorDataset and a DataLoader with batch_size=16 and shuffle=True.",
+          "Create the loss function and the Adam optimiser.",
+          "For 50 epochs, loop over the batches: logits = model(xb); loss = loss_fn(logits, yb); optimizer.zero_grad(); loss.backward(); optimizer.step().",
+          "Print the average loss every 10 epochs. It should go down; if it does not, check the learning rate and the label dtype."
+        ],
+        "code": "from torch.utils.data import TensorDataset, DataLoader\n\nloader = DataLoader(TensorDataset(X_train_t, y_train_t), batch_size=16, shuffle=True)\nloss_fn = nn.CrossEntropyLoss()\noptimizer = torch.optim.Adam(model.parameters(), lr=1e-3)\n\nfor epoch in range(50):\n    model.train()\n    total = 0.0\n    for xb, yb in loader:\n        loss = loss_fn(model(xb), yb)\n        optimizer.zero_grad()\n        loss.backward()\n        optimizer.step()\n        total += loss.item()\n    if epoch % 10 == 0:\n        print(epoch, total / len(loader))"
+      },
+      "mini_project": {
+        "title": "Make the loss go down",
+        "brief": "Train your network from lesson 2.",
+        "steps": [
+          "Write the training loop with a DataLoader.",
+          "Record the average loss per epoch in a list and plot it.",
+          "Train again with a learning rate 10 times larger and 10 times smaller, and plot all three curves.",
+          "Write one sentence on what the learning rate changed."
+        ],
+        "done_when": "You have a plot with three loss curves and a sentence explaining them."
+      }
+    },
+    {
+      "no": 4,
+      "title": "Saving a model",
+      "minutes": 15,
+      "key_points": [
+        "Before measuring, call model.eval() and wrap prediction in with torch.no_grad(): layers like dropout switch to test behaviour and no gradients are tracked.",
+        "Measure on a validation set during training to spot overfitting, and keep the test set for the final score.",
+        "Save the learned weights, not the whole object: torch.save(model.state_dict(), \"model.pt\").",
+        "To load, create the same class again, then model.load_state_dict(torch.load(\"model.pt\")) and model.eval().",
+        "Save what the model needs to be used later as well: the class names in order and any scaling values used on the inputs."
+      ],
+      "worked_example": {
+        "title": "Evaluate, save and reload",
+        "steps": [
+          "Switch to evaluation mode and predict the test set without gradients.",
+          "Compute accuracy by comparing argmax predictions with the labels.",
+          "Save state_dict to model.pt, and the class names to a small JSON file.",
+          "In a fresh script, rebuild Net(), load the weights, call eval() and check you get the same accuracy."
+        ],
+        "code": "model.eval()\nwith torch.no_grad():\n    preds = model(X_test_t).argmax(dim=1)\nprint((preds == y_test_t).float().mean().item())\n\ntorch.save(model.state_dict(), \"model.pt\")\n\nreloaded = Net()\nreloaded.load_state_dict(torch.load(\"model.pt\"))\nreloaded.eval()"
+      },
+      "mini_project": {
+        "title": "A model you can hand over",
+        "brief": "Make your trained network reusable by someone else.",
+        "steps": [
+          "Add a validation split and print validation accuracy every 10 epochs.",
+          "Save the weights from the epoch with the best validation accuracy.",
+          "Save the class names and any input scaling values next to the weights.",
+          "Write predict.py that loads everything and predicts one new row given on the command line."
+        ],
+        "done_when": "A classmate can run predict.py on your saved files and get a prediction."
+      }
+    }
+  ],
+  "check": [
+    { "id": "dl-q1", "lesson": 1, "prompt": "x has shape [32, 10] and w has shape [10, 4]. What is the shape of x @ w?", "options": [
+      { "id": "a", "text": "[10, 4]" },
+      { "id": "b", "text": "[32, 4]" },
+      { "id": "c", "text": "[32, 10]" },
+      { "id": "d", "text": "It fails" }
+    ], "answer": "b", "explanation": "In matrix multiplication the inner sizes (10 and 10) must match and disappear, leaving the outer sizes: [32, 4]." },
+    { "id": "dl-q2", "lesson": 2, "prompt": "Why does a network need an activation such as ReLU between linear layers?", "options": [
+      { "id": "a", "text": "To make training faster on a GPU" },
+      { "id": "b", "text": "Without it, stacked linear layers act like one linear layer" },
+      { "id": "c", "text": "To turn the outputs into probabilities" },
+      { "id": "d", "text": "To stop overfitting" }
+    ], "answer": "b", "explanation": "Two linear layers in a row are still a linear function. A non-linear activation lets the network learn curved patterns." },
+    { "id": "dl-q3", "lesson": 3, "prompt": "In a training step, what must happen right before loss.backward()?", "options": [
+      { "id": "a", "text": "optimizer.step()" },
+      { "id": "b", "text": "optimizer.zero_grad()" },
+      { "id": "c", "text": "model.eval()" },
+      { "id": "d", "text": "torch.save()" }
+    ], "answer": "b", "explanation": "PyTorch adds new gradients to existing ones, so you clear them with zero_grad before backward. step comes after backward." },
+    { "id": "dl-q4", "lesson": 3, "prompt": "What should you pass to nn.CrossEntropyLoss?", "options": [
+      { "id": "a", "text": "Softmax probabilities and one-hot labels" },
+      { "id": "b", "text": "Raw logits and int64 class indices" },
+      { "id": "c", "text": "Predicted class indices and true class indices" },
+      { "id": "d", "text": "Raw logits and float labels between 0 and 1" }
+    ], "answer": "b", "explanation": "CrossEntropyLoss applies log-softmax itself, so it takes raw logits, with the true classes as int64 indices." },
+    { "id": "dl-q5", "lesson": 4, "prompt": "What is the usual way to save a trained PyTorch model?", "options": [
+      { "id": "a", "text": "torch.save(model.state_dict(), \"model.pt\")" },
+      { "id": "b", "text": "Copy the .py file" },
+      { "id": "c", "text": "print(model) into a text file" },
+      { "id": "d", "text": "Save the training loss list" }
+    ], "answer": "a", "explanation": "The state_dict holds the learned weights. To use them, rebuild the same class and load the state_dict into it." }
+  ],
+  "review_cards": [
+    { "front": "Three things every tensor has", "back": "A shape, a dtype and a device." },
+    { "front": "The five steps of a training step", "back": "Predict, compute loss, optimizer.zero_grad(), loss.backward(), optimizer.step()." },
+    { "front": "What do model.eval() and torch.no_grad() do?", "back": "eval() switches layers like dropout to test behaviour; no_grad() stops gradient tracking during prediction." },
+    { "front": "How do you reload saved weights?", "back": "Create the same model class, call load_state_dict(torch.load(path)), then eval()." }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "_note": "SPM subject -> skill links used by A1 (grade C or better counts). Links are team judgement from the KSSM subject content, marked unverified until a teacher reviews them. A subject with no link still shows on the form; it just adds no skill.",
+  "min_grade": "C",
+  "grade_order": ["A+", "A", "A-", "B+", "B", "C+", "C", "D", "E", "G"],
+  "subjects": [
+    { "subject": "Mathematics", "skills": ["statistics"], "status": "unverified" },
+    { "subject": "Additional Mathematics", "skills": ["statistics"], "status": "unverified" },
+    { "subject": "Sains Komputer", "skills": ["sql", "html-css"], "status": "unverified" },
+    { "subject": "Physics", "skills": ["electronics"], "status": "unverified" },
+    { "subject": "Bahasa Melayu", "skills": [], "status": "unverified" },
+    { "subject": "English", "skills": [], "status": "unverified" },
+    { "subject": "Sejarah", "skills": [], "status": "unverified" },
+    { "subject": "Chemistry", "skills": [], "status": "unverified" },
+    { "subject": "Biology", "skills": [], "status": "unverified" },
+    { "subject": "Prinsip Perakaunan", "skills": ["spreadsheets"], "status": "unverified" },
+    { "subject": "Ekonomi", "skills": [], "status": "unverified" },
+    { "subject": "Pendidikan Islam", "skills": [], "status": "unverified" },
+    { "subject": "Pendidikan Moral", "skills": [], "status": "unverified" }
+  ]
+}

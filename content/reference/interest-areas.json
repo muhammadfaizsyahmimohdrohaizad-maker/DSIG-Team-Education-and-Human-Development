@@ -1,0 +1,10 @@
+[
+  { "label_en": "Programming", "label_ms": "Pengaturcaraan" },
+  { "label_en": "Artificial intelligence", "label_ms": "Kecerdasan buatan" },
+  { "label_en": "Data and statistics", "label_ms": "Data dan statistik" },
+  { "label_en": "Web and app design", "label_ms": "Reka bentuk web dan aplikasi" },
+  { "label_en": "Networks and cloud", "label_ms": "Rangkaian dan awan" },
+  { "label_en": "Cybersecurity", "label_ms": "Keselamatan siber" },
+  { "label_en": "Electronics and robotics", "label_ms": "Elektronik dan robotik" },
+  { "label_en": "Business and management", "label_ms": "Perniagaan dan pengurusan" }
+]

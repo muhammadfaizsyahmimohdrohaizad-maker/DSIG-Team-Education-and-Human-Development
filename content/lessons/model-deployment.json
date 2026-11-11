@@ -1,0 +1,177 @@
+{
+  "skill": "model-deployment",
+  "title": "Deploying a model",
+  "lessons": [
+    {
+      "no": 1,
+      "title": "From notebook to script",
+      "minutes": 15,
+      "key_points": [
+        "A notebook is good for exploring but hard to rerun: cells can run out of order and hidden state builds up. Deployable code lives in plain .py files that run top to bottom.",
+        "Split the work into a training script (train.py: load data, fit, save the model) and a prediction module (predict.py: load the model, predict).",
+        "Save the whole scikit-learn Pipeline with joblib.dump(pipe, \"model.joblib\"), so the same preparation steps run at prediction time.",
+        "Pin your library versions in requirements.txt (for example scikit-learn==1.5.2). A model saved with one version may not load in another.",
+        "Fix random seeds and log the data version and test score each time you train, so a model can be traced back to how it was made."
+      ],
+      "worked_example": {
+        "title": "Move the iris model out of a notebook",
+        "steps": [
+          "Create train.py that loads the data, splits it, fits make_pipeline(StandardScaler(), KNeighborsClassifier()) and prints the test score.",
+          "At the end of train.py, call joblib.dump(pipe, \"model.joblib\").",
+          "Create predict.py with a function predict(rows) that loads model.joblib once and returns pipe.predict(rows).",
+          "Run python train.py, then python -c \"from predict import predict; print(predict([[5.1, 3.5, 1.4, 0.2]]))\"."
+        ],
+        "code": "# train.py\nimport joblib\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.pipeline import make_pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neighbors import KNeighborsClassifier\n\nX, y = load_iris(return_X_y=True)\nX_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)\npipe = make_pipeline(StandardScaler(), KNeighborsClassifier()).fit(X_tr, y_tr)\nprint(\"test accuracy\", pipe.score(X_te, y_te))\njoblib.dump(pipe, \"model.joblib\")"
+      },
+      "mini_project": {
+        "title": "Make your model rerunnable",
+        "brief": "Turn one of your notebook models into scripts.",
+        "steps": [
+          "Write train.py that trains and saves your model in one run.",
+          "Write predict.py with a predict function that loads the saved model.",
+          "Create requirements.txt with pinned versions (pip freeze, then keep only what you use).",
+          "Delete the saved model, run train.py again and check the score is the same."
+        ],
+        "done_when": "A fresh python train.py recreates the model and predict.py uses it."
+      }
+    },
+    {
+      "no": 2,
+      "title": "A simple prediction API",
+      "minutes": 20,
+      "key_points": [
+        "An API lets other programs use your model over HTTP. A client sends input as JSON in a POST request and gets the prediction back as JSON.",
+        "FastAPI is a small Python web framework. You declare the input shape with a Pydantic model, and FastAPI rejects badly formed input with a 422 error before your code runs.",
+        "Load the model once when the app starts, not on every request; loading is slow.",
+        "Add a GET /health endpoint that returns {\"status\": \"ok\"}, so hosting platforms can check the service is alive.",
+        "Run it locally with uvicorn app:app --reload and try it from the automatic docs page at /docs."
+      ],
+      "worked_example": {
+        "title": "Serve the iris model",
+        "steps": [
+          "Define a Pydantic class Flower with four float fields.",
+          "Load model.joblib at the top of app.py.",
+          "Write POST /predict that turns the Flower into a row, calls model.predict and returns the class name.",
+          "Start uvicorn, open http://127.0.0.1:8000/docs, send {\"sepal_length\": 5.1, \"sepal_width\": 3.5, \"petal_length\": 1.4, \"petal_width\": 0.2} and get {\"species\": \"setosa\"}.",
+          "Send a string instead of a number and see the 422 error that Pydantic returns."
+        ],
+        "code": "# app.py\nimport joblib\nfrom fastapi import FastAPI\nfrom pydantic import BaseModel\n\nmodel = joblib.load(\"model.joblib\")\nNAMES = [\"setosa\", \"versicolor\", \"virginica\"]\napp = FastAPI()\n\nclass Flower(BaseModel):\n    sepal_length: float\n    sepal_width: float\n    petal_length: float\n    petal_width: float\n\n@app.get(\"/health\")\ndef health():\n    return {\"status\": \"ok\"}\n\n@app.post(\"/predict\")\ndef predict(f: Flower):\n    row = [[f.sepal_length, f.sepal_width, f.petal_length, f.petal_width]]\n    return {\"species\": NAMES[int(model.predict(row)[0])]}"
+      },
+      "mini_project": {
+        "title": "Put an API in front of your model",
+        "brief": "Serve the model you scripted in lesson 1.",
+        "steps": [
+          "Write app.py with /health and /predict, using a Pydantic model for the input.",
+          "Run it with uvicorn and make three predictions from the /docs page.",
+          "Call it from a second program with Python requests or curl.",
+          "Add one check of your own (for example, refuse negative values) and return a clear error message."
+        ],
+        "done_when": "Another program gets predictions from your running API, and bad input gets a clear error."
+      }
+    },
+    {
+      "no": 3,
+      "title": "Running it in the cloud",
+      "minutes": 20,
+      "key_points": [
+        "A container packages your code, the model file, Python and the libraries into one image, so it runs the same on your laptop and on a server. Docker builds it from a Dockerfile.",
+        "Keep the image small: start from a slim Python base image, install only requirements.txt, and copy only the files the app needs.",
+        "Settings that change between places (the port, a model path, an API key) come from environment variables, not from the code. Never bake secrets into the image.",
+        "Cloud container services (for example Google Cloud Run or AWS App Runner) take an image, run it behind HTTPS, and start more copies when traffic grows.",
+        "After deploying, call /health and one /predict request against the public address before telling anyone it works."
+      ],
+      "worked_example": {
+        "title": "A Dockerfile for the iris API",
+        "steps": [
+          "Start FROM python:3.12-slim and set WORKDIR /app.",
+          "COPY requirements.txt first and pip install it, so Docker can reuse that layer when only your code changes.",
+          "COPY app.py and model.joblib.",
+          "Start uvicorn on 0.0.0.0 and the port given by the PORT environment variable (default 8000).",
+          "Build with docker build -t iris-api . and run with docker run -p 8000:8000 iris-api, then open /docs."
+        ],
+        "code": "FROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY app.py model.joblib ./\nCMD [\"sh\", \"-c\", \"uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}\"]"
+      },
+      "mini_project": {
+        "title": "Ship your container",
+        "brief": "Run your API from a container, then from a server if you have access to one.",
+        "steps": [
+          "Write a Dockerfile for your API and build the image.",
+          "Run it locally with docker run and test /health and /predict.",
+          "Move one setting (such as the model path) into an environment variable.",
+          "If you have a free cloud account, deploy the image and test the public URL; otherwise write the exact deploy steps you would follow."
+        ],
+        "done_when": "Your API runs from a container and answers /health and /predict."
+      }
+    },
+    {
+      "no": 4,
+      "title": "Watching it after launch",
+      "minutes": 15,
+      "key_points": [
+        "A model can get worse after launch without any code change, because the real data drifts away from the training data (new kinds of questions, a new semester, a new user group).",
+        "Log every request's time, input summary, prediction and response time. Do not log personal data you do not need.",
+        "Watch simple numbers: error rate, response time, how often each class is predicted, and input ranges compared with the training data.",
+        "When true answers arrive later (for example a lecturer corrects the bot), compare them with the predictions to measure live accuracy.",
+        "Keep the previous model version so you can roll back quickly, and retrain on fresh data on a schedule or when the numbers move."
+      ],
+      "worked_example": {
+        "title": "Spot drift in the FAQ bot",
+        "steps": [
+          "The bot classifies questions by module. In week 1, 30% of predictions are \"Android Programming\".",
+          "In week 6, that share falls to 5% and many questions get low confidence.",
+          "The logs show many new questions about a module that started mid-semester, which was not in the training data.",
+          "You label 50 of the new questions, retrain, compare the new model with the old one on the same held-out set, and deploy only if it is better. The old version stays ready for rollback."
+        ]
+      },
+      "mini_project": {
+        "title": "Add monitoring to your API",
+        "brief": "Give your API the minimum it needs to be looked after.",
+        "steps": [
+          "Log each /predict call to a CSV or the console: timestamp, predicted class and response time in milliseconds.",
+          "Write a short script that reads the log and prints the count per predicted class and the average response time.",
+          "Send 20 test requests, including a few with unusual values, and run the script.",
+          "Write down one threshold that would make you investigate (for example, average response time above 500 ms)."
+        ],
+        "done_when": "Your log and summary script work, and you have written one alert rule."
+      }
+    }
+  ],
+  "check": [
+    { "id": "deploy-q1", "lesson": 1, "prompt": "Why save the whole scikit-learn Pipeline instead of only the final model?", "options": [
+      { "id": "a", "text": "The file is smaller" },
+      { "id": "b", "text": "The same preparation steps, such as scaling, run again at prediction time" },
+      { "id": "c", "text": "Pipelines train faster" },
+      { "id": "d", "text": "joblib cannot save models on their own" }
+    ], "answer": "b", "explanation": "If you save only the model, new inputs reach it without the scaling or encoding it was trained with, and predictions go wrong." },
+    { "id": "deploy-q2", "lesson": 2, "prompt": "In a FastAPI app, when should the model file be loaded?", "options": [
+      { "id": "a", "text": "Inside the /predict function, on every request" },
+      { "id": "b", "text": "Once, when the app starts" },
+      { "id": "c", "text": "Only when /health is called" },
+      { "id": "d", "text": "In the browser" }
+    ], "answer": "b", "explanation": "Loading a model is slow. Loading it once at start-up means each request only runs the prediction." },
+    { "id": "deploy-q3", "lesson": 2, "prompt": "A client sends {\"sepal_length\": \"long\"} to your /predict endpoint, which uses a Pydantic model with float fields. What happens?", "options": [
+      { "id": "a", "text": "The model predicts anyway" },
+      { "id": "b", "text": "FastAPI returns a 422 error saying the input is invalid" },
+      { "id": "c", "text": "The server crashes" },
+      { "id": "d", "text": "The value is set to 0" }
+    ], "answer": "b", "explanation": "Pydantic checks the input before your function runs, and FastAPI answers with a 422 validation error that names the bad field." },
+    { "id": "deploy-q4", "lesson": 3, "prompt": "Where should an API key used by your service come from?", "options": [
+      { "id": "a", "text": "Written in app.py" },
+      { "id": "b", "text": "Copied into the Docker image" },
+      { "id": "c", "text": "An environment variable set on the server" },
+      { "id": "d", "text": "A comment in the Dockerfile" }
+    ], "answer": "c", "explanation": "Secrets in code or images end up in Git or image registries. Environment variables are set where the service runs and stay out of the code." },
+    { "id": "deploy-q5", "lesson": 4, "prompt": "The code has not changed, but live accuracy has dropped over two months. What is the most likely cause?", "options": [
+      { "id": "a", "text": "The server is too slow" },
+      { "id": "b", "text": "The incoming data has drifted away from the training data" },
+      { "id": "c", "text": "The Docker image expired" },
+      { "id": "d", "text": "The /health endpoint failed" }
+    ], "answer": "b", "explanation": "When real inputs change (new topics, new users), a model trained on older data gets worse. Monitoring inputs and predictions shows this early." }
+  ],
+  "review_cards": [
+    { "front": "Why pin library versions in requirements.txt?", "back": "A model saved with one version may not load, or may behave differently, with another." },
+    { "front": "What does a /health endpoint do?", "back": "Returns a simple OK so hosting platforms and people can check the service is alive." },
+    { "front": "Why put the API in a container?", "back": "Code, model, Python and libraries travel together, so it runs the same everywhere." },
+    { "front": "What is data drift?", "back": "Live inputs changing away from the training data, which makes a model worse without any code change." }
+  ]
+}

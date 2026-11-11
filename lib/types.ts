@@ -57,3 +57,68 @@ export type SkillProgress = {
 export type GapRow = { skill: EscoUri; state: SkillState };
 
 export type Marks = { structure: 0 | 1 | 2; accuracy: 0 | 1 | 2; evidence: 0 | 1 };
+
+// ---- Added by fullstack (sprint 1): matches, plan, learning, CV ----
+
+export type SkillRef = { uri: EscoUri; label: string };
+export type SkillSuggestion = SkillRef & { score: number };
+
+/** A ranked match with what the screen needs to show it. */
+export type MatchView = Match & { title: string; titleMs?: string; tasks: string[]; sourceUrl?: string };
+
+export type StudyOption = {
+  id: string;
+  code: MascoCode;
+  level: EducationLevel;
+  kind: string;
+  institution: string;
+  programme: string;
+  duration?: string;
+  award?: string;
+  sourceUrl: string;
+  verified: boolean;
+};
+
+export type GapRowView = GapRow & {
+  label: string;
+  lessonsDone: number;
+  /** The lesson to open next (1 to 4); undefined when there is nothing left to read. */
+  nextLesson?: number;
+  /** Why the row has this state, in plain words. */
+  evidence: string;
+  hasLessons: boolean;
+};
+
+export type SkillGapView = {
+  target: { code: MascoCode; title: string };
+  rows: GapRowView[];
+  lessonsLeft: number;
+  options: StudyOption[];
+  savedOptionIds: string[];
+};
+
+export type LessonOutline = { no: number; title: string; minutes: number; done: boolean };
+
+export type CheckQuestionView = { id: string; lessonNo: number; prompt: string; options: { id: string; text: string }[] };
+
+export type CheckOpen =
+  | { open: true; skill: EscoUri; title: string; questions: CheckQuestionView[] }
+  | { open: false; skill: EscoUri; title: string; finishLesson: number; reason: "retake" | "lessons" };
+
+export type CheckOutcome = {
+  score: number;
+  passed: boolean;
+  retakeAfterLesson?: number;
+  /** Shown only after marking: the questions to go over, with the right answer and why. */
+  missed: { id: string; lessonNo: number; prompt: string; answer: string; explanation: string }[];
+  reviewCardsAdded: number;
+};
+
+export type CvView = {
+  name: string;
+  educationLevel?: EducationLevel;
+  target?: string;
+  skills: { uri: EscoUri; label: string; masteredOn: string }[];
+  modules: string[];
+  projects: Project[];
+};
