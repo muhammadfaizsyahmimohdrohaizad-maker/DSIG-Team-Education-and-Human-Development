@@ -4,14 +4,14 @@
 // stores the profile and a dated snapshot; setTarget picks the one job the plan is built around.
 // Matching never calls AI.
 import { err, ok, type Result } from "@/lib/result";
-import { profileInput, setTargetInput, skillText } from "@/lib/schemas";
+import { rankInput, setTargetInput, skillText } from "@/lib/schemas";
 import type { MatchView, Profile, SkillSuggestion } from "@/lib/types";
 import { getProfile, saveProfile, setTarget as saveTarget } from "@/server/data/profiles";
 import { getModules, getOccupations, getSkills, suggestSkills as suggest } from "@/server/data/reference";
 import { computeMatches } from "./rank";
 import { invalid, withUser } from "./run";
 
-type ProfileInput = ReturnType<typeof profileInput.parse>;
+type ProfileInput = ReturnType<typeof rankInput.parse>;
 
 const toProfile = (userId: string, v: ProfileInput, isUnder18: boolean): Profile => ({
   userId,
@@ -27,16 +27,18 @@ const toProfile = (userId: string, v: ProfileInput, isUnder18: boolean): Profile
 
 /** Live ranking while the student fills in the form. Nothing is saved. */
 export async function rankMatches(input: unknown): Promise<Result<MatchView[]>> {
-  const parsed = profileInput.safeParse(input);
+  const parsed = rankInput.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
   return withUser("rankMatches", async (userId) => ok(await computeMatches(toProfile(userId, parsed.data, false))));
 }
 
 /** Save: checks every reference against the reference data, stores the profile and a dated snapshot. */
 export async function saveSession(input: unknown): Promise<Result<{ matches: MatchView[]; sessionId: string; savedAt: string }>> {
-  const parsed = profileInput.safeParse(input);
+  const parsed = rankInput.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
   const v = parsed.data;
+  const educationLevel = v.educationLevel;
+  if (!educationLevel) return err("VALIDATION", "Check the highlighted fields.", { educationLevel: "Choose where you are now" });
   return withUser("saveSession", async (userId) => {
     const current = await getProfile(userId);
     if (!current) return err("NOT_FOUND", "We could not find your profile. Log out and in again.");
@@ -52,7 +54,7 @@ export async function saveSession(input: unknown): Promise<Result<{ matches: Mat
     const profile = toProfile(userId, v, current.isUnder18);
     const matches = await computeMatches(profile);
     const saved = await saveProfile(userId, {
-      educationLevel: v.educationLevel, spmGrades: v.spmGrades, moduleIds: v.moduleIds, skills: v.skills,
+      educationLevel, spmGrades: v.spmGrades, moduleIds: v.moduleIds, skills: v.skills,
       interests: v.interests, projects: v.projects, jobInMind: profile.jobInMind,
     }, matches.map((m) => m.code));
     return ok({ matches, ...saved });

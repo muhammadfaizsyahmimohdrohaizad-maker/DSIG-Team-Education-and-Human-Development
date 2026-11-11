@@ -112,3 +112,5 @@ export const completeLessonInput = z.object({
   lessonNo: z.number().int().min(1).max(4),
   notes: z.string().max(20000, "Notes can be up to 20,000 characters").optional(),
 });
+/** Live ranking runs before the form is complete, so the education level may still be empty. */
+export const rankInput = profileInput.partial({ educationLevel: true });
