@@ -13,6 +13,8 @@ import { aiStatusFor, type AiStatus } from "@/features/interview/ai-status";
 import { asStudent, invalid } from "@/features/interview/run";
 import { cardsFromNotes, notesKind, type DraftCard } from "./notes";
 
+export type { ReviewRating } from "@/server/engines/schedule";
+
 const RATINGS: ReviewRating[] = ["again", "hard", "good", "easy"];
 
 export type DueCard = {
