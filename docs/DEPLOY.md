@@ -105,6 +105,11 @@ node scripts-ops/deploy-preview.mjs main --refs --inline package.json,app/x.tsx 
 4. With a `VERCEL_TOKEN` in the environment (a machine that can reach `api.vercel.com`), the script posts
    the deployment itself and prints the URL.
 
+Size limit in practice: every inlined byte passes through the agent's own output. That works for a
+scaffold-sized tree (about 70 KB) but not for merged main (about 450 KB after Sprint 1). For full builds
+use a Git deployment (step 1) or run the script with `VERCEL_TOKEN` on a machine that can reach
+`api.vercel.com`; keep the MCP route for small redeploys with `--refs`.
+
 `.vercelignore` keeps docs, tests, migrations and these scripts out of the upload. Vercel applies the same
 file to Git deployments, so a build check sees what a real deploy sees.
 
