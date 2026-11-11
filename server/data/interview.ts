@@ -149,18 +149,16 @@ export async function logAiCall(userId: string, kind: "interview_feedback" | "no
 export const AI_RATE_MAX = 6;
 export const AI_RATE_WINDOW_S = 60;
 
-type UntypedRpc = (fn: string, args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
-
 /**
- * True if one more AI call is allowed now. Uses the DBA's hit_rate_limit (team/db, in progress); the call is
- * untyped until lib/database.types.ts lists it, then this cast goes. Assumed signature:
- * hit_rate_limit(p_key text, p_limit int, p_window_seconds int) returns boolean (true = allowed). Errors throw,
- * and the AI gate treats a throw as a refusal.
+ * True if one more AI call is allowed now (the DBA's hit_rate_limit: fixed window, service role only).
+ * Errors throw, and the AI gate treats a throw as a refusal. The key holds only the user id.
  */
 export async function hitAiRateLimit(userId: string): Promise<boolean> {
-  const client = adminDb();
-  const rpc = client.rpc.bind(client) as unknown as UntypedRpc;
-  const { data, error } = await rpc("hit_rate_limit", { p_key: `ai:${userId}`, p_limit: AI_RATE_MAX, p_window_seconds: AI_RATE_WINDOW_S });
+  const { data, error } = await adminDb().rpc("hit_rate_limit", {
+    p_key: `ai:${userId}`,
+    p_limit: AI_RATE_MAX,
+    p_window: `${AI_RATE_WINDOW_S} seconds`,
+  });
   if (error) fail("rate limit", error);
   return data === true;
 }

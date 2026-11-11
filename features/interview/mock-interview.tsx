@@ -12,6 +12,7 @@ import {
   retryAiFeedback, startInterview, submitAnswer,
   type AiFeedback, type AiStatus, type InterviewSetup, type InterviewStart, type MarkedAnswer,
 } from "./actions";
+import { useVoiceInput, VoiceButton } from "./voice-input";
 
 const ROUNDS: { round: InterviewRound; name: string; desc: string }[] = [
   { round: "technical", name: "Technical round", desc: "Questions on the skills this job uses every day." },
@@ -34,6 +35,9 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
   const [error, setError] = useState<string | null>(null);
   const [answerError, setAnswerError] = useState<string | undefined>();
   const [pending, startTransition] = useTransition();
+  // Voice is not offered to under-18 accounts: in Chrome, speech goes to Google's speech service.
+  const voice = useVoiceInput((said) => setAnswer((prev) => (prev.trim() ? `${prev.trimEnd()} ${said}` : said)));
+  const voiceOffered = setup.ai !== "off_under_18";
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   const focusHeading = () => requestAnimationFrame(() => headingRef.current?.focus());
@@ -54,6 +58,7 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
 
   function submit(index: number, skipped: boolean) {
     if (pending || !session) return;
+    voice.stop();
     const q = session.questions[index]!;
     if (!skipped && !answer.trim()) { setAnswerError("Write an answer first, or skip this question."); return; }
     setAnswerError(undefined);
@@ -145,7 +150,10 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
           onChange={(e) => { setAnswer(e.target.value); setAnswerError(undefined); }}
           hint={`${words} ${words === 1 ? "word" : "words"}. Say what the situation was, what you did and how it turned out.`}
           error={answerError}
+          labelAside={voiceOffered ? <VoiceButton voice={voice} /> : undefined}
         />
+        {voiceOffered && voice.listening ? <p className="m-0 text-sm text-muted" role="status">Listening. Your browser turns speech into text (in Chrome, through Google&apos;s speech service). You can edit the text before you submit.</p> : null}
+        {voiceOffered && voice.problem ? <AlertMessage>{voice.problem}</AlertMessage> : null}
         {error ? <AlertMessage>{error}</AlertMessage> : null}
         <div className="flex flex-wrap gap-3">
           <Button onClick={() => submit(view.index, false)} loading={pending} loadingText="Marking your answer">Submit answer</Button>
