@@ -54,11 +54,9 @@ export default async function Page({ params }: { params: Promise<{ skill: string
       <Panel>
         <h2>{lesson.mini_project.title}</h2>
         <p>{lesson.mini_project.brief}</p>
-        <ol>
-          {lesson.mini_project.steps.map((s) => (
-            <li key={s}>{s}</li>
-          ))}
-        </ol>
+        <div className="w-full divide-y divide-hairline">{lesson.mini_project.steps.map((step, index) => (
+          <details key={step} className="py-2"><summary className="cursor-pointer font-semibold">Show hint {index + 1}</summary><p>{step}</p></details>
+        ))}</div>
         <p>{lesson.mini_project.done_when}</p>
       </Panel>
       <ActionForm label="Save and continue" submit={finish}>

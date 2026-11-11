@@ -113,14 +113,14 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
           <Button onClick={start} loading={pending} loadingText="Getting your questions" className="self-start">Start the interview</Button>
         </Card>
         <SoftPanel as="aside" aria-labelledby="marked-h">
-          <h2 id="marked-h" className="m-0 text-xl">How you&apos;re marked</h2>
+          <h2 id="marked-h" className="m-0 text-xl">What the feedback covers</h2>
           <ul className="m-0 flex flex-col gap-2 pl-5">
             <li><b className="text-navy">Structure:</b> the situation, what you did and the result</li>
             <li><b className="text-navy">Accuracy:</b> the key points are there</li>
             <li><b className="text-navy">Evidence:</b> an example from your own work</li>
           </ul>
-          <p className="m-0">Each answer gets up to 5 marks from a fixed checklist. If you share interview feedback when you book, your adviser sees your latest answer.</p>
-          <Link href="/plan/progress" className="inline-flex min-h-11 items-center font-semibold">See past interviews</Link>
+          <p className="m-0">Each answer gets a practical suggestion from a fixed checklist. If you share interview feedback when you book, your adviser sees your latest answer.</p>
+          <Link href="/plan/progress" className="inline-flex min-h-11 items-center font-semibold">See skill progress</Link>
         </SoftPanel>
       </div>
     );
@@ -171,30 +171,32 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
       <section aria-labelledby="fb-h" className="flex flex-col gap-5">
         <div className="flex flex-wrap items-center justify-between gap-2 text-[15px]">
           <span className="font-semibold text-navy">{roundName(session.round)} · Question {view.index + 1} of {count}</span>
-          <StatusTag kind="no_ai" label="Checklist marks" />
+          <StatusTag kind="no_ai" label="Checklist feedback" />
         </div>
         <div className="flex flex-wrap items-center gap-5">
-          <Score total={r.total} />
+          
           <div className="flex min-w-0 flex-[1_1_280px] flex-col gap-1">
-            <h1 id="fb-h" ref={headingRef} tabIndex={-1} className="m-0 text-[clamp(1.5rem,2.5vw,2rem)] leading-tight">{r.headline}</h1>
+            <h1 id="fb-h" ref={headingRef} tabIndex={-1} className="m-0 text-[clamp(1.5rem,2.5vw,2rem)] leading-tight">Feedback on your answer</h1>
             <p className="m-0 text-muted">{q.prompt}</p>
+            {r.ai.state !== "skipped" && <details><summary>Show your answer</summary><p className="whitespace-pre-wrap">{answer}</p></details>}
           </div>
         </div>
-        <ul className="m-0 grid list-none gap-3 p-0 tablet:grid-cols-3">
+        <ul className="m-0 grid list-none gap-3 p-0 ">
           {r.criteria.map((c) => (
             <Card as="li" key={c.name} pad="p-4" gap="gap-1">
               <div className="flex items-baseline justify-between gap-2">
                 <b className="text-navy">{c.name}</b>
-                <span className={cn("font-bold", c.mark === c.max ? "text-navy" : "text-maroon")}>{c.mark} of {c.max}</span>
+                <span className={cn("font-bold", c.mark === c.max ? "text-navy" : "text-maroon")}>{c.mark === c.max ? "Present" : c.mark > 0 ? "Partly covered" : "Missing"}</span>
               </div>
               <span className="text-[15px]">{c.note}</span>
             </Card>
           ))}
         </ul>
         <SoftPanel pad="p-5" gap="gap-1.5">
-          <h2 className="m-0 text-lg">Try next time</h2>
+          <h2 className="m-0 text-lg">One next step</h2>
           <p className="m-0">{r.tip}</p>
         </SoftPanel>
+        <Link href="/book" className="font-semibold">Talk to a career adviser</Link>
         <AiPanel ai={r.ai} pending={pending} onRetry={() => retry(view.index)} />
         {error ? <AlertMessage>{error}</AlertMessage> : null}
         <div className="flex flex-wrap gap-3">
@@ -207,11 +209,10 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
     );
   }
 
-  const total = results.reduce((sum, r) => sum + (r?.total ?? 0), 0);
   return (
     <section aria-labelledby="done-h" className="flex flex-col gap-5">
       <HeroBand>
-        <h1 id="done-h" ref={headingRef} tabIndex={-1} className="m-0 text-[clamp(1.5rem,2.5vw,2rem)]">Interview done: {total} out of {count * 5}</h1>
+        <h1 id="done-h" ref={headingRef} tabIndex={-1} className="m-0 text-[clamp(1.5rem,2.5vw,2rem)]">Your interview review</h1>
         <p className="m-0 text-cream">Saved to your progress. Here is how each answer went.</p>
       </HeroBand>
       <ol className="m-0 flex flex-col gap-0 rounded-card border border-hairline p-0">
@@ -220,7 +221,7 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
           return (
             <li key={q.id} className={cn("flex flex-wrap items-baseline justify-between gap-2 px-5 py-4", i > 0 && "border-t border-hairline")}>
               <span className="min-w-0 flex-[1_1_240px]">{i + 1}. {q.prompt}</span>
-              <b className="text-navy">{!r ? "Not answered" : r.ai.state === "skipped" ? "Skipped" : `${r.total} of 5`}</b>
+              <b className="text-navy">{!r ? "Not answered" : r.ai.state === "skipped" ? "Skipped" : r.tip}</b>
             </li>
           );
         })}
@@ -238,17 +239,17 @@ function AiNotice({ status }: { status: AiStatus }) {
   if (status === "on") {
     return (
       <InfoMessage>
-        <b>AI feedback is on.</b> After the checklist marks your answer, the answer (with names, emails and numbers like phone and IC removed) goes to Google Gemini for a short tip. Turn it off in <Link href="/settings">Settings and privacy</Link> to get the checklist only.
+        <b>AI feedback is on.</b> After the checklist reviews your answer, the answer (with names, emails and numbers like phone and IC removed) goes to Google Gemini for a short tip. Turn it off in <Link href="/settings">Settings and privacy</Link> to get the checklist only.
       </InfoMessage>
     );
   }
   if (status === "off_unavailable") {
-    return <InfoMessage><b>Checklist marks only.</b> AI feedback isn&apos;t available at the moment. Every answer still gets marks and a tip.</InfoMessage>;
+    return <InfoMessage><b>Checklist feedback.</b> AI feedback isn&apos;t available at the moment. Every answer still gets feedback and a tip.</InfoMessage>;
   }
   if (status === "off_under_18") {
-    return <InfoMessage><b>Checklist marks only.</b> AI feedback is not available for accounts under 18. Every answer still gets marks and a tip.</InfoMessage>;
+    return <InfoMessage><b>Checklist feedback.</b> AI feedback is not available for accounts under 18. Every answer still gets feedback and a tip.</InfoMessage>;
   }
-  return <InfoMessage><b>AI feedback is off.</b> You get checklist marks and a tip for every answer. Turn AI on in <Link href="/settings">Settings and privacy</Link> if you want a short AI tip as well.</InfoMessage>;
+  return <InfoMessage><b>AI feedback is off.</b> You get checklist feedback and a tip for every answer. Turn AI on in <Link href="/settings">Settings and privacy</Link> if you want a short AI tip as well.</InfoMessage>;
 }
 
 function AiPanel({ ai, pending, onRetry }: { ai: AiFeedback; pending: boolean; onRetry: () => void }) {
@@ -268,17 +269,8 @@ function AiPanel({ ai, pending, onRetry }: { ai: AiFeedback; pending: boolean; o
         <StatusTag kind="ai_generated" />
       </div>
       <p className="m-0">{ai.text}</p>
-      <p className="m-0 text-sm text-muted">AI feedback can be wrong, and it never changes your marks. If something looks off, share this interview with your adviser when you book.</p>
+      <p className="m-0 text-sm text-muted">AI feedback can be wrong. If something looks off, share this interview with your adviser when you book.</p>
     </Card>
-  );
-}
-
-function Score({ total }: { total: number }) {
-  return (
-    <div className={cn("flex size-24 shrink-0 flex-col items-center justify-center rounded-full border-[6px]", total >= 4 ? "border-navy" : total >= 2 ? "border-maroon" : "border-control")}>
-      <span className="font-display text-3xl font-bold leading-none text-navy">{total}</span>
-      <span className="text-[13px] text-muted">out of 5</span>
-    </div>
   );
 }
 

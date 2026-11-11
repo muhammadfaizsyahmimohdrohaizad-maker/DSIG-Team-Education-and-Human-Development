@@ -16,7 +16,8 @@ export default async function Page() {
     redirect("/skill-gap");
   }
   return (
-    <WorkspacePage title="Career map">
+    <WorkspacePage title="Occupations your skills point to">
+      <details><summary>How the match is calculated</summary><p>Your skills, modules, interests and projects help rank occupations. Skill coverage shows the percentage of essential skills your profile already covers.</p></details>
       <RouteLink href="/about-you">Edit your skills and interests</RouteLink>
       {!data?.matches.length && <p>Add your modules, skills or interests to see matching occupations.</p>}
       {data?.matches.map((job) => (
@@ -24,7 +25,10 @@ export default async function Page() {
           <span>
             MASCO {job.code} · {job.fit} match
           </span>
-          <h2>{job.title}</h2>
+          <h2 className="text-xl">{job.title}</h2>
+          <span>{Math.round(job.coverage * 100)}% essential skill coverage</span>
+          <progress className="w-full accent-maroon" aria-label="Essential skill coverage" value={job.coverage} max={1}/>
+          <RouteLink href={"/map/" + job.code}>View {job.code} details</RouteLink>
           <ul>
             {job.reasons.map((r, i) => (
               <li key={i}>{r.text}</li>
