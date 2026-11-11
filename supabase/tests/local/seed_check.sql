@@ -4,7 +4,7 @@ begin;
 select plan(29);
 
 select is((select count(*)::int from public.profiles where role = 'student'), 22, '22 demo students');
-select is((select count(*)::int from ref.interview_questions), 48, 'reference: 48 interview questions from content/interview');
+select is((select count(*)::int from ref.interview_questions), 66, 'reference: 66 interview questions from content/interview');
 select ok(not exists (select 1 from ref.interview_questions where prompt like '[Placeholder]%' or not (rubric ? 'keyPoints') or rubric ->> 'why' is null),
   'no placeholder questions: every one has key points and a why');
 select ok((select bool_and(id = md5('iq:' || code || ':' || round || ':' || position)::uuid) from ref.interview_questions), 'interview ids follow md5(''iq:'' || key)');
