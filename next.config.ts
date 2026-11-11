@@ -17,7 +17,8 @@ const csp = [
 ].join("; ");
 
 const config: NextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: true, 
+  basePath: "/careerprep",
   poweredByHeader: false,
   async headers() {
     return [
