@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { SiteFooter } from "@/components/site-footer";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-inter" });
@@ -10,12 +11,14 @@ export const metadata: Metadata = {
   description: "Find jobs that match what you know, close the skill gap, and practise for the interview.",
 };
 
+// Every page: skip link first, then the group's header and <main id="main">, then the shared footer.
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
-      <body>
+      <body className="flex min-h-screen flex-col">
         <a className="skip-link" href="#main">Skip to main content</a>
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

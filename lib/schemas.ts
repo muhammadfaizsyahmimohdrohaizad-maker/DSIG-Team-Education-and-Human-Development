@@ -114,3 +114,24 @@ export const completeLessonInput = z.object({
 });
 /** Live ranking runs before the form is complete, so the education level may still be empty. */
 export const rankInput = profileInput.partial({ educationLevel: true });
+
+// Added by frontend (sprint 1): log-in, password reset and the parent's decision, for the forms in app/(public).
+export const logInInput = z.object({
+  email,
+  password: z.string().min(1, "Enter your password"),
+});
+
+export const passwordResetInput = z.object({ email });
+
+export const parentDecisionInput = z.discriminatedUnion("decision", [
+  z.object({
+    token: z.string().min(1),
+    decision: z.literal("agree"),
+    isParent: z.literal(true, { error: "Tick this box to agree" }),
+    agreesToUse: z.literal(true, { error: "Tick this box to agree" }),
+  }),
+  z.object({
+    token: z.string().min(1),
+    decision: z.literal("decline"),
+  }),
+]);

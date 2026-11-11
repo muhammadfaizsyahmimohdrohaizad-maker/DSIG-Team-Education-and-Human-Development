@@ -14,7 +14,7 @@ export function NavLinks({ nav }: { nav: NavItem[] }) {
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className={`inline-flex min-h-11 flex-1 items-center justify-center rounded-xl px-2 text-[13px] font-semibold no-underline tablet:flex-none tablet:rounded-full tablet:px-[18px] tablet:text-[15px] ${active ? "bg-navy text-white" : "text-navy"}`}
+            className={`inline-flex min-h-11 flex-1 items-center justify-center rounded-button px-1 text-[13px] font-semibold no-underline tablet:flex-none tablet:rounded-full tablet:px-[18px] tablet:text-[15px] ${active ? "bg-navy text-white hover:text-white" : "text-navy hover:text-navy hover:underline"}`}
           >
             {item.label}
           </Link>
