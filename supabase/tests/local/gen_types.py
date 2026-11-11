@@ -69,7 +69,7 @@ funcs = q("""select coalesce(json_agg(json_build_object('schema', n.nspname, 'na
           where n.nspname = 'public' and p.prokind = 'f'
             and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e')
             and (has_function_privilege('authenticated', p.oid, 'execute') or has_function_privilege('anon', p.oid, 'execute')
-                 or p.proname in ('import_reference', 'complete_past_bookings', 'purge_audit_log', 'record_interview_answer', 'add_ai_feedback'))
+                 or p.proname in ('import_reference', 'complete_past_bookings', 'purge_audit_log', 'record_interview_answer', 'add_ai_feedback', 'delete_declined_student', 'claim_due_emails', 'hit_rate_limit'))
             and p.prorettype <> 'trigger'::regtype""")
 
 SCALAR = {
@@ -146,6 +146,8 @@ def emit_schema(schema):
                 for o in f["out"]:
                     out.append(f"          {o['name']}: {ts(o['udt'])}")
                 out.append("        }[]")
+            elif f["retset"] and f["rettype"] in {c["table"] for c in cols if c["schema"] == schema}:
+                out.append(f'        Returns: Database["{schema}"]["Tables"]["{f["rettype"]}"]["Row"][]')
             elif f["retset"]:
                 out.append(f"        Returns: {ts(f['rettype'])}[]")
             else:

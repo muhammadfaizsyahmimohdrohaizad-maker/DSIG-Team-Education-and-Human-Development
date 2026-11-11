@@ -37,3 +37,19 @@ reset role;
 ```
 
 Keep `select plan(N)` equal to the number of assertions; `finish()` fails the run when they differ.
+
+## Postgres 17
+
+Production runs Postgres 17 (`config.toml` `major_version = 17`). Only Postgres 16 is installable in the build
+sandbox (the PGDG apt repository is blocked), so the migrations were reviewed for the known 17 changes instead:
+
+- Maintenance commands (CREATE INDEX, REINDEX, REFRESH MATERIALIZED VIEW, ANALYZE) now run index and
+  materialized-view expressions with `search_path = pg_catalog, pg_temp`. Our expression and partial indexes use
+  only built-in functions and opclasses stored by OID (`gin_trgm_ops`), the generated column `total` uses only
+  jsonb operators, and no CHECK constraint calls our own functions. Every SECURITY DEFINER function pins its
+  search_path (tested in rls.test.sql).
+- Removed in 17: `adminpack`, `db_user_namespace`, `old_snapshot_threshold`, the `pg_stat_bgwriter` checkpoint
+  columns. None are used. Extensions used: `pgcrypto` and `pg_trgm`, both on Supabase's Postgres 17.
+- No MERGE, no custom operators, no `SET SESSION AUTHORIZATION`, no reliance on `public` schema CREATE rights.
+
+Run the suite on 17 when its binaries are available: `PGBIN=/usr/lib/postgresql/17/bin supabase/tests/local/run.sh`.

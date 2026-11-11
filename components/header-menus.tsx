@@ -123,7 +123,7 @@ export function HeaderMenus({ account, notifications }: { account: HeaderAccount
             </Link>
           ))}
           {/* The route handler that signs out is owned by backend (app/auth/sign-out/route.ts, POST). */}
-          <form action="/auth/sign-out" method="post" className="mt-1 border-t border-hairline pt-1">
+          <form action="/careerprep/auth/sign-out" method="post" className="mt-1 border-t border-hairline pt-1">
             <button type="submit" className="flex min-h-11 w-full cursor-pointer items-center rounded-control px-3 text-left font-semibold text-maroon hover:bg-cream">
               Log out
             </button>

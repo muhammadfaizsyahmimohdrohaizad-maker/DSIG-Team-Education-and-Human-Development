@@ -1,9 +1,15 @@
 -- Checks that supabase/seed.sql produces what the mockup boards show, read through the same functions the
 -- app uses. Run by run.sh against the "demo" database. Avoids checks that depend on today's date.
 begin;
-select plan(25);
+select plan(29);
 
 select is((select count(*)::int from public.profiles where role = 'student'), 22, '22 demo students');
+select is((select count(*)::int from ref.interview_questions), 48, 'reference: 48 interview questions from content/interview');
+select ok(not exists (select 1 from ref.interview_questions where prompt like '[Placeholder]%' or not (rubric ? 'keyPoints') or rubric ->> 'why' is null),
+  'no placeholder questions: every one has key points and a why');
+select ok((select bool_and(id = md5('iq:' || code || ':' || round || ':' || position)::uuid) from ref.interview_questions), 'interview ids follow md5(''iq:'' || key)');
+select is((select count(*)::int from public.interview_answers a left join ref.interview_questions q on q.id = a.question_id where q.id is null), 0,
+  'every demo answer points at a real question');
 select is((select count(*)::int from public.profiles where role = 'adviser'), 3, '3 demo advisers');
 select ok((select bool_and(encrypted_password = extensions.crypt('CareerPrep-demo-2026', encrypted_password)) from auth.users),
   'every demo account uses the documented password');

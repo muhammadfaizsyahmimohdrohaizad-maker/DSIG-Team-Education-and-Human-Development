@@ -68,6 +68,8 @@ done
 echo "== seed_reference.sql + seed.sql"
 "${PSQL[@]}" -d demo -1 -f "$ROOT/supabase/seed_reference.sql" >/dev/null
 "${PSQL[@]}" -d demo -1 -f "$ROOT/supabase/seed.sql" >/dev/null
+echo "== seed_reference.sql again (idempotent, with student answers present)"
+"${PSQL[@]}" -d demo -1 -f "$ROOT/supabase/seed_reference.sql" >/dev/null
 echo "== seed_check.sql"
 if ! "${PSQL[@]}" -d demo -t -A -f "$HERE/seed_check.sql" | grep -v '^$'; then status=1; fi
 

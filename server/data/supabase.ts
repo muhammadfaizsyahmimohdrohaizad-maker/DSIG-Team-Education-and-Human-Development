@@ -27,8 +27,10 @@ export async function db() {
  * Service-role client. Bypasses RLS and every grant, so each use is scoped to one user id or one token hash,
  * and it is used ONLY for:
  * - sign-up: the profile and first consent rows, and setting app_metadata.role (the role source for RLS);
- * - the parent decision (/parent-consent/[token]): the approval row, the parent consent, the account lock;
+ * - the parent decision (/parent-consent/[token]): the approval row, the parent consent, the account lock,
+ *   and on a decline delete_declined_student before the Auth user is deleted;
  * - last_login_at on log-in, and looking up a user's email for status emails;
+ * - rate limits (hit_rate_limit) and the email outbox (insert on failure, claim_due_emails in the cron);
  * - marked mastery checks, interview answers with their marks, AI feedback and the ai_calls log (students
  *   cannot write any of these), and the reference import;
  * - the data export, account deletion and the cron jobs.

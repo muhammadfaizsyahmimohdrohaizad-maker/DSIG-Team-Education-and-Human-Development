@@ -64,7 +64,7 @@ export default async function ParentConsentPage({ params }: { params: Promise<{ 
               </SoftPanel>
             </div>
             <p className="m-0 text-[15px]">
-              We delete {name}&apos;s data 12 months after the last log-in, or straight away if {name} or you ask. Read the <a href="/privacy">Privacy Notice</a>.
+              We delete {name}&apos;s data 12 months after the last log-in, or straight away if {name} or you ask. Read the <a href="/careerprep/privacy">Privacy Notice</a>.
             </p>
             <ParentDecisionForm token={token} studentFullName={request.studentFullName} studentFirstName={name} recordParentDecision={recordParentDecision} />
           </section>

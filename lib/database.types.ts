@@ -298,6 +298,50 @@ export type Database = {
           },
         ]
       }
+      email_outbox: {
+        Row: {
+          id: number
+          to_user: string
+          kind: string
+          payload: Json
+          attempts: number
+          last_error: string | null
+          next_attempt_at: string
+          sent_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: never
+          to_user: string
+          kind: string
+          payload?: Json
+          attempts?: number
+          last_error?: string | null
+          next_attempt_at?: string
+          sent_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: never
+          to_user?: string
+          kind?: string
+          payload?: Json
+          attempts?: number
+          last_error?: string | null
+          next_attempt_at?: string
+          sent_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_outbox_to_user_fkey"
+            columns: ["to_user"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       interview_answers: {
         Row: {
           id: string
@@ -515,6 +559,7 @@ export type Database = {
           semester: number | null
           institution: string | null
           staff_unit: string | null
+          reminder_emails: boolean
         }
         Insert: {
           user_id: string
@@ -536,6 +581,7 @@ export type Database = {
           semester?: number | null
           institution?: string | null
           staff_unit?: string | null
+          reminder_emails?: boolean
         }
         Update: {
           user_id?: string
@@ -557,6 +603,7 @@ export type Database = {
           semester?: number | null
           institution?: string | null
           staff_unit?: string | null
+          reminder_emails?: boolean
         }
         Relationships: [
           {
@@ -612,6 +659,28 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
+        ]
+      }
+      rate_limits: {
+        Row: {
+          key: string
+          window_start: string
+          expires_at: string
+          hits: number
+        }
+        Insert: {
+          key: string
+          window_start: string
+          expires_at: string
+          hits?: number
+        }
+        Update: {
+          key?: string
+          window_start?: string
+          expires_at?: string
+          hits?: number
+        }
+        Relationships: [
         ]
       }
       review_cards: {
@@ -836,6 +905,12 @@ export type Database = {
         }
         Returns: Json
       }
+      claim_due_emails: {
+        Args: {
+          p_limit?: number
+        }
+        Returns: Database["public"]["Tables"]["email_outbox"]["Row"][]
+      }
       claim_slot: {
         Args: {
           p_slot: string
@@ -860,9 +935,23 @@ export type Database = {
         Args: never
         Returns: number
       }
+      delete_declined_student: {
+        Args: {
+          p_user: string
+        }
+        Returns: boolean
+      }
       has_current_undertaking: {
         Args: {
           uid: string
+        }
+        Returns: boolean
+      }
+      hit_rate_limit: {
+        Args: {
+          p_key: string
+          p_limit: number
+          p_window: string
         }
         Returns: boolean
       }
@@ -989,6 +1078,10 @@ export type Database = {
           score: number
         }[]
       }
+      touch_activity: {
+        Args: never
+        Returns: boolean
+      }
     }
     Enums: {
       booking_state: "requested" | "accepted" | "declined" | "change_requested" | "cancelled" | "completed"
@@ -1069,6 +1162,7 @@ export type Database = {
           position: number
           prompt: string
           rubric: Json
+          source_version: string | null
         }
         Insert: {
           id?: string
@@ -1077,6 +1171,7 @@ export type Database = {
           position: number
           prompt: string
           rubric: Json
+          source_version?: string | null
         }
         Update: {
           id?: string
@@ -1085,6 +1180,7 @@ export type Database = {
           position?: number
           prompt?: string
           rubric?: Json
+          source_version?: string | null
         }
         Relationships: [
           {

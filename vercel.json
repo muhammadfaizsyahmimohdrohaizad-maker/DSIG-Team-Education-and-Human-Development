@@ -4,8 +4,11 @@
   "installCommand": "npx --yes pnpm@10.12.1 install --no-frozen-lockfile",
   "buildCommand": "npx --yes pnpm@10.12.1 ls --depth 0 && npx next build",
   "regions": ["sin1"],
+  "redirects": [
+    { "source": "/", "destination": "/careerprep", "permanent": false }
+  ],
   "crons": [
-    { "path": "/api/cron/reminders", "schedule": "0 1 * * *" },
-    { "path": "/api/cron/purge", "schedule": "0 19 * * *" }
+    { "path": "/careerprep/api/cron/reminders", "schedule": "0 1 * * *" },
+    { "path": "/careerprep/api/cron/purge", "schedule": "0 19 * * *" }
   ]
 }
