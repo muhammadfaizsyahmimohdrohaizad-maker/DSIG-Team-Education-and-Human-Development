@@ -24,16 +24,26 @@ here, use the local runner: `supabase/tests/local/run.sh --keep` prints a socket
   that the server itself derived, never an id taken from the request:
   - sign-up: insert the profile and first consent rows; set `app_metadata.role` with the Auth admin API;
   - the parent decision: read and claim the `parent_approvals` row by token hash, insert the parent consent,
-    unlock the account; saving a new approval request;
-  - `last_login_at` on log-in; email lookup for status emails;
+    unlock the account; saving a new approval request. On a decline: `delete_declined_student(p_user)` (refuses
+    anyone but a locked under-18 student whose approval row says no), then `auth.admin.deleteUser(p_user)`;
+  - `last_login_at` on log-in; email lookup for status emails. On every other request the middleware calls
+    `touch_activity()` with the user's own client (`db()`); it writes at most once per Malaysian day;
+  - rate limits: `hit_rate_limit(p_key, p_limit, p_window)` returns **true when the action may go ahead**, false
+    when the limit is used up. One call per attempt, before the work. Hash emails and IPs into the key
+    (e.g. `login:<sha256(email)>`); keys are at most 200 characters. Old windows are pruned by the function;
+  - email retries: on a failed send, insert into `email_outbox` (`to_user`, `kind`, `payload` with only `status`,
+    `time`, `link`, `booking_id`, `minutes`, `adviser_name`; anything else is refused). The cron calls
+    `claim_due_emails(p_limit)` (it counts the attempt and schedules the next one: 5 min, 30 min, 2 h, 12 h;
+    5 attempts at most), sends, then sets `sent_at` (or `last_error`, short, no content) on each row;
   - inserting a marked mastery check (students can read `mastery_checks` but not write it);
   - saving an interview answer with its checklist marks and storing AI feedback: `record_interview_answer(p_user, ...)`
     and `add_ai_feedback(p_user, ...)` are executable only by the service role, so a student cannot send their own
     marks; the SQL still checks the student, the question, the marks range, age and AI consent;
   - logging every AI provider call in `ai_calls` (`kind` `interview_feedback` or `notes_cards`, `ok` true or false).
     The daily budget counts these rows with the user's client (students can read their own log);
-  - the reference import (`import_reference`), the data export, account deletion and the cron jobs
-    (`complete_past_bookings`, `purge_audit_log`, reminders, 12-month inactivity deletion).
+  - the reference import (`import_reference`, including interview sets), the data export, account deletion and the
+    cron jobs (`complete_past_bookings`, `purge_audit_log`, `claim_due_emails`, reminders, 12-month inactivity
+    deletion). Reminders go only to students with `profiles.reminder_emails = true`; status emails always go.
 
 ## Rules the database enforces
 
@@ -60,6 +70,8 @@ here, use the local runner: `supabase/tests/local/run.sh --keep` prints a socket
 | `P0002` (`not_found`) | `NOT_FOUND` |
 | `P0001` `slot_taken`, `slot_closed`, `bad_status`, `too_late`, `not_completed`; `23505` | `CONFLICT` |
 | `22023` (`answer_required`, `invalid_input`), `23514` (check constraint) | `VALIDATION` |
+
+`profiles.reminder_emails` (default true) is the Settings "Reminder emails" switch; students update it with `db()`.
 
 `review_cards.origin` is `lesson` (after a passed check, the default), `notes` (headings method) or `notes_ai`
 (AI-made, shown labelled AI-generated; refused for under-18 accounts).
