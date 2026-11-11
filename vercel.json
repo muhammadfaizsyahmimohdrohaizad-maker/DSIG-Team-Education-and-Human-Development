@@ -5,11 +5,7 @@
   "buildCommand": "npx --yes pnpm@10.12.1 ls --depth 0 && npx next build",
   "regions": ["sin1"],
   "crons": [
-    { "path": "/api/cron/reminders", "schedule": "0 1 * * *" },
-    { "path": "/api/cron/purge", "schedule": "0 19 * * *" }
-  ],
-  "rewrites": [
-    { "source": "/careerprep", "destination": "https://careerprep-sigma.vercel.app" },
-    { "source": "/careerprep/:path*", "destination": "https://careerprep-sigma.vercel.app/:path*" }
+    { "path": "/careerprep/api/cron/reminders", "schedule": "0 1 * * *" },
+    { "path": "/careerprep/api/cron/purge", "schedule": "0 19 * * *" }
   ]
 }

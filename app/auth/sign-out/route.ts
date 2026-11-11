@@ -8,5 +8,5 @@ export async function POST(req: NextRequest) {
   if (origin && origin !== new URL(req.url).origin) return NextResponse.json({ error: "Not allowed" }, { status: 403 });
   await authSignOut("global").catch(() => undefined);
   // 303 so the browser follows with GET.
-  return NextResponse.redirect(new URL("/", req.url), 303);
+  return NextResponse.redirect(new URL("/careerprep", req.url), 303);
 }

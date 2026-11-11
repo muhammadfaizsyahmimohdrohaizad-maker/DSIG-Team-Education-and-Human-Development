@@ -29,7 +29,7 @@ const protections = [
 
 const faqs: Array<{ q: string; a: React.ReactNode }> = [
   { q: "Is CareerPrep free?", a: "Yes, for students. Institutions that use it for their career services pay for it." },
-  { q: "Who can see my data?", a: <>You, and your career adviser only for what you choose to share. Your institution sees totals with no names. Read the <a href="/privacy">Privacy Notice</a> for the details.</> },
+  { q: "Who can see my data?", a: <>You, and your career adviser only for what you choose to share. Your institution sees totals with no names. Read the <a href="/careerprep/privacy">Privacy Notice</a> for the details.</> },
   { q: "Does it use AI?", a: "Matching uses official job and skill lists, not AI. AI writes feedback on your notes and interview answers only if you turn it on, and it is always labelled." },
   { q: "Is it only for GMI students?", a: "We are starting at GMI. It is built for anyone from SPM leavers to degree students." },
 ];
@@ -121,7 +121,7 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
-          <a href="/privacy" className="inline-flex min-h-11 items-center self-start font-semibold text-white hover:text-cream">Read the Privacy Notice</a>
+          <a href="/careerprep/privacy" className="inline-flex min-h-11 items-center self-start font-semibold text-white hover:text-cream">Read the Privacy Notice</a>
         </HeroBand>
 
         <section aria-labelledby="faq-h" className="flex max-w-[860px] flex-col">
