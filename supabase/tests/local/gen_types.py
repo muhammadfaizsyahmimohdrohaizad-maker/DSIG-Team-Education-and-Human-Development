@@ -6,7 +6,8 @@
     python3 supabase/tests/local/gen_types.py <socket dir> <port> > lib/database.types.ts
 
 Includes the public and ref schemas: tables, enums, and the functions anon/authenticated may execute plus
-the service-role jobs (import_reference, complete_past_bookings, purge_audit_log).
+the service-role functions (import_reference, complete_past_bookings, purge_audit_log,
+record_interview_answer, add_ai_feedback).
 """
 import json
 import subprocess
@@ -68,7 +69,7 @@ funcs = q("""select coalesce(json_agg(json_build_object('schema', n.nspname, 'na
           where n.nspname = 'public' and p.prokind = 'f'
             and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e')
             and (has_function_privilege('authenticated', p.oid, 'execute') or has_function_privilege('anon', p.oid, 'execute')
-                 or p.proname in ('import_reference', 'complete_past_bookings', 'purge_audit_log'))
+                 or p.proname in ('import_reference', 'complete_past_bookings', 'purge_audit_log', 'record_interview_answer', 'add_ai_feedback'))
             and p.prorettype <> 'trigger'::regtype""")
 
 SCALAR = {

@@ -2,7 +2,7 @@
 -- Runs with pgTAP (`pnpm db:test`, i.e. supabase test db) or without it: supabase/tests/local/run.sh.
 -- Each block switches to the API role with a fake JWT, the way PostgREST does for a real request.
 begin;
-select plan(112);
+select plan(108);
 
 -- =========================================================================================================
 -- Fixtures (as the migration owner)
@@ -162,8 +162,6 @@ select lives_ok($$insert into public.consents (user_id, kind, given, notice_vers
   'a locked account can still record its consents');
 select throws_ok($$select public.claim_slot('55555555-0000-0000-0000-000000000002', 'x', null, '{}', gen_random_uuid())$$,
   '42501', 'not_allowed', 'a locked account cannot book');
-select throws_ok($$select public.record_interview_answer('aaaaaaaa-0000-0000-0000-000000000001', 'x', false, '{"structure":0,"accuracy":0,"evidence":0}')$$,
-  '42501', 'account_locked', 'a locked account cannot save interview answers');
 reset role;
 -- The parent approves through the emailed link; the server unlocks with the service role.
 update public.profiles set account_locked = false where user_id = '11111111-0000-0000-0000-00000000000c';
@@ -342,18 +340,11 @@ reset role;
 select is((select state::text from public.student_skill_states('11111111-0000-0000-0000-00000000000a') where skill_uri = 's2'), 'check_needed',
   'advisers see the derived state (claimed, not mastered)');
 
--- Interview: marks validated; AI feedback only with consent and 18+
-select lives_ok($$select public.record_interview_answer('aaaaaaaa-0000-0000-0000-000000000001', 'I built a chatbot', false, '{"structure":2,"accuracy":1,"evidence":1}')$$,
-  'student saves an answer with checklist marks');
-select throws_ok($$select public.record_interview_answer('aaaaaaaa-0000-0000-0000-000000000001', 'x', false, '{"structure":3,"accuracy":1,"evidence":1}')$$,
-  '23514', null, 'marks outside the rubric are refused');
-select lives_ok($$select public.add_ai_feedback((select id from public.interview_answers limit 1), 'Name the tool you used.')$$,
-  'adult with AI consent gets AI feedback stored');
-reset role;
-set local request.jwt.claims to '{"sub":"11111111-0000-0000-0000-00000000000c","role":"authenticated","app_metadata":{"role":"student"}}';
+-- Interview writes are the server's (service role); see ai.test.sql for the full set.
+set local request.jwt.claims to '{"sub":"11111111-0000-0000-0000-00000000000a","role":"authenticated","app_metadata":{"role":"student"}}';
 set local role authenticated;
-select throws_ok($$select public.add_ai_feedback(public.record_interview_answer('aaaaaaaa-0000-0000-0000-000000000001', 'My answer', false, '{"structure":1,"accuracy":1,"evidence":0}'), 'AI text')$$,
-  '42501', 'ai_not_allowed', 'AI feedback is refused for an under-18 account, whatever its consent');
+select throws_ok($$select public.record_interview_answer('11111111-0000-0000-0000-00000000000a', 'aaaaaaaa-0000-0000-0000-000000000001', 'x', false, '{"structure":2,"accuracy":2,"evidence":1}')$$,
+  '42501', null, 'a student cannot write interview marks through the API');
 reset role;
 
 select * from finish();

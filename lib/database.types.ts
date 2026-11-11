@@ -33,6 +33,38 @@ export type Database = {
           },
         ]
       }
+      ai_calls: {
+        Row: {
+          id: number
+          user_id: string
+          kind: string
+          ok: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: never
+          user_id: string
+          kind: string
+          ok: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: never
+          user_id?: string
+          kind?: string
+          ok?: boolean
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_calls_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       app_settings: {
         Row: {
           key: string
@@ -591,6 +623,7 @@ export type Database = {
           back: string
           fsrs: Json
           card_due_at: string
+          origin: string
         }
         Insert: {
           id?: string
@@ -600,6 +633,7 @@ export type Database = {
           back: string
           fsrs: Json
           card_due_at: string
+          origin?: string
         }
         Update: {
           id?: string
@@ -609,6 +643,7 @@ export type Database = {
           back?: string
           fsrs?: Json
           card_due_at?: string
+          origin?: string
         }
         Relationships: [
           {
@@ -742,6 +777,7 @@ export type Database = {
       }
       add_ai_feedback: {
         Args: {
+          p_user: string
           p_answer: string
           p_feedback: string
         }
@@ -913,6 +949,7 @@ export type Database = {
       }
       record_interview_answer: {
         Args: {
+          p_user: string
           p_question: string
           p_answer: string
           p_skipped: boolean

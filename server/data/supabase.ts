@@ -29,7 +29,8 @@ export async function db() {
  * - sign-up: the profile and first consent rows, and setting app_metadata.role (the role source for RLS);
  * - the parent decision (/parent-consent/[token]): the approval row, the parent consent, the account lock;
  * - last_login_at on log-in, and looking up a user's email for status emails;
- * - marked mastery checks (students cannot insert them) and the reference import;
+ * - marked mastery checks, interview answers with their marks, AI feedback and the ai_calls log (students
+ *   cannot write any of these), and the reference import;
  * - the data export, account deletion and the cron jobs.
  * Never import it from a client component, and never pass it a value the user chose as an id.
  */
