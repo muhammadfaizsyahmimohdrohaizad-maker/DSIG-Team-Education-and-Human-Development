@@ -59,3 +59,50 @@ export const adviserFeedback = z.object({
   bookingId: z.string().uuid(),
   text: z.string().trim().min(1, "Write your feedback first").max(2000),
 });
+
+// ---- Accounts, booking and adviser actions (added by backend, Sprint 1) ----
+const uuid = z.string().uuid("This link or button is out of date. Reload the page and try again.");
+
+export const logInInput = z.object({ email, password: z.string().min(1, "Enter your password") });
+export const passwordResetInput = z.object({ email });
+export const newPasswordInput = z.object({ password });
+
+export const parentToken = z.string().trim().regex(/^[A-Za-z0-9_-]{43}$/, "This link is incomplete. Open it again from the email, or copy the whole link.");
+export const parentTokenInput = z.object({ token: parentToken });
+export const parentDecisionInput = z.object({
+  token: parentToken,
+  approve: z.boolean(),
+  isGuardian: z.boolean().default(false),
+  agrees: z.boolean().default(false),
+}).refine((v) => !v.approve || (v.isGuardian && v.agrees), { path: ["agrees"], message: "Tick both boxes to agree, or choose Decline" });
+export const parentApprovalRequest = z.object({ parentEmail: email.optional() });
+
+export const openSlotsQuery = z.object({
+  from: z.iso.datetime({ offset: true }).optional(),
+  days: z.number().int().min(1).max(60).default(14),
+  adviserId: uuid.optional(),
+});
+export const bookingRef = z.object({ bookingId: uuid });
+export const moveBookingInput = z.object({ bookingId: uuid, slotId: uuid });
+
+export const respondInput = z.object({
+  bookingId: uuid,
+  accept: z.boolean(),
+  note: z.string().trim().max(1000, "Keep the note under 1,000 characters").optional(),
+}).refine((v) => v.accept || !!v.note, { path: ["note"], message: "Tell the student why, or suggest another time" });
+
+export const availabilityInput = z.object({
+  slots: z.array(z.object({
+    start: z.iso.datetime({ offset: true, error: "Pick a time from the grid" }),
+    minutes: z.union([z.literal(30), z.literal(60)], { error: "Choose 30 or 60 minutes" }),
+    open: z.boolean(),
+  })).max(300, "Save one or two weeks at a time"),
+  blockDays: z.array(z.object({
+    day: z.iso.date({ error: "Pick a date to block" }),
+    reason: z.string().trim().max(200, "Keep the reason under 200 characters").optional(),
+  })).max(60).default([]),
+  unblockDays: z.array(z.iso.date({ error: "Pick a date to unblock" })).max(60).default([]),
+});
+
+export const consentUpdate = z.object({ kind: z.enum(["ai_processing", "adviser_visibility"]), given: z.boolean() });
+export const deleteAccountInput = z.object({ confirmation: z.string().max(200) });
