@@ -15,17 +15,26 @@ export type ButtonSize = "default" | "compact" | "large";
 
 type StyleProps = { variant?: ButtonVariant; size?: ButtonSize; fullWidth?: boolean; className?: string };
 
+// No tailwind-merge here, so `className` must only add classes that don't clash with these (self-start, mt-auto).
+// Height, padding and text size come from `size` and `variant` so callers never need to override them.
 export function buttonClasses({ variant = "primary", size = "default", fullWidth = false, className }: StyleProps = {}): string {
-  const height = size === "large" ? "min-h-[52px] text-[17px]" : size === "compact" ? "min-h-11" : "min-h-12";
   const base = "inline-flex items-center justify-center gap-2 font-sans no-underline cursor-pointer text-center leading-tight";
-  const byVariant: Record<ButtonVariant, string> = {
-    primary: "rounded-button bg-maroon px-5 font-bold text-white hover:bg-maroon-dark hover:text-white",
-    outline: "rounded-button border border-navy bg-white px-[18px] font-semibold text-navy hover:bg-cream hover:text-navy",
-    danger: "rounded-button border border-maroon bg-white px-[18px] font-semibold text-maroon hover:bg-cream hover:text-maroon",
-    text: "px-3 font-semibold text-navy underline underline-offset-2 hover:text-maroon",
-    "on-navy": "rounded-field border border-cream/50 px-[14px] text-sm font-semibold text-white hover:bg-white/10 hover:text-white",
+  const height: Record<ButtonSize, string> = { large: "min-h-[52px] text-[17px]", default: "min-h-12", compact: "min-h-11" };
+  const pad: Record<ButtonVariant, Record<ButtonSize, string>> = {
+    primary: { large: "px-6", default: "px-5", compact: "px-4" },
+    outline: { large: "px-[22px]", default: "px-[18px]", compact: "px-3.5" },
+    danger: { large: "px-[22px]", default: "px-[18px]", compact: "px-3.5" },
+    text: { large: "px-3", default: "px-3", compact: "px-2" },
+    "on-navy": { large: "px-[22px]", default: "px-[18px]", compact: "px-3.5" },
   };
-  return cn(base, height, byVariant[variant], fullWidth && "w-full", className);
+  const look: Record<ButtonVariant, string> = {
+    primary: "rounded-button bg-maroon font-bold text-white hover:bg-maroon-dark hover:text-white",
+    outline: "rounded-button border border-navy bg-white font-semibold text-navy hover:bg-cream hover:text-navy",
+    danger: "rounded-button border border-maroon bg-white font-semibold text-maroon hover:bg-cream hover:text-maroon",
+    text: "font-semibold text-navy underline underline-offset-2 hover:text-maroon",
+    "on-navy": "rounded-button border border-cream/50 font-semibold text-white hover:bg-white/10 hover:text-white",
+  };
+  return cn(base, height[size], pad[variant][size], look[variant], fullWidth && "w-full", className);
 }
 
 function Content({ loading, loadingText, children }: { loading?: boolean; loadingText?: string; children: ReactNode }) {

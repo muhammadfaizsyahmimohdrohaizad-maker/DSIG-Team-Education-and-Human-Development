@@ -8,6 +8,7 @@ export { StatusTag, Pill, TAGS, type TagKind } from "./status-tag";
 export { Card, SoftPanel, HeroBand, Kicker } from "./surfaces";
 export { StatusMessage, InfoMessage, AlertMessage, EmptyState, ErrorState, Skeleton, SkeletonList } from "./feedback";
 export { Toast } from "./toast";
+export { PasswordInput } from "./password-input";
 export { Tabs, type TabItem } from "./tabs";
 export { SegmentedLinks } from "./segmented-links";
 export { CopyDetailsButton } from "./copy-details-button";
