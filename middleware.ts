@@ -5,6 +5,7 @@ import { createServerClient } from "@supabase/ssr";
 const STUDENT = ["/dashboard", "/about-you", "/map", "/skill-gap", "/plan", "/book", "/settings"];
 const ADVISER = ["/adviser"];
 const STAFF_SETUP = ["/staff"];
+const INSTITUTION = ["/institution"];
 
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({ request: req });
@@ -25,7 +26,7 @@ export async function middleware(req: NextRequest) {
 
   const { data } = await supabase.auth.getUser();
   const path = req.nextUrl.pathname;
-  const needsAuth = [...STUDENT, ...ADVISER, ...STAFF_SETUP].some((p) => path === p || path.startsWith(`${p}/`));
+  const needsAuth = [...STUDENT, ...ADVISER, ...STAFF_SETUP, ...INSTITUTION].some((p) => path === p || path.startsWith(`${p}/`));
 
   if (needsAuth && !data.user) {
     const to = req.nextUrl.clone();
@@ -36,8 +37,11 @@ export async function middleware(req: NextRequest) {
 
   // Role comes from the custom access-token hook (System Design 5.2); RLS enforces it again.
   const role = (data.user?.app_metadata as { role?: string } | undefined)?.role;
-  if (role === "student" && ADVISER.some((p) => path.startsWith(p))) return NextResponse.redirect(new URL("/dashboard", req.url));
-  if (role === "adviser" && STUDENT.some((p) => path.startsWith(p))) return NextResponse.redirect(new URL("/adviser/requests", req.url));
+  const under = (list: string[]) => list.some((p) => path === p || path.startsWith(`${p}/`));
+  if (role === "student" && (under(ADVISER) || under(STAFF_SETUP))) return NextResponse.redirect(new URL("/dashboard", req.url));
+  if (role === "adviser" && under(STUDENT)) return NextResponse.redirect(new URL("/adviser/requests", req.url));
+  if (role !== "institution" && under(INSTITUTION)) return NextResponse.redirect(new URL(role === "adviser" ? "/adviser/requests" : "/dashboard", req.url));
+  if (role === "institution" && (under(STUDENT) || under(ADVISER) || under(STAFF_SETUP))) return NextResponse.redirect(new URL("/institution", req.url));
 
   return res;
 }
