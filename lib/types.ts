@@ -109,8 +109,11 @@ export type CheckOutcome = {
   score: number;
   passed: boolean;
   retakeAfterLesson?: number;
-  /** Shown only after marking: the questions to go over, with the right answer and why. */
-  missed: { id: string; lessonNo: number; prompt: string; answer: string; explanation: string }[];
+  /**
+   * The questions to go over and the lesson each comes from. The right answer and the explanation are
+   * included only on a pass: a retake uses the same five questions, so a fail never reveals the key.
+   */
+  missed: { id: string; lessonNo: number; prompt: string; answer?: string; explanation?: string }[];
   reviewCardsAdded: number;
 };
 

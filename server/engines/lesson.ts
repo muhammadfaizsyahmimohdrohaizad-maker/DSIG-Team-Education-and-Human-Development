@@ -47,3 +47,27 @@ export function canRetake(failedAt: Date | undefined, retakeAfterLesson: number 
 function normalise(s: string): string {
   return s.trim().toLowerCase();
 }
+
+export type CheckGate = { open: true } | { open: false; finishLesson: number; reason: "retake" | "lessons" };
+
+/**
+ * When the 5-question check may be opened (FR-LRN-02, FR-LRN-03):
+ * - after a failed check, only once the lesson behind most misses is marked done again;
+ * - the first time, after all four lessons, or straight away for a skill the student claimed.
+ */
+export function checkGate(p: {
+  claimed: boolean;
+  lessonsDone: readonly number[];
+  lessonDoneAt: ReadonlyMap<number, Date>;
+  latestCheck?: { score: number; retakeAfterLesson?: number; takenAt: Date };
+}): CheckGate {
+  const c = p.latestCheck;
+  if (c && c.score < PASS_MARK && c.retakeAfterLesson !== undefined && !canRetake(c.takenAt, c.retakeAfterLesson, p.lessonDoneAt)) {
+    return { open: false, finishLesson: c.retakeAfterLesson, reason: "retake" };
+  }
+  if (!c && !p.claimed) {
+    const missing = [1, 2, 3, 4].find((n) => !p.lessonsDone.includes(n));
+    if (missing !== undefined) return { open: false, finishLesson: missing, reason: "lessons" };
+  }
+  return { open: true };
+}
