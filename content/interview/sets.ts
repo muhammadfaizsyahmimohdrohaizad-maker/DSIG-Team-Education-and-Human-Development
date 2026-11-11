@@ -161,3 +161,19 @@ export function expandSets(files: readonly InterviewFile[], occupationCodes: rea
   const unknownCodes = [...own.keys()].filter((c) => !occupationCodes.includes(c));
   return { rows, noTechnical, unknownCodes };
 }
+
+/**
+ * The ref.interview_questions row for the import. ref.interview_questions has no why or source column, so both
+ * travel inside the rubric jsonb next to the engine rubric; server/data/interview.ts reads them from there.
+ * id: derive it from `key` (for example md5('iq:' || key)::uuid, as the seed does) so re-imports keep answer links.
+ */
+export function importRow(row: InterviewRow) {
+  return {
+    key: row.key,
+    code: row.code,
+    round: row.round,
+    position: row.position,
+    prompt: row.prompt,
+    rubric: { ...row.rubric, why: row.why, source: row.source },
+  };
+}

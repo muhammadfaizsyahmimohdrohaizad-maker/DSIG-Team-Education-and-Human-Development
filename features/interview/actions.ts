@@ -69,6 +69,19 @@ async function askAi(userId: string, student: Interviewee, question: Question, a
   return { state: "shown", text: r.value };
 }
 
+export type InterviewSetup = { jobCode: string; jobTitle: string; ai: AiStatus };
+
+/** What the start screen needs: the target job and whether AI feedback is on, and why not if it is off. */
+export async function getInterviewSetup(): Promise<Result<InterviewSetup>> {
+  return asStudent("getInterviewSetup", async (userId) => {
+    const student = await getInterviewee(userId);
+    if (!student) return err("NOT_FOUND", "We couldn't find your profile. Log in again.");
+    if (!student.target) return err("CONFLICT", "Pick a target job on your Map first. The interview asks questions for that job.");
+    const [title, status] = await Promise.all([occupationTitle(student.target), aiStatus(userId, student)]);
+    return ok({ jobCode: student.target, jobTitle: title ?? student.target, ai: status });
+  });
+}
+
 /** The three questions of the chosen round for the student's target job. */
 export async function startInterview(input: unknown): Promise<Result<InterviewStart>> {
   const parsed = startInterviewInput.safeParse(input);

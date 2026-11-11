@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { checkFiles, expandSets, toRubric, SHARED, type InterviewFile } from "@/content/interview/sets.ts";
+import { checkFiles, expandSets, importRow, toRubric, SHARED, type InterviewFile } from "@/content/interview/sets.ts";
 import { checklist, explain, total } from "@/server/engines/feedback.ts";
 import { SAMPLES } from "./ai-interview-samples.ts";
 
@@ -28,6 +28,12 @@ describe("interview content", () => {
     expect(ai.filter((r) => r.round === "behavioural").map((r) => r.position)).toEqual([1, 2, 3]);
     expect(ai[0]!.prompt).toMatch("INNER JOIN");
     expect(noTechnical).toEqual(["2524-03"]);
+  });
+  it("carries why and source in the rubric column for the import", () => {
+    const row = importRow(expandSets(files, ["2519-03"]).rows[0]!);
+    expect(row.key).toBe("2519-03:technical:1");
+    expect(row.rubric.why).toMatch("database queries");
+    expect(row.rubric.keyPoints.length).toBeGreaterThanOrEqual(2);
   });
   it("reports files whose occupation is not in the reference", () => {
     expect(expandSets(files, ["2519-03"]).unknownCodes).toContain("3514");
