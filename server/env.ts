@@ -12,6 +12,8 @@ const schema = z.object({
   LLM_PROVIDER: z.enum(["gemini", "stub"]).default("stub"),
   GEMINI_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().default("gemini-2.5-flash-lite"),
+  // AI calls per student per Malaysian day; blank means the default of 20, 0 turns AI off for everyone.
+  AI_DAILY_LIMIT: z.string().regex(/^\d*$/, "Use a whole number").optional().transform((v) => (v ? Number(v) : 20)),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().default("CareerPrep <no-reply@example.com>"),
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aiAllowed, createAi, parseCards, startOfDayMyt, stubProvider, validateFeedback, STUB_FEEDBACK, type AiBudget } from "@/server/llm/core.ts";
+import { aiAllowed, createAi, parseCards, startOfDayMyt, stubProvider, validateFeedback, STUB_FEEDBACK, type AiBudget, type AiCallLog } from "@/server/llm/core.ts";
 
 const adult = { id: "u1", isUnder18: false, aiConsent: true, fullName: "Aina Rahman" };
 const budget = (used = 0): AiBudget & { seen: Date[] } => {
@@ -88,6 +88,36 @@ describe("guarded feedback call", () => {
     const graded = stubProvider("Good answer, 4/5. Add a number.");
     const r = await createAi({ provider: graded, budget: budget() }).feedback(adult, input);
     expect(r.ok).toBe(false);
+  });
+});
+
+describe("AI call log (ai_calls, for the budget)", () => {
+  const logger = () => {
+    const rows: [string, string, boolean][] = [];
+    const log: AiCallLog = async (id, kind, ok) => { rows.push([id, kind, ok]); };
+    return { rows, log };
+  };
+  it("logs successful feedback and card calls with their kind", async () => {
+    const { rows, log } = logger();
+    const ai = createAi({ provider: stubProvider(), budget: budget(), log });
+    await ai.feedback(adult, input);
+    await ai.cards(adult, "# Git\nA branch is a line of work.");
+    expect(rows).toEqual([["u1", "interview_feedback", true], ["u1", "notes_cards", true]]);
+  });
+  it("logs failed and timed-out calls as not ok", async () => {
+    const { rows, log } = logger();
+    await createAi({ provider: stubProvider(() => { throw new Error("500"); }), budget: budget(), log }).feedback(adult, input);
+    await createAi({ provider: stubProvider(() => new Promise<string>((res) => setTimeout(() => res("late"), 200))), budget: budget(), log, timeoutMs: 20 }).feedback(adult, input);
+    expect(rows).toEqual([["u1", "interview_feedback", false], ["u1", "interview_feedback", false]]);
+  });
+  it("logs nothing when the gate or budget refuses, and survives a failing logger", async () => {
+    const { rows, log } = logger();
+    await createAi({ provider: stubProvider(), budget: budget(), log }).feedback({ ...adult, isUnder18: true }, input);
+    await createAi({ provider: stubProvider(), budget: budget(3), dailyLimit: 3, log }).feedback(adult, input);
+    expect(rows).toHaveLength(0);
+    const broken: AiCallLog = async () => { throw new Error("db down"); };
+    const r = await createAi({ provider: stubProvider(), budget: budget(), log: broken }).feedback(adult, input);
+    expect(r.ok).toBe(true);
   });
 });
 

@@ -1,10 +1,12 @@
 import "server-only";
-// D5 interview answers and the ref.interview_questions they answer. Reads run as the user (RLS); writes go
-// through the DBA's RPCs (record_interview_answer, add_ai_feedback), which take the user id from the JWT.
+// D5 interview answers and the ref.interview_questions they answer, and the ai_calls log. Reads run as the user
+// (RLS). Writes use the service role, because students must not be able to write their own marks: the RPCs
+// record_interview_answer and add_ai_feedback are granted to service_role only and re-check the student, the
+// marks range, age and consent. userId always comes from the signed-in session, never from the request.
 import type { Json } from "../../lib/database.types.ts";
 import type { InterviewRound, Marks } from "../../lib/types.ts";
 import type { Rubric } from "../engines/feedback.ts";
-import { db } from "./supabase.ts";
+import { adminDb, db } from "./supabase.ts";
 
 function fail(what: string, error: { message: string }): never {
   throw new Error(`interview: ${what}: ${error.message}`);
@@ -100,8 +102,9 @@ export async function getInterviewee(userId: string): Promise<Interviewee | null
 }
 
 /** Saves an answer with its checklist marks. Throws RpcRefused for forbidden, account_locked, not_found, answer_required. */
-export async function recordAnswer(questionId: string, text: string | null, skipped: boolean, marks: Marks): Promise<string> {
-  const { data, error } = await (await db()).rpc("record_interview_answer", {
+export async function recordAnswer(userId: string, questionId: string, text: string | null, skipped: boolean, marks: Marks): Promise<string> {
+  const { data, error } = await adminDb().rpc("record_interview_answer", {
+    p_user: userId,
     p_question: questionId,
     p_answer: text ?? "",
     p_skipped: skipped,
@@ -112,8 +115,8 @@ export async function recordAnswer(questionId: string, text: string | null, skip
 }
 
 /** Stores AI feedback on an answer (sets ai_used). The database refuses it for under-18s or without AI consent. */
-export async function addAiFeedback(answerId: string, feedback: string): Promise<void> {
-  const { error } = await (await db()).rpc("add_ai_feedback", { p_answer: answerId, p_feedback: feedback });
+export async function addAiFeedback(userId: string, answerId: string, feedback: string): Promise<void> {
+  const { error } = await adminDb().rpc("add_ai_feedback", { p_user: userId, p_answer: answerId, p_feedback: feedback });
   if (error) refused(error);
 }
 
@@ -127,16 +130,19 @@ export async function getAnswer(userId: string, answerId: string): Promise<Saved
   return { id: data.id, questionId: data.question_id, text: data.answer_text, skipped: data.skipped, marks: data.marks as unknown as Marks, aiUsed: data.ai_used };
 }
 
-/**
- * AI budget count: answers that got AI feedback since an instant. Only successful calls leave a row, so a
- * timed-out call is not counted; ask the DBA for an ai_calls log if attempts must count too.
- */
+/** AI budget count: provider calls logged in ai_calls since an instant, failed ones included. RLS: own rows. */
 export async function aiUsedSince(userId: string, since: Date): Promise<number> {
-  const { count, error } = await (await db()).from("interview_answers")
+  const { count, error } = await (await db()).from("ai_calls")
     .select("id", { count: "exact", head: true })
-    .eq("user_id", userId).eq("ai_used", true).gte("created_at", since.toISOString());
+    .eq("user_id", userId).gte("created_at", since.toISOString());
   if (error) fail("ai usage", error);
   return count ?? 0;
+}
+
+/** Logs one provider call for the budget. Students cannot insert into ai_calls, so this uses the service role. */
+export async function logAiCall(userId: string, kind: "interview_feedback" | "notes_cards", ok: boolean): Promise<void> {
+  const { error } = await adminDb().from("ai_calls").insert({ user_id: userId, kind, ok });
+  if (error) console.error(`interview: log ai call: ${error.message}`);
 }
 
 export async function occupationTitle(code: string): Promise<string | null> {

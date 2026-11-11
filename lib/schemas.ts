@@ -164,4 +164,6 @@ export const addCardsInput = z.object({
     front: z.string().trim().min(1).max(300),
     back: z.string().trim().min(1).max(600),
   })).min(1, "Keep at least one card").max(50),
+  /** True when the cards came from importNotes with method "ai"; saved as origin notes_ai (the AI-generated label). */
+  aiGenerated: z.boolean(),
 });

@@ -60,7 +60,7 @@ async function askAi(userId: string, student: Interviewee, question: Question, a
     return { state: "failed", message: `${r.error.message} Your checklist marks are saved.`, canRetry };
   }
   try {
-    await addAiFeedback(answerId, r.value);
+    await addAiFeedback(userId, answerId, r.value);
   } catch (e) {
     // The database re-checks age and consent; if consent was withdrawn meanwhile, show nothing from the AI.
     if (e instanceof RpcRefused && e.token === "ai_not_allowed") return { state: "off", status: "off_no_consent" };
@@ -119,7 +119,7 @@ export async function submitAnswer(input: unknown): Promise<Result<MarkedAnswer>
 
     const marks = skipped ? SKIPPED : checklist(text, question.rubric, student.projectNames);
     const notes = explain(text, question.rubric, marks, skipped);
-    const answerId = await recordAnswer(question.id, skipped ? null : text, skipped, marks);
+    const answerId = await recordAnswer(userId, question.id, skipped ? null : text, skipped, marks);
 
     const aiResult: AiFeedback = skipped ? { state: "skipped" } : await askAi(userId, student, question, answerId, text, notes);
     return ok({ ...notes, answerId, questionId: question.id, marks, total: total(marks), ai: aiResult });

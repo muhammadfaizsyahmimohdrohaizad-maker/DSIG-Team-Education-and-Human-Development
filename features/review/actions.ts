@@ -21,6 +21,8 @@ export type DueCard = {
   back: string;
   /** "Databases and SQL" for lesson cards, null for cards from the student's own notes. */
   skill: string | null;
+  /** Show the AI-generated tag when true (cards an AI wrote from the student's notes). */
+  aiGenerated: boolean;
   /** When the card comes back for each rating, as ISO dates, for the "Again in ..." labels. */
   nextDue: Record<ReviewRating, string>;
 };
@@ -41,6 +43,7 @@ export async function getDueCards(): Promise<Result<DueToday>> {
         front: c.front,
         back: c.back,
         skill: c.skillUri ? labels.get(c.skillUri) ?? null : null,
+        aiGenerated: c.origin === "notes_ai",
         nextDue: Object.fromEntries(RATINGS.map((r) => [r, next(c.fsrs, r, now).due.toISOString()])) as Record<ReviewRating, string>,
       })),
       nextDue: nextDue?.toISOString() ?? null,
@@ -102,7 +105,8 @@ export async function addNoteCardsToReview(input: unknown): Promise<Result<{ add
   if (!parsed.success) return invalid(parsed.error);
   return asStudent("addNoteCardsToReview", async (userId) => {
     const tomorrow = new Date(endOfTodayMyt(new Date()).getTime() + 1);
-    const added = await addNoteCards(userId, parsed.data.cards.map((c) => ({ ...c, fsrs: newCard(tomorrow) })));
+    const cards = parsed.data.cards.map((c) => ({ front: c.front, back: c.back, fsrs: newCard(tomorrow) }));
+    const added = await addNoteCards(userId, parsed.data.aiGenerated ? "notes_ai" : "notes", cards);
     return ok({ added });
   });
 }

@@ -16,6 +16,7 @@ export async function asStudent<T>(what: string, fn: (userId: string) => Promise
       if (e.token === "not_found") return err("NOT_FOUND", "That question or answer no longer exists. Start the interview again.");
       if (e.token === "answer_required") return err("VALIDATION", "Write an answer or choose Skip.", { text: "Write an answer or choose Skip" });
       if (e.token === "forbidden") return err("FORBIDDEN", "Only student accounts can do this.");
+      if (e.token === "ai_not_allowed") return err("FORBIDDEN", "AI is off for your account, so AI-made cards can't be saved. Use your headings and bold words instead.");
     }
     const r = err("UNEXPECTED", "Something went wrong. Try again.");
     if (!r.ok) console.error(`[${r.error.ref}] ${what}:`, e instanceof Error ? e.message : e);

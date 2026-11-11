@@ -3,10 +3,10 @@
 //
 // Every call goes through the same steps, in this order:
 //   1. aiAllowed: never for under-18 accounts (Gemini API terms), never without AI consent;
-//   2. budget: at most `dailyLimit` calls per student per Malaysian day;
+//   2. budget: at most `dailyLimit` calls per student per Malaysian day, counting every logged attempt;
 //   3. redact: names, emails, phones, IC numbers and links are removed before anything leaves the server;
 //   4. a fixed prompt that asks for short plain feedback and forbids marks and grades;
-//   5. a timeout (8 s by default);
+//   5. a timeout (8 s by default), and every provider call is logged (ok or not) for the budget;
 //   6. output validation: plain text, length cap, no marks, scores, grades or percentages.
 // The checklist marks (server/engines/feedback.ts) are computed before and never changed by any of this.
 import type { Result } from "../../lib/result.ts";
@@ -38,9 +38,16 @@ export interface AiBudget {
   usedSince(userId: string, since: Date): Promise<number>;
 }
 
+export type AiCallKind = "interview_feedback" | "notes_cards";
+
+/** Records one provider call, successful or not, so the budget counts attempts (ai_calls). */
+export type AiCallLog = (userId: string, kind: AiCallKind, ok: boolean) => Promise<void>;
+
 export type AiDeps = {
   provider: AiProvider;
   budget: AiBudget;
+  /** Called after every provider call. A failure to log is reported by the logger, never to the student. */
+  log?: AiCallLog;
   dailyLimit?: number;
   timeoutMs?: number;
   now?: () => Date;
@@ -187,6 +194,16 @@ export function createAi(deps: AiDeps) {
   const timeoutMs = deps.timeoutMs ?? AI_TIMEOUT_MS;
   const now = deps.now ?? (() => new Date());
 
+  async function call(userId: string, kind: AiCallKind, prompt: Prompt): Promise<Result<string>> {
+    const raw = await withTimeout(deps.provider, prompt, timeoutMs);
+    try {
+      await deps.log?.(userId, kind, raw.ok);
+    } catch {
+      // Logging is best effort; the adapter's logger reports its own failures.
+    }
+    return raw;
+  }
+
   async function gate(user: AiUser): Promise<Result<true>> {
     if (!aiAllowed(user)) {
       return user.isUnder18
@@ -215,7 +232,7 @@ export function createAi(deps: AiDeps) {
         question: redact(input.question, names),
         answer: redact(input.answer, names),
       });
-      const raw = await withTimeout(deps.provider, prompt, timeoutMs);
+      const raw = await call(user.id, "interview_feedback", prompt);
       return raw.ok ? validateFeedback(raw.value) : raw;
     },
 
@@ -223,7 +240,7 @@ export function createAi(deps: AiDeps) {
       const allowed = await gate(user);
       if (!allowed.ok) return allowed;
       const clipped = redact(notes, user.fullName ? [user.fullName] : []).slice(0, NOTES_MAX_CHARS);
-      const raw = await withTimeout(deps.provider, cardsPrompt(clipped), timeoutMs);
+      const raw = await call(user.id, "notes_cards", cardsPrompt(clipped));
       if (!raw.ok) return raw;
       const cards = parseCards(raw.value);
       return cards.length ? ok(cards) : err("AI_ERROR", "AI couldn't make cards from these notes. Try the headings method.");

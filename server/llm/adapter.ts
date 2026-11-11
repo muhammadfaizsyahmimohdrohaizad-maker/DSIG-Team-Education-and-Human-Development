@@ -1,7 +1,7 @@
 import "server-only";
-import { aiUsedSince } from "../data/interview.ts";
+import { aiUsedSince, logAiCall } from "../data/interview.ts";
 import { env } from "../env.ts";
-import { createAi, DEFAULT_DAILY_LIMIT, stubProvider, type Ai, type AiProvider } from "./core.ts";
+import { createAi, stubProvider, type Ai, type AiProvider } from "./core.ts";
 
 // The only file that talks to an AI provider (System Design 2.3, 5.3, 5.4). The guarded steps (age and
 // consent gate, budget, redaction, prompt, timeout, output checks) live in core.ts; this file wires the
@@ -28,19 +28,14 @@ const gemini: AiProvider = {
   },
 };
 
-/** AI_DAILY_LIMIT: calls per student per Malaysian day (default 20). Read here until server/env.ts has it. */
-function dailyLimit(): number {
-  const n = Number.parseInt(process.env.AI_DAILY_LIMIT ?? "", 10);
-  return Number.isFinite(n) && n >= 0 ? n : DEFAULT_DAILY_LIMIT;
-}
-
 let instance: Ai | undefined;
 
 export function ai(): Ai {
   instance ??= createAi({
     provider: env().LLM_PROVIDER === "gemini" ? gemini : stubProvider(),
     budget: { usedSince: aiUsedSince },
-    dailyLimit: dailyLimit(),
+    log: logAiCall,
+    dailyLimit: env().AI_DAILY_LIMIT,
   });
   return instance;
 }
