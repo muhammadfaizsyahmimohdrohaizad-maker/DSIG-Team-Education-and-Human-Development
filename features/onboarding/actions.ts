@@ -2,7 +2,8 @@
 
 // onboarding: parent or guardian approval for under-18 accounts (FR-CON-02, System Design 5.3).
 import { err, invalid, ok, unexpected, type Result } from "@/lib/result";
-import { parentApprovalRequest, parentDecisionInput, parentTokenInput } from "@/lib/schemas";
+import { parentApprovalRequest, parentTokenInput } from "@/lib/schemas";
+import { parentDecisionInput } from "./schemas";
 import {
   claimParentDecision, findParentRequest, insertParentConsent, ownProfile, parentEmailFor, setLocked, undoParentDecision,
 } from "@/server/data/account";
@@ -46,11 +47,12 @@ export async function checkParentLink(input: unknown): Promise<Result<ParentLink
 
 export type ParentDecision = { decision: "approved" | "declined" };
 
-/** Agree unlocks the account; Decline keeps it locked. Either way one consent row is added with given_by 'parent'. */
+/** Input { token, decision: "agree" | "decline" }. Agree unlocks the account; Decline keeps it locked. Either way one consent row is added with given_by 'parent'. */
 export async function recordParentDecision(input: unknown): Promise<Result<ParentDecision>> {
   const parsed = parentDecisionInput.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  const { token, approve } = parsed.data;
+  const { token } = parsed.data;
+  const approve = parsed.data.decision === "agree";
   const hash = hashToken(token);
 
   const userId = await claimParentDecision(hash, approve);

@@ -20,13 +20,17 @@ export function newParentToken(now: Date = new Date()): ParentToken {
   return { token, hash: hashToken(token), expiresAt };
 }
 
-export type SignUpConsents = { termsPrivacy: boolean; storeUse: boolean; aiProcessing: boolean; adviserVisibility: boolean };
+export type SignUpConsents = { termsPrivacy: boolean; storeUse?: boolean; aiProcessing: boolean; adviserVisibility: boolean };
 
-/** One consent row per choice on the sign-up form, in a fixed order. */
-export function consentRows(c: SignUpConsents): { kind: ConsentKind; given: boolean }[] {
+/**
+ * One consent row per choice on the sign-up form, in a fixed order. Advisers only see the Terms and
+ * Privacy box (the others are about a student's own data), so only that row is written for them.
+ */
+export function consentRows(role: "student" | "adviser", c: SignUpConsents): { kind: ConsentKind; given: boolean }[] {
+  if (role === "adviser") return [{ kind: "terms_privacy", given: c.termsPrivacy }];
   return [
     { kind: "terms_privacy", given: c.termsPrivacy },
-    { kind: "store_use", given: c.storeUse },
+    { kind: "store_use", given: c.storeUse === true },
     { kind: "ai_processing", given: c.aiProcessing },
     { kind: "adviser_visibility", given: c.adviserVisibility },
   ];

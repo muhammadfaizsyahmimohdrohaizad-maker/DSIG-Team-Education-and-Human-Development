@@ -41,12 +41,17 @@ describe("parent email", () => {
 });
 
 describe("sign-up consent rows (FR-CON-01)", () => {
-  it("writes one row per choice, optional ones as chosen", () => {
-    expect(consentRows({ termsPrivacy: true, storeUse: true, aiProcessing: false, adviserVisibility: true })).toEqual([
+  it("writes one row per choice for a student, optional ones as chosen", () => {
+    expect(consentRows("student", { termsPrivacy: true, storeUse: true, aiProcessing: false, adviserVisibility: true })).toEqual([
       { kind: "terms_privacy", given: true },
       { kind: "store_use", given: true },
       { kind: "ai_processing", given: false },
       { kind: "adviser_visibility", given: true },
+    ]);
+  });
+  it("writes only the Terms and Privacy row for an adviser, who never sees the other boxes", () => {
+    expect(consentRows("adviser", { termsPrivacy: true, aiProcessing: false, adviserVisibility: false })).toEqual([
+      { kind: "terms_privacy", given: true },
     ]);
   });
 });

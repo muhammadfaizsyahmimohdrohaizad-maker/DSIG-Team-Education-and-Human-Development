@@ -63,18 +63,10 @@ export const adviserFeedback = z.object({
 // ---- Accounts, booking and adviser actions (added by backend, Sprint 1) ----
 const uuid = z.string().uuid("This link or button is out of date. Reload the page and try again.");
 
-export const logInInput = z.object({ email, password: z.string().min(1, "Enter your password") });
-export const passwordResetInput = z.object({ email });
 export const newPasswordInput = z.object({ password });
 
 export const parentToken = z.string().trim().regex(/^[A-Za-z0-9_-]{43}$/, "This link is incomplete. Open it again from the email, or copy the whole link.");
 export const parentTokenInput = z.object({ token: parentToken });
-export const parentDecisionInput = z.object({
-  token: parentToken,
-  approve: z.boolean(),
-  isGuardian: z.boolean().default(false),
-  agrees: z.boolean().default(false),
-}).refine((v) => !v.approve || (v.isGuardian && v.agrees), { path: ["agrees"], message: "Tick both boxes to agree, or choose Decline" });
 export const parentApprovalRequest = z.object({ parentEmail: email.optional() });
 
 export const openSlotsQuery = z.object({
