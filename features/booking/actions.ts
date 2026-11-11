@@ -43,7 +43,10 @@ export async function requestBooking(input: unknown): Promise<Result<BookingRequ
 
 export type BookingMoved = { bookingId: string; start: string; minutes: number; status: MyBooking["status"] };
 
-/** Moves an active booking to another open time; the adviser of the new time accepts it again. */
+/**
+ * Moves an active booking to another open time. A request stays "requested"; an accepted booking becomes
+ * "change_requested" (move_booking, analysis 4.11). Either way the adviser of the new time answers again.
+ */
 export async function moveBooking(input: unknown): Promise<Result<BookingMoved>> {
   const parsed = moveBookingInput.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
@@ -53,7 +56,7 @@ export async function moveBooking(input: unknown): Promise<Result<BookingMoved>>
   if (!moved.ok) return moved;
   const m = moved.value;
   if (m.changed) {
-    const notices: Notice[] = [{ to: m.adviserId, kind: "moved", bookingId: m.bookingId, start: m.start, minutes: m.minutes }];
+    const notices: Notice[] = [{ to: m.adviserId, kind: m.status === "change_requested" ? "change_requested" : "moved", bookingId: m.bookingId, start: m.start, minutes: m.minutes }];
     if (m.oldAdviserId !== m.adviserId) notices.push({ to: m.oldAdviserId, kind: "cancelled", bookingId: m.bookingId, start: m.oldStart });
     notifyAfter(...notices);
   }

@@ -45,7 +45,7 @@ describe("booking emails (System Design 5.3)", () => {
     expect(bookingEmail({ ...base, kind: "reminder" }).subject).toBe("Reminder: your session is tomorrow at 10:00 am");
   });
   it("never take topic, note or shared data as input", () => {
-    for (const kind of ["requested", "moved", "cancelled", "accepted", "declined", "feedback", "reminder"] as const) {
+    for (const kind of ["requested", "moved", "change_requested", "cancelled", "accepted", "declined", "feedback", "reminder"] as const) {
       const m = bookingEmail({ ...base, kind });
       expect(m.subject.length).toBeGreaterThan(0);
       expect(m.text).toContain(base.link);

@@ -13,7 +13,7 @@ export type Notice = { to: string; kind: BookingEmailKind; bookingId: string; st
 /** Absolute link for a notice: students go to their booking, advisers to Requests. */
 export function noticeLink(n: Pick<Notice, "kind" | "bookingId">): string {
   const site = env().SITE_URL.replace(/\/+$/, "");
-  const forAdviser = n.kind === "requested" || n.kind === "moved" || n.kind === "cancelled";
+  const forAdviser = n.kind === "requested" || n.kind === "moved" || n.kind === "change_requested" || n.kind === "cancelled";
   return forAdviser ? `${site}/adviser/requests` : `${site}/book/${n.bookingId}`;
 }
 

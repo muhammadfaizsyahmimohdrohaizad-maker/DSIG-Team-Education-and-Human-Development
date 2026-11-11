@@ -35,7 +35,7 @@ export function malaysiaDate(iso: string): string {
   return new Date(new Date(iso).getTime() + MYT_OFFSET_MS).toISOString().slice(0, 10);
 }
 
-export type BookingEmailKind = "requested" | "moved" | "cancelled" | "accepted" | "declined" | "feedback" | "reminder";
+export type BookingEmailKind = "requested" | "moved" | "change_requested" | "cancelled" | "accepted" | "declined" | "feedback" | "reminder";
 
 export type BookingEmailFacts = { kind: BookingEmailKind; start: string; minutes?: number; adviserName?: string; link: string };
 
@@ -52,6 +52,8 @@ export function bookingEmail(f: BookingEmailFacts): { subject: string; text: str
       return lines(`New session request for ${when}`, ["A student asked for a session with you.", `${when}${length}`, "", "Accept or decline it on your Requests page:"]);
     case "moved":
       return lines(`A session request moved to ${when}`, ["A student moved their session request to a new time.", `${when}${length}`, "", "Accept or decline it on your Requests page:"]);
+    case "change_requested":
+      return lines(`A confirmed session moved to ${when}`, ["A student moved a session you had accepted to a new time. It needs your answer again.", `${when}${length}`, "", "Accept or decline the new time on your Requests page:"]);
     case "cancelled":
       return lines(`Session on ${when} cancelled`, ["A student cancelled their session. The time is open again for other students.", when, "", "Your requests:"]);
     case "accepted":

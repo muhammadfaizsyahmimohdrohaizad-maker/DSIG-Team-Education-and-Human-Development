@@ -104,6 +104,7 @@ export const availabilityInput = z.object({
 });
 
 export const consentUpdate = z.object({ kind: z.enum(["ai_processing", "adviser_visibility"]), given: z.boolean() });
+export const cohortQuery = z.object({ programme: z.string().trim().min(1).max(120).optional() });
 export const deleteAccountInput = z.object({ confirmation: z.string().max(200) });
 
 // ---- Added by fullstack (sprint 1) ----

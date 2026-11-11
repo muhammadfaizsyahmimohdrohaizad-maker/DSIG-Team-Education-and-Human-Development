@@ -57,14 +57,20 @@ export async function adviserRequests(): Promise<Result<AdviserRequest[]>> {
   })));
 }
 
-/** What open_request returns: only the items the student ticked (shape fixed by the SQL function). */
+/** What open_request returns (migration 000004): the booking, the student, and only the items the student ticked. */
 export type SharedSummary = {
-  student: { name: string };
+  booking: { id: string; status: BookingState; slot_start: string; minutes: number; topic: string; note: string | null };
+  student: { id: string; name: string; education_level: EducationLevel | null; programme: string | null; semester: number | null };
   shared: SharedItem[];
-  target?: string | null;
-  gaps?: { skill: string; state: SkillState }[];
-  plan?: Record<string, unknown>[];
-  interview?: Record<string, unknown> | null;
+  /** target_matches */
+  target?: { code: string; title: string } | null;
+  matches?: unknown[] | null;
+  /** gap_progress */
+  gaps?: { skill: string; label: string; state: SkillState }[];
+  /** study_plan */
+  plan?: { institution: string; programme: string; level: string; kind: string; duration: string | null; award: string | null; source_url: string | null }[];
+  /** interview_feedback: the latest answer only */
+  interview?: { round: string; prompt: string; total: number | null; skipped: boolean; ai_used: boolean; ai_feedback: string | null; created_at: string } | null;
 };
 
 export async function openRequest(bookingId: string): Promise<Result<SharedSummary>> {
@@ -173,8 +179,17 @@ export async function saveAvailability(userId: string, change: AvailabilityChang
 
 // ---------- Cohort (A6) ----------
 
-export async function cohortRows(): Promise<Result<{ target: string; students: number }[]>> {
-  const { data, error } = await (await db()).rpc("cohort_rows");
+/**
+ * One row per metric (migration 000004): total, sharing, with_target, mock_sessions_month (label null),
+ * target (label = job title) and gap (label = skill, students still missing it). Rows under 5 students and
+ * cohorts with fewer than 5 sharing students never leave Postgres.
+ */
+export type CohortMetricRow = { metric: string; label: string | null; students: number };
+
+export async function cohortRows(programme?: string): Promise<Result<CohortMetricRow[]>> {
+  const { data, error } = await (await db()).rpc("cohort_rows", programme ? { p_programme: programme } : {});
   if (error) return fromDb(error, ADVISER_ERRORS, "cohortRows");
-  return ok((data as { target: string; students: number | string }[]).map((r) => ({ target: r.target, students: Number(r.students) })));
+  return ok((data as { metric: string; label: string | null; students: number | string }[]).map((r) => ({
+    metric: r.metric, label: r.label, students: Number(r.students),
+  })));
 }

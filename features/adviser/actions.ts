@@ -3,19 +3,19 @@
 // adviser: undertaking, requests, responses, feedback, availability and cohort (FR-CON-04, FR-ADV-01..04).
 // Student data reaches an adviser only through the open_request RPC, which writes the audit row.
 import { err, invalid, ok, type Result } from "@/lib/result";
-import { adviserFeedback, availabilityInput, bookingRef, openSlotsQuery, respondInput } from "@/lib/schemas";
-import { aggregate, type CohortRow } from "@/server/engines/cohort";
+import { adviserFeedback, availabilityInput, bookingRef, cohortQuery, openSlotsQuery, respondInput } from "@/lib/schemas";
+import { MIN_GROUP } from "@/server/engines/cohort";
 import { ownProfile } from "@/server/data/account";
 import {
   acceptUndertaking as acceptUndertakingRow, adviserRequests, cohortRows, mySlots, openRequest as openRequestRpc,
   respondTo, saveAvailability, saveFeedback,
-  type AdviserRequest, type AvailabilitySaved, type BlockedDay, type MySlot, type SharedSummary, type Undertaking,
+  type AdviserRequest, type AvailabilitySaved, type BlockedDay, type CohortMetricRow, type MySlot, type SharedSummary, type Undertaking,
 } from "@/server/data/adviser";
 import { currentUser } from "@/server/data/supabase";
 import { notifyAfter } from "@/features/booking/notify";
 import { slotWindow } from "@/features/booking/rules";
 
-export type { AdviserRequest, AvailabilitySaved, BlockedDay, CohortRow, MySlot, SharedSummary, Undertaking };
+export type { AdviserRequest, AvailabilitySaved, BlockedDay, CohortMetricRow, MySlot, SharedSummary, Undertaking };
 
 const LOG_IN = "Log in with your staff account to continue.";
 
@@ -117,11 +117,16 @@ export async function setAvailability(input: unknown): Promise<Result<Availabili
   return saveAvailability(user.id, parsed.data);
 }
 
-/** Students per target job, among those who allow adviser visibility. Groups under 5 never leave Postgres. */
-export async function getCohort(): Promise<Result<CohortRow[]>> {
+/**
+ * Cohort totals (FR-ADV-04), optionally for one programme: { metric, label, students } rows from cohort_rows.
+ * Groups under 5 never leave Postgres; the MIN_GROUP filter here only guards against a changed function.
+ */
+export async function getCohort(input: unknown = {}): Promise<Result<CohortMetricRow[]>> {
+  const parsed = cohortQuery.safeParse(input ?? {});
+  if (!parsed.success) return invalid(parsed.error);
   const user = await currentUser();
   if (!user) return err("UNAUTHENTICATED", LOG_IN);
-  const rows = await cohortRows();
+  const rows = await cohortRows(parsed.data.programme);
   if (!rows.ok) return rows;
-  return ok(aggregate(rows.value.map((r) => ({ group: r.target, count: r.students }))));
+  return ok(rows.value.filter((r) => r.students >= MIN_GROUP));
 }
