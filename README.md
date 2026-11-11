@@ -30,16 +30,9 @@ Checks: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm db:test`, `pnpm test:e
 
 ## Deploy (Vercel)
 
-1. Import this GitHub repo in Vercel. Framework: Next.js. `vercel.json` pins functions to Singapore and
-   sets the two daily cron jobs.
-2. In the Supabase project (region Singapore), run the migrations: `supabase link --project-ref <ref>`
-   then `supabase db push`.
-3. In Vercel > Project Settings > Environment Variables, add every name in `.env.example` for Production
-   and Preview. `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `RESEND_API_KEY` and `CRON_SECRET` are
-   secrets: paste them only there.
-4. In Supabase > Authentication > URL Configuration, set the Site URL to the Vercel address and add
-   `<address>/auth/callback` to the redirect URLs.
-5. Custom domain later: Vercel > Project > Domains, then update `SITE_URL` and the Supabase URLs.
+Vercel project `careerprep` in the DSIG team, functions in Singapore. `docs/DEPLOY.md` has the steps:
+connecting GitHub, every environment variable, Supabase URLs and migrations, the custom domain, and the
+build check the team uses without npm. The sprint board is `docs/BOARD.md`.
 
 ## Removed from the October prototype
 
