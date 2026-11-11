@@ -2,7 +2,12 @@ import "server-only";
 import type { ConsentKind } from "../../lib/types.ts";
 import { db } from "./supabase.ts";
 
-/** Latest choice for one consent kind. Consents are append-only, so the newest row wins. */
+/**
+ * Latest choice for one consent kind, read as the signed-in user. Consents are append-only and consented_at
+ * is set by the database clock, so the newest row wins. Use before every AI call (ai_processing).
+ * Writes: own choices go through the user's client (RLS: own rows, given_by 'self'); parent consents are
+ * written by the server with the service role (server/data/account.ts).
+ */
 export async function latestConsent(userId: string, kind: ConsentKind): Promise<boolean> {
   const { data } = await (await db())
     .from("consents")
@@ -13,8 +18,4 @@ export async function latestConsent(userId: string, kind: ConsentKind): Promise<
     .limit(1)
     .maybeSingle();
   return data?.given ?? false;
-}
-
-export async function recordConsent(userId: string, kind: ConsentKind, given: boolean, noticeVersion: string, givenBy: "self" | "parent" = "self") {
-  return (await db()).from("consents").insert({ user_id: userId, kind, given, notice_version: noticeVersion, given_by: givenBy });
 }
