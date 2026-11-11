@@ -34,7 +34,9 @@
   body { font-family: var(--font-sans); font-size: 16px; line-height: 1.6; background: var(--color-white); }
   h1, h2, h3 { font-family: var(--font-display); font-weight: 700; color: var(--color-navy); text-wrap: balance; }
   p, li, dd { text-wrap: pretty; }
-  a { color: var(--color-maroon); }
+  ul { list-style: disc; }
+  ol { list-style: decimal; }
+  a { color: var(--color-maroon); text-decoration-line: underline; text-underline-offset: 2px; }
   a:hover { color: var(--color-maroon-dark); }
 
   /* Focus: 3px maroon ring, 2px offset; on navy surfaces a white halo sits inside it. */

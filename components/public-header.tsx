@@ -6,7 +6,7 @@ import { ChevronLeftIcon } from "./ui/icons";
 export function PublicHeader({ variant }: { variant: "account" | "back" | "plain" }) {
   return (
     <header className="border-b border-hairline bg-white">
-      <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-4 py-3 tablet:px-6">
+      <div className="mx-auto flex max-w-[1328px] items-center justify-between gap-3 px-4 py-3 tablet:px-6">
         <Link href="/" className="inline-flex min-h-11 items-center font-display text-xl font-bold tracking-[-0.02em] text-navy no-underline hover:text-navy">
           CareerPrep
         </Link>

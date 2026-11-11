@@ -25,7 +25,7 @@ export const ADVISER_NAV: NavItem[] = [
 export function AppHeader({ nav, home, account, notifications }: { nav: NavItem[]; home: string; account: HeaderAccount; notifications: HeaderNotification[] }) {
   return (
     <header className="relative border-b border-hairline bg-white">
-      <div className="mx-auto flex max-w-[1280px] flex-nowrap items-center justify-between gap-3 px-4 py-3 tablet:flex-wrap tablet:px-6">
+      <div className="mx-auto flex max-w-[1328px] flex-nowrap items-center justify-between gap-3 px-4 py-3 tablet:flex-wrap tablet:px-6">
         <Link href={home} className="inline-flex min-h-11 items-center font-display text-xl font-bold tracking-[-0.02em] text-navy no-underline hover:text-navy">
           CareerPrep
         </Link>

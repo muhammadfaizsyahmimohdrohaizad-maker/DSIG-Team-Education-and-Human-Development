@@ -24,7 +24,7 @@ export function CheckboxRow({ id, children, requirement, error, className, ...re
   const errId = error ? `${id}-error` : undefined;
   return (
     <div className={cn("flex flex-col gap-1", className)}>
-      <label htmlFor={id} className="flex min-h-11 cursor-pointer items-start gap-3 py-2.5 text-[15px] leading-normal">
+      <label htmlFor={id} className="flex min-h-11 cursor-pointer items-start gap-3 py-1.5 text-[15px] leading-normal">
         <input id={id} type="checkbox" aria-invalid={error ? true : undefined} aria-describedby={errId} className={cn(boxClasses, "mt-0.5")} {...rest} />
         <span>{children}<Requirement kind={requirement} /></span>
       </label>
