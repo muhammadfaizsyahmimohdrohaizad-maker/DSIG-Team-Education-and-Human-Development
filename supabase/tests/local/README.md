@@ -9,7 +9,8 @@ The script starts a throwaway Postgres 16 cluster in a temp directory on a free 
 
 - `rls`: Supabase stand-in, pgTAP shim, every file in `supabase/migrations/` in order, then every
   `supabase/tests/*.test.sql`.
-- `demo`: the same migrations, then `supabase/seed.sql`, then `seed_check.sql` (the seed matches the mockup boards).
+- `demo`: the same migrations, then `supabase/seed_reference.sql` and `supabase/seed.sql`, then `seed_check.sql`
+  (the seed matches the mockup boards).
 
 It exits non-zero if a migration, the seed or any test fails, and deletes the cluster afterwards.
 
@@ -18,6 +19,7 @@ It exits non-zero if a migration, the seed or any test fails, and deletes the cl
 | `supabase_standin.sql` | What a Supabase project has before our migrations: roles `anon`, `authenticated`, `service_role`; `auth.users`, `auth.identities`; `auth.uid()`, `auth.jwt()`, `auth.role()` reading `request.jwt.claims`; Supabase's default grants on `public`; pgcrypto in `extensions`. |
 | `pgtap_shim.sql` | `plan`, `ok`, `is`, `isnt`, `throws_ok`, `lives_ok`, `has_function`, `finish` for machines without pgTAP. `finish()` raises if anything failed. |
 | `seed_check.sql` | Reads the demo seed through the app's RPCs as Pn. Nurul Huda and Aina Rahman. |
+| `make_seed_reference.py` | Regenerates `supabase/seed_reference.sql` from `scripts/import-reference.ts --print`. |
 
 Requirements: `initdb`, `pg_ctl`, `postgres` from `PGBIN` (default `/usr/lib/postgresql/16/bin`), `psql` on PATH,
 `python3` (only to pick a free port). As root the server runs as the `postgres` OS user.

@@ -5,112 +5,9 @@
 -- Every demo account signs in with password CareerPrep-demo-2026, e.g. aina.rahman@demo.careerprep.test,
 -- nurul.huda@demo.careerprep.test (adviser), careers.office@demo.careerprep.test (institution).
 --
--- Reference rows are placeholders tagged source_version 'demo-seed'. Codes with a letter suffix (2512-AI,
--- 2521-DA, 2522-NA) and the urn:careerprep:demo:skill:* URIs are NOT official MASCO or ESCO identifiers; the
--- reference import (content/reference) replaces them. Lesson files and check questions marked
--- [Placeholder] are still to be written in content/lessons.
-
--- ---------------------------------------------------------------------------------------------------------
--- Reference data (D3)
--- ---------------------------------------------------------------------------------------------------------
-insert into ref.skills (uri, label_en, label_ms)
-select 'urn:careerprep:demo:skill:' || slug, label, null from (values
-  ('python', 'Programming in Python'), ('sql', 'Databases and SQL'), ('statistics', 'Statistics'),
-  ('pandas', 'Cleaning data with pandas'), ('git', 'Version control with Git'), ('ml-basics', 'Machine learning basics'),
-  ('eval-models', 'Evaluating models'), ('pytorch', 'Deep learning with PyTorch'), ('deploy-model', 'Deploying a model'),
-  ('unit-testing', 'Unit testing'), ('rest-apis', 'REST APIs'), ('agile-teamwork', 'Agile teamwork'),
-  ('oop-design', 'Object-oriented design'), ('data-structures', 'Data structures and algorithms'),
-  ('html-css', 'HTML and CSS'), ('javascript', 'JavaScript'), ('responsive-design', 'Responsive web design'),
-  ('web-accessibility', 'Web accessibility'), ('react', 'React'), ('spreadsheets', 'Spreadsheets'),
-  ('data-visualisation', 'Data visualisation'), ('presenting-findings', 'Presenting findings'),
-  ('networking', 'Computer networking'), ('linux', 'Linux administration'), ('network-security', 'Network security'),
-  ('cloud', 'Cloud services'), ('troubleshooting', 'Troubleshooting'), ('scripting', 'Shell scripting')
-) v(slug, label);
-
-insert into ref.occupations (code, title_en, title_ms, tasks, interest_areas, source_version) values
-  ('2512-AI', 'AI engineer', 'Jurutera AI',
-   '{"write and maintain program code","maintain software","test and debug software","install and maintain software"}', '{ai,programming}', 'demo-seed'),
-  ('2512-01', 'Software developer', 'Pembangun perisian',
-   '{"research and analyse software requirements","design and develop software systems","modify existing software to correct errors"}', '{programming}', 'demo-seed'),
-  ('2513-01', 'Web developer', 'Pembangun laman web',
-   '{"design and develop websites","integrate code with back-end data","work with network specialists on web issues"}', '{programming,design}', 'demo-seed'),
-  ('2521-DA', 'Data analyst', 'Penganalisis data',
-   '{"collect and clean data","analyse data with statistics","present findings"}', '{data,business}', 'demo-seed'),
-  ('2522-NA', 'Network administrator', 'Pentadbir rangkaian',
-   '{"operate and maintain networks","help users with network problems","run backup and recovery"}', '{networks}', 'demo-seed');
-
-insert into ref.occupation_skills (code, uri, essential)
-select code, 'urn:careerprep:demo:skill:' || slug, true from (values
-  ('2512-AI','python'),('2512-AI','sql'),('2512-AI','statistics'),('2512-AI','pandas'),('2512-AI','git'),
-  ('2512-AI','ml-basics'),('2512-AI','eval-models'),('2512-AI','pytorch'),('2512-AI','deploy-model'),
-  ('2512-01','python'),('2512-01','sql'),('2512-01','git'),('2512-01','unit-testing'),('2512-01','rest-apis'),
-  ('2512-01','agile-teamwork'),('2512-01','oop-design'),('2512-01','data-structures'),('2512-01','html-css'),
-  ('2513-01','html-css'),('2513-01','javascript'),('2513-01','sql'),('2513-01','git'),('2513-01','rest-apis'),
-  ('2513-01','unit-testing'),('2513-01','agile-teamwork'),('2513-01','responsive-design'),('2513-01','web-accessibility'),('2513-01','react'),
-  ('2521-DA','sql'),('2521-DA','statistics'),('2521-DA','pandas'),('2521-DA','python'),('2521-DA','spreadsheets'),
-  ('2521-DA','data-visualisation'),('2521-DA','git'),('2521-DA','presenting-findings'),
-  ('2522-NA','networking'),('2522-NA','linux'),('2522-NA','network-security'),('2522-NA','cloud'),
-  ('2522-NA','troubleshooting'),('2522-NA','scripting'),('2522-NA','git'),('2522-NA','python')
-) v(code, slug);
-
--- Four lessons for each AI engineer gap skill (titles from the Lessons board). Ids are derived from names
--- so other seeds and tests can refer to them.
-insert into ref.lessons (id, skill_uri, lesson_no, content_path)
-select md5('lesson:' || slug || ':' || n)::uuid, 'urn:careerprep:demo:skill:' || slug, n,
-       'content/lessons/' || slug || '/' || n || '-' || lower(regexp_replace(title, '[^A-Za-z0-9]+', '-', 'g')) || '.md'
-from (values
-  ('git', 1, 'Commits and history'), ('git', 2, 'Working with branches'), ('git', 3, 'Merging and conflicts'), ('git', 4, 'Pull requests'),
-  ('ml-basics', 1, 'What a model learns'), ('ml-basics', 2, 'Training and test data'), ('ml-basics', 3, 'Your first classifier'), ('ml-basics', 4, 'Choosing features'),
-  ('eval-models', 1, 'Accuracy and its limits'), ('eval-models', 2, 'Precision and recall'), ('eval-models', 3, 'Overfitting'), ('eval-models', 4, 'Cross-validation'),
-  ('pytorch', 1, 'Tensors'), ('pytorch', 2, 'A small neural network'), ('pytorch', 3, 'Training loops'), ('pytorch', 4, 'Saving a model'),
-  ('deploy-model', 1, 'From notebook to script'), ('deploy-model', 2, 'A simple prediction API'), ('deploy-model', 3, 'Running it in the cloud'), ('deploy-model', 4, 'Watching it after launch')
-) v(slug, n, title);
-
--- Five check questions per skill. Git's first three come from the Learning board; the rest are placeholders.
--- options: [{id, text}], answer_key: the id of the right option (read only by submit_mastery_check).
-insert into ref.check_questions (id, lesson_id, prompt, options, answer_key) values
-  (md5('check:git:1')::uuid, md5('lesson:git:2')::uuid, 'Which command creates a new branch called "fix-header"?',
-   '[{"id":"a","text":"git switch fix-header"},{"id":"b","text":"git branch fix-header"},{"id":"c","text":"git merge fix-header"}]', 'b'),
-  (md5('check:git:2')::uuid, md5('lesson:git:3')::uuid, 'You are on main and want to bring in work from "fix-header". What do you run?',
-   '[{"id":"a","text":"git merge fix-header"},{"id":"b","text":"git branch -d fix-header"},{"id":"c","text":"git commit fix-header"}]', 'a'),
-  (md5('check:git:3')::uuid, md5('lesson:git:3')::uuid, 'When does a merge conflict happen?',
-   '[{"id":"a","text":"When a branch has no commits"},{"id":"b","text":"When two branches change the same lines"},{"id":"c","text":"When you switch branches too often"}]', 'b');
-insert into ref.check_questions (id, lesson_id, prompt, options, answer_key)
-select md5('check:' || slug || ':' || q)::uuid, md5('lesson:' || slug || ':' || least(q, 4))::uuid,
-       '[Placeholder] Check question ' || q || ' for ' || s.label_en,
-       '[{"id":"a","text":"Option A"},{"id":"b","text":"Option B"},{"id":"c","text":"Option C"}]', 'a'
-from (values ('ml-basics'), ('eval-models'), ('pytorch'), ('deploy-model')) v(slug)
-cross join generate_series(1, 5) q
-join ref.skills s on s.uri = 'urn:careerprep:demo:skill:' || slug;
-insert into ref.check_questions (id, lesson_id, prompt, options, answer_key)
-select md5('check:git:' || q)::uuid, md5('lesson:git:' || case q when 4 then 1 else 4 end)::uuid,
-       '[Placeholder] Check question ' || q || ' for Version control with Git',
-       '[{"id":"a","text":"Option A"},{"id":"b","text":"Option B"},{"id":"c","text":"Option C"}]', 'a'
-from generate_series(4, 5) q;
-
--- Interview sets: three questions per round. Behavioural questions for Software and Web developer come
--- from content/interview (eMASCO tasks); the rest are placeholders until content/interview has rounds.
-insert into ref.interview_questions (id, code, round, position, prompt, rubric) values
-  (md5('iq:2512-01:behavioural:1')::uuid, '2512-01', 'behavioural', 1, 'Tell us about a time you worked out what a piece of software needed to do before you built it. How did you find out the requirements?', '{"key_points":[],"placeholder":true}'),
-  (md5('iq:2512-01:behavioural:2')::uuid, '2512-01', 'behavioural', 2, 'Walk us through how you designed a program or app you built. Why did you structure it that way?', '{"key_points":[],"placeholder":true}'),
-  (md5('iq:2512-01:behavioural:3')::uuid, '2512-01', 'behavioural', 3, 'Describe a time you fixed a bug in code that already existed. How did you find the cause without breaking anything else?', '{"key_points":[],"placeholder":true}'),
-  (md5('iq:2513-01:behavioural:1')::uuid, '2513-01', 'behavioural', 1, 'Walk us through a website you designed and built. How did you decide on the layout and the user''s path through it?', '{"key_points":[],"placeholder":true}'),
-  (md5('iq:2513-01:behavioural:2')::uuid, '2513-01', 'behavioural', 2, 'Tell us how you connected a web page to data or a back end, for example a form that saves to a database.', '{"key_points":[],"placeholder":true}'),
-  (md5('iq:2513-01:behavioural:3')::uuid, '2513-01', 'behavioural', 3, 'Describe a time a website problem turned out to be about hosting, the network or the server rather than your code. How did you work it out?', '{"key_points":[],"placeholder":true}');
-insert into ref.interview_questions (id, code, round, position, prompt, rubric)
-select md5('iq:' || o.code || ':' || r || ':' || n)::uuid, o.code, r::public.interview_round, n,
-       '[Placeholder] ' || initcap(r) || ' question ' || n || ' for ' || o.title_en, '{"key_points":[],"placeholder":true}'
-from ref.occupations o cross join (values ('technical'), ('behavioural')) v(r) cross join generate_series(1, 3) n
-on conflict (code, round, position) do nothing;
-
--- Study options from the Plan board
-insert into ref.study_options (id, code, level, kind, institution, programme, duration, award, source_url) values
-  (md5('so:t1')::uuid, '2512-AI', 'degree', 'Public university', 'Universiti Malaya (UM)', 'Bachelor of Computer Science (Artificial Intelligence)', '4 years', 'Bachelor degree', 'https://www.um.edu.my'),
-  (md5('so:t2')::uuid, '2512-AI', 'degree', 'Private university', 'Multimedia University (MMU)', 'Bachelor of Computer Science (Hons) Artificial Intelligence', '3 years', 'Bachelor degree', 'https://www.mmu.edu.my'),
-  (md5('so:t7')::uuid, '2512-AI', 'degree', 'Private university', 'Asia Pacific University (APU)', 'BSc (Hons) Computer Science, AI specialism', '3 years', 'Bachelor degree', 'https://www.apu.edu.my'),
-  (md5('so:t3')::uuid, '2512-01', 'degree', 'Public university', 'Universiti Teknologi Malaysia (UTM)', 'Bachelor of Computer Science (Software Engineering)', '4 years', 'Bachelor degree', 'https://www.utm.my'),
-  (md5('so:t4')::uuid, '2521-DA', 'degree', 'Public university', 'Universiti Teknologi Malaysia (UTM)', 'Bachelor of Computer Science (Data Engineering)', '4 years', 'Bachelor degree', 'https://www.utm.my'),
-  (md5('so:s6')::uuid, '2512-01', 'spm', 'Diploma', 'German-Malaysian Institute (GMI)', 'Diploma in Software Engineering', '3 years', 'Diploma', 'https://www.gmi.edu.my');
+-- Reference data comes from seed_reference.sql (the full-stack content, loaded first). The two occupations
+-- the mockup names differently use the reference titles: "Network specialist" (2523-01) for the board's
+-- "Network administrator"; skill counts follow the reference sets (e.g. Software developer has 8 skills).
 
 -- ---------------------------------------------------------------------------------------------------------
 -- People (D1). Auth users the way the server creates them (role in app_metadata), then their profiles.
@@ -126,27 +23,27 @@ insert into _people values
   ('a0000000-0000-4000-8000-000000000003', 'priya.nair', 'Ms. Priya Nair', 'adviser', null, null, null, '{}', null, 'Student counselling', '2026-08-03 09:00+08'),
   ('a0000000-0000-4000-8000-000000000009', 'careers.office', 'GMI Career Services Office', 'institution', null, null, null, '{}', null, null, '2026-08-03 09:00+08'),
   -- Students named on the adviser boards
-  ('b0000000-0000-4000-8000-000000000001', 'aina.rahman', 'Aina Rahman', 'student', 'Software Engineering', 5, '2512-AI', '{python,sql}', true, null, '2026-09-02 20:15+08'),
-  ('b0000000-0000-4000-8000-000000000002', 'daniel.lim', 'Daniel Lim', 'student', 'Software Engineering', 4, '2513-01', '{html-css,javascript,sql,git,responsive-design,react}', true, null, '2026-09-10 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', 'aina.rahman', 'Aina Rahman', 'student', 'Software Engineering', 5, '2519-03', '{python,sql}', true, null, '2026-09-02 20:15+08'),
+  ('b0000000-0000-4000-8000-000000000002', 'daniel.lim', 'Daniel Lim', 'student', 'Software Engineering', 4, '2513-01', '{html-css,javascript,sql,web-programming}', true, null, '2026-09-10 10:00+08'),
   ('b0000000-0000-4000-8000-000000000003', 'siti.aisyah', 'Siti Aisyah', 'student', 'Mechatronic Engineering', 5, null, '{}', false, null, '2026-09-12 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000004', 'hafiz.ahmad', 'Hafiz Ahmad', 'student', 'Software Engineering', 5, '2512-01', '{python,sql,git,oop-design,data-structures,html-css,agile-teamwork}', true, null, '2026-09-08 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000005', 'kumaran.raj', 'Kumaran Raj', 'student', 'Software Engineering', 5, '2521-DA', '{sql,python,spreadsheets}', true, null, '2026-09-15 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000006', 'tan.weiling', 'Tan Wei Ling', 'student', 'Software Engineering', 4, '2522-NA', '{networking,linux}', true, null, '2026-09-16 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000004', 'hafiz.ahmad', 'Hafiz Ahmad', 'student', 'Software Engineering', 5, '2512-01', '{java,javascript,sql,git,software-design,requirements,software-testing}', true, null, '2026-09-08 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000005', 'kumaran.raj', 'Kumaran Raj', 'student', 'Software Engineering', 5, '2524-03', '{sql,python,spreadsheets}', true, null, '2026-09-15 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000006', 'tan.weiling', 'Tan Wei Ling', 'student', 'Software Engineering', 4, '2523-01', '{networking,linux}', true, null, '2026-09-16 10:00+08'),
   ('b0000000-0000-4000-8000-000000000007', 'nur.iman', 'Nur Iman', 'student', 'Software Engineering', 3, null, '{}', true, null, '2026-10-01 10:00+08'),
   ('b0000000-0000-4000-8000-000000000008', 'farah.zulkifli', 'Farah Zulkifli', 'student', 'Industrial Electronics', 4, null, '{}', false, null, '2026-09-20 10:00+08'),
   -- Other students in the cohort, so that some groups reach 5 (Cohort board) and Pn. Nurul Huda has 14 students
-  ('b0000000-0000-4000-8000-000000000101', 'amirul.hakim', 'Amirul Hakim', 'student', 'Software Engineering', 5, '2512-01', '{python,sql,oop-design,data-structures,html-css}', true, null, '2026-09-03 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000102', 'lee.jiahui', 'Lee Jia Hui', 'student', 'Software Engineering', 5, '2512-01', '{python,sql,oop-design,html-css}', true, null, '2026-09-03 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000103', 'muhammad.danish', 'Muhammad Danish', 'student', 'Software Engineering', 4, '2512-01', '{python,data-structures}', true, null, '2026-09-04 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000104', 'priya.devi', 'Priya Devi', 'student', 'Software Engineering', 3, '2512-01', '{sql,html-css}', true, null, '2026-09-04 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000105', 'nurul.aqilah', 'Nurul Aqilah', 'student', 'Software Engineering', 4, '2513-01', '{html-css,javascript,responsive-design}', true, null, '2026-09-05 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000101', 'amirul.hakim', 'Amirul Hakim', 'student', 'Software Engineering', 5, '2512-01', '{java,sql,software-design,requirements}', true, null, '2026-09-03 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000102', 'lee.jiahui', 'Lee Jia Hui', 'student', 'Software Engineering', 5, '2512-01', '{java,javascript,sql}', true, null, '2026-09-03 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000103', 'muhammad.danish', 'Muhammad Danish', 'student', 'Software Engineering', 4, '2512-01', '{java}', true, null, '2026-09-04 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000104', 'priya.devi', 'Priya Devi', 'student', 'Software Engineering', 3, '2512-01', '{sql,javascript}', true, null, '2026-09-04 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000105', 'nurul.aqilah', 'Nurul Aqilah', 'student', 'Software Engineering', 4, '2513-01', '{html-css,javascript}', true, null, '2026-09-05 10:00+08'),
   ('b0000000-0000-4000-8000-000000000106', 'ong.kahwai', 'Ong Kah Wai', 'student', 'Software Engineering', 5, '2513-01', '{html-css,javascript,sql}', true, null, '2026-09-05 10:00+08'),
   ('b0000000-0000-4000-8000-000000000107', 'haziq.firdaus', 'Haziq Firdaus', 'student', 'Software Engineering', 3, '2513-01', '{html-css}', true, null, '2026-09-06 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000108', 'kavitha.rani', 'Kavitha Rani', 'student', 'Software Engineering', 4, '2513-01', '{html-css,javascript,react}', true, null, '2026-09-06 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000109', 'syafiqah.nabila', 'Syafiqah Nabila', 'student', 'Software Engineering', 5, '2521-DA', '{sql,spreadsheets}', true, null, '2026-09-07 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000110', 'chong.meiling', 'Chong Mei Ling', 'student', 'Software Engineering', 4, '2521-DA', '{sql,python,statistics}', true, null, '2026-09-07 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000111', 'arif.zulkarnain', 'Arif Zulkarnain', 'student', 'Software Engineering', 5, '2521-DA', '{spreadsheets}', true, null, '2026-09-08 10:00+08'),
-  ('b0000000-0000-4000-8000-000000000112', 'vinod.kumar', 'Vinod Kumar', 'student', 'Software Engineering', 3, '2521-DA', '{sql}', true, null, '2026-09-08 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000108', 'kavitha.rani', 'Kavitha Rani', 'student', 'Software Engineering', 4, '2513-01', '{html-css,javascript,ui-design}', true, null, '2026-09-06 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000109', 'syafiqah.nabila', 'Syafiqah Nabila', 'student', 'Software Engineering', 5, '2524-03', '{sql,spreadsheets}', true, null, '2026-09-07 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000110', 'chong.meiling', 'Chong Mei Ling', 'student', 'Software Engineering', 4, '2524-03', '{sql,python,statistics}', true, null, '2026-09-07 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000111', 'arif.zulkarnain', 'Arif Zulkarnain', 'student', 'Software Engineering', 5, '2524-03', '{spreadsheets}', true, null, '2026-09-08 10:00+08'),
+  ('b0000000-0000-4000-8000-000000000112', 'vinod.kumar', 'Vinod Kumar', 'student', 'Software Engineering', 3, '2524-03', '{sql}', true, null, '2026-09-08 10:00+08'),
   ('b0000000-0000-4000-8000-000000000113', 'aiman.hafiz', 'Aiman Hafiz', 'student', 'Mechatronic Engineering', 4, null, '{}', false, null, '2026-09-09 10:00+08'),
   ('b0000000-0000-4000-8000-000000000114', 'goh.siewlan', 'Goh Siew Lan', 'student', 'Mechatronic Engineering', 5, null, '{}', true, null, '2026-09-09 10:00+08');
 
@@ -169,7 +66,7 @@ insert into public.profiles (user_id, role, full_name, education_level, programm
 select p.id, p.role, p.full_name,
        case when p.role = 'student' then 'diploma'::public.edu_level end, p.programme, p.semester,
        'German-Malaysian Institute (GMI)', p.staff_unit,
-       array(select 'urn:careerprep:demo:skill:' || s from unnest(p.skills) s), '{}', p.target,
+       array(select 'careerprep:skill/' || s from unnest(p.skills) s), '{}', p.target,
        timestamptz '2026-11-10 21:00+08', p.joined
 from _people p;
 
@@ -190,9 +87,9 @@ insert into public.staff_undertakings (adviser_id, version, accepted_at) values
 update public.profiles set
   spm_grades = '[{"subject":"Bahasa Melayu","grade":"A-"},{"subject":"English","grade":"A"},{"subject":"Mathematics","grade":"A"},
                  {"subject":"Additional Mathematics","grade":"B+"},{"subject":"Physics","grade":"B"},{"subject":"Chemistry","grade":"B"}]',
-  module_ids = '{SE1013,SE1023,SE2033,SE2043,SE3053}',
-  interests = '{ai,programming}',
-  job_in_mind = '2512-AI'
+  module_ids = '{gmi-dse-basic-programming,gmi-dse-basic-software-testing,gmi-dse-modelling-requirements,gmi-dse-quality-assurance,gmi-dse-advanced-web-programming}',
+  interests = '{Artificial intelligence,Programming}',
+  job_in_mind = '2519-03'
 where user_id = 'b0000000-0000-4000-8000-000000000001';
 
 -- Settings board: all four choices made on 3 Nov 2026, 9:12 pm.
@@ -205,33 +102,34 @@ insert into public.projects (user_id, name, description) values
    'A chatbot that answers common questions from my class. Written in Python; it cleans its question data with pandas.');
 
 insert into public.profile_sessions (user_id, snapshot, created_at) values
-  ('b0000000-0000-4000-8000-000000000001', '{"name":"Session 1","focus":"No specific interest","matches":[{"code":"2512-01","fit":"Good"},{"code":"2513-01","fit":"Good"},{"code":"2522-NA","fit":"Some"}]}', '2026-10-20 20:00+08'),
-  ('b0000000-0000-4000-8000-000000000001', '{"name":"Session 2","focus":"Data and business","matches":[{"code":"2521-DA","fit":"Strong"}]}', '2026-11-01 20:00+08'),
-  ('b0000000-0000-4000-8000-000000000001', '{"name":"Session 3","focus":"AI and programming","matches":[{"code":"2512-AI","fit":"Strong"},{"code":"2512-01","fit":"Good"},{"code":"2521-DA","fit":"Some"}]}', '2026-11-08 20:00+08');
+  ('b0000000-0000-4000-8000-000000000001', '{"name":"Session 1","focus":"No specific interest","matches":[{"code":"2512-01","fit":"Good"},{"code":"2513-01","fit":"Good"},{"code":"2523-01","fit":"Some"}]}', '2026-10-20 20:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', '{"name":"Session 2","focus":"Data and business","matches":[{"code":"2524-03","fit":"Strong"}]}', '2026-11-01 20:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', '{"name":"Session 3","focus":"AI and programming","matches":[{"code":"2519-03","fit":"Strong"},{"code":"2512-01","fit":"Good"},{"code":"2524-03","fit":"Some"}]}', '2026-11-08 20:00+08');
 
 insert into public.saved_study_options (user_id, option_id, saved_at) values
-  ('b0000000-0000-4000-8000-000000000001', md5('so:t1')::uuid, '2026-11-08 20:10+08'),
-  ('b0000000-0000-4000-8000-000000000001', md5('so:t2')::uuid, '2026-11-08 20:11+08');
+  ('b0000000-0000-4000-8000-000000000001', (select id from ref.study_options where code = '2519-03' and institution like 'Universiti Malaya%'), '2026-11-08 20:10+08'),
+  ('b0000000-0000-4000-8000-000000000001', (select id from ref.study_options where code = '2519-03' and institution like 'Multimedia University%'), '2026-11-08 20:11+08');
 
--- Skill gap board: 4 of 9 ready (Python, SQL, Statistics, pandas); Git lesson 2 in progress; ML basics lesson 1 done.
+-- Skill gap board: 4 of 9 ready (Python, SQL, Statistics, cleaning data); Git lesson 2 in progress; machine learning lesson 1 done.
+-- Checks are inserted here directly; in the app the server inserts them with the service role.
 insert into public.mastery_checks (user_id, skill_uri, score, retake_after_lesson, taken_at) values
-  ('b0000000-0000-4000-8000-000000000001', 'urn:careerprep:demo:skill:statistics', 4, null, '2026-10-30 19:00+08'),
-  ('b0000000-0000-4000-8000-000000000001', 'urn:careerprep:demo:skill:sql', 5, null, '2026-11-03 20:00+08');
+  ('b0000000-0000-4000-8000-000000000001', 'careerprep:skill/statistics', 4, null, '2026-10-30 19:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', 'careerprep:skill/sql', 5, null, '2026-11-03 20:00+08');
 insert into public.skill_progress (user_id, skill_uri, state, claimed, evidence, updated_at) values
-  ('b0000000-0000-4000-8000-000000000001', 'urn:careerprep:demo:skill:statistics', 'mastered', false, 'Passed the statistics check on 30 Oct.', '2026-10-30 19:00+08'),
-  ('b0000000-0000-4000-8000-000000000001', 'urn:careerprep:demo:skill:sql', 'mastered', false, 'Passed the SQL check on 3 Nov.', '2026-11-03 20:00+08'),
-  ('b0000000-0000-4000-8000-000000000001', 'urn:careerprep:demo:skill:pandas', 'have', false, 'The Class FAQ chatbot project cleans its question data with pandas.', '2026-10-20 20:00+08'),
-  ('b0000000-0000-4000-8000-000000000001', 'urn:careerprep:demo:skill:git', 'learning', false, null, '2026-11-05 21:00+08'),
-  ('b0000000-0000-4000-8000-000000000001', 'urn:careerprep:demo:skill:ml-basics', 'learning', false, null, '2026-11-07 21:00+08');
+  ('b0000000-0000-4000-8000-000000000001', 'careerprep:skill/statistics', 'mastered', false, 'Passed the statistics check on 30 Oct.', '2026-10-30 19:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', 'careerprep:skill/sql', 'mastered', false, 'Passed the SQL check on 3 Nov.', '2026-11-03 20:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', 'careerprep:skill/data-cleansing', 'have', false, 'The Class FAQ chatbot project cleans its question data with pandas.', '2026-10-20 20:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', 'careerprep:skill/git', 'learning', false, null, '2026-11-05 21:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', 'careerprep:skill/machine-learning', 'learning', false, null, '2026-11-07 21:00+08');
 insert into public.lesson_progress (user_id, lesson_id, notes, done_at) values
-  ('b0000000-0000-4000-8000-000000000001', md5('lesson:git:1')::uuid, 'commit = saved snapshot with a message', '2026-11-05 21:00+08'),
-  ('b0000000-0000-4000-8000-000000000001', md5('lesson:git:2')::uuid,
+  ('b0000000-0000-4000-8000-000000000001', (select id from ref.lessons where skill_uri = 'careerprep:skill/git' and lesson_no = 1), 'commit = saved snapshot with a message', '2026-11-05 21:00+08'),
+  ('b0000000-0000-4000-8000-000000000001', (select id from ref.lessons where skill_uri = 'careerprep:skill/git' and lesson_no = 2),
    E'branch = copy of code to work on safely\ngit branch name -> make it\ngit switch name -> go to it\nmerge from main when done\nconflict = same lines changed, need to pick', null),
-  ('b0000000-0000-4000-8000-000000000001', md5('lesson:ml-basics:1')::uuid, null, '2026-11-07 21:00+08');
+  ('b0000000-0000-4000-8000-000000000001', (select id from ref.lessons where skill_uri = 'careerprep:skill/machine-learning' and lesson_no = 1), null, '2026-11-07 21:00+08');
 
 -- Dashboard: 6 review cards due today
 insert into public.review_cards (user_id, skill_uri, front, back, fsrs, card_due_at)
-select 'b0000000-0000-4000-8000-000000000001', 'urn:careerprep:demo:skill:' || skill, front, back,
+select 'b0000000-0000-4000-8000-000000000001', 'careerprep:skill/' || skill, front, back,
        '{"state":2,"stability":3.2,"difficulty":5.1,"reps":2,"lapses":0}', '2026-11-11 08:00+08'
 from (values
   ('sql', 'What does a LEFT JOIN keep?', 'Every row from the left table, with matches from the right or NULL.'),
@@ -244,7 +142,7 @@ from (values
 
 -- Mock interview on 20 Oct (Skill gap: "Evaluating models came up in your 20 Oct mock interview")
 insert into public.interview_answers (user_id, question_id, answer_text, skipped, marks, ai_used, ai_feedback, created_at) values
-  ('b0000000-0000-4000-8000-000000000001', md5('iq:2512-AI:technical:1')::uuid,
+  ('b0000000-0000-4000-8000-000000000001', md5('iq:2519-03:technical:1')::uuid,
    'I would train the model on our FAQ data and check if the answers look right.', false,
    '{"structure":1,"accuracy":1,"evidence":0}', false, null, '2026-10-20 21:00+08');
 

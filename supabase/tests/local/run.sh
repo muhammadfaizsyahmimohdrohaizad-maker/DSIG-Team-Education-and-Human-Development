@@ -7,7 +7,7 @@
 #
 # Needs: initdb, pg_ctl, postgres (PGBIN, default /usr/lib/postgresql/16/bin) and psql on PATH.
 # As root, the server runs as the "postgres" OS user (initdb refuses root).
-# Two databases are made: "rls" (migrations + tests) and "demo" (migrations + supabase/seed.sql + seed_check.sql).
+# Two databases are made: "rls" (migrations + tests) and "demo" (migrations + seed_reference.sql + seed.sql + seed_check.sql).
 set -euo pipefail
 
 PGBIN=${PGBIN:-/usr/lib/postgresql/16/bin}
@@ -65,7 +65,8 @@ for t in "$ROOT"/supabase/tests/*.test.sql; do
   if ! "${PSQL[@]}" -d rls -t -A -f "$t" | grep -v '^$'; then status=1; fi
 done
 
-echo "== seed.sql"
+echo "== seed_reference.sql + seed.sql"
+"${PSQL[@]}" -d demo -1 -f "$ROOT/supabase/seed_reference.sql" >/dev/null
 "${PSQL[@]}" -d demo -1 -f "$ROOT/supabase/seed.sql" >/dev/null
 echo "== seed_check.sql"
 if ! "${PSQL[@]}" -d demo -t -A -f "$HERE/seed_check.sql" | grep -v '^$'; then status=1; fi

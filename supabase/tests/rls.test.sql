@@ -2,7 +2,7 @@
 -- Runs with pgTAP (`pnpm db:test`, i.e. supabase test db) or without it: supabase/tests/local/run.sh.
 -- Each block switches to the API role with a fake JWT, the way PostgREST does for a real request.
 begin;
-select plan(107);
+select plan(112);
 
 -- =========================================================================================================
 -- Fixtures (as the migration owner)
@@ -122,7 +122,12 @@ select lives_ok($$insert into public.skill_progress (user_id, skill_uri, state, 
 select throws_ok($$insert into public.skill_progress (user_id, skill_uri, state) values ('11111111-0000-0000-0000-00000000000b', 's2', 'learning')$$,
   '42501', null, 'student cannot write another student''s progress');
 select throws_ok('select answer_key from ref.check_questions', '42501', null, 'student cannot read check answer keys');
-select lives_ok('select id, lesson_id, prompt, options from ref.check_questions', 'student can read check questions without keys');
+select throws_ok('select * from ref.check_questions', '42501', null, 'select * on check questions is refused (it includes the key)');
+select lives_ok('select id, lesson_id, position, prompt, options from ref.check_questions', 'student can read check questions without keys');
+select lives_ok('select * from ref.modules, ref.module_skills, ref.spm_subject_skills, ref.interest_areas limit 1', 'student can read the new reference tables');
+select is((select label from public.suggest_skills('skil one', 3) limit 1), 'Skill one', 'suggest_skills maps a typo to the nearest skill (A8)');
+select throws_ok($$select public.import_reference('{"source_version":"x"}')$$, '42501', null, 'student cannot run the reference import');
+select throws_ok($$insert into ref.skills (uri, label_en) values ('evil', 'Evil')$$, '42501', null, 'student cannot write reference data');
 select throws_ok($$insert into public.bookings (student_id, slot_id, topic, request_id) values ('11111111-0000-0000-0000-00000000000a', '55555555-0000-0000-0000-000000000001', 'x', gen_random_uuid())$$,
   '42501', null, 'student cannot insert a booking directly');
 select throws_ok($$insert into public.availability_slots (adviser_id, slot_start, minutes) values ('11111111-0000-0000-0000-00000000000a', now() + interval '1 day', 30)$$,
@@ -157,7 +162,8 @@ select lives_ok($$insert into public.consents (user_id, kind, given, notice_vers
   'a locked account can still record its consents');
 select throws_ok($$select public.claim_slot('55555555-0000-0000-0000-000000000002', 'x', null, '{}', gen_random_uuid())$$,
   '42501', 'not_allowed', 'a locked account cannot book');
-select throws_ok($$select public.submit_mastery_check('s1', '{}')$$, '42501', 'account_locked', 'a locked account cannot take a check');
+select throws_ok($$select public.record_interview_answer('aaaaaaaa-0000-0000-0000-000000000001', 'x', false, '{"structure":0,"accuracy":0,"evidence":0}')$$,
+  '42501', 'account_locked', 'a locked account cannot save interview answers');
 reset role;
 -- The parent approves through the emailed link; the server unlocks with the service role.
 update public.profiles set account_locked = false where user_id = '11111111-0000-0000-0000-00000000000c';
@@ -304,25 +310,37 @@ select ok(not exists (select 1 from public.cohort_rows(null) where students < 5)
 reset role;
 
 -- =========================================================================================================
--- Mastery check (A3): marked in the database, retake rule enforced
+-- Mastery (A3): the server inserts checks with the service role; a student cannot fake mastery
 -- =========================================================================================================
+set local request.jwt.claims to '';
+-- A failed check, inserted the way server/data/learning.ts does (service role).
+set local role service_role;
+insert into public.mastery_checks (user_id, skill_uri, score, retake_after_lesson) values ('11111111-0000-0000-0000-00000000000a', 's1', 2, 3);
+reset role;
 set local request.jwt.claims to '{"sub":"11111111-0000-0000-0000-00000000000a","role":"authenticated","app_metadata":{"role":"student"}}';
 set local role authenticated;
-select is((select r ->> 'score' from public.submit_mastery_check('s1', '{
-    "99999999-0000-0000-0000-000000000001":"a", "99999999-0000-0000-0000-000000000002":"b",
-    "99999999-0000-0000-0000-000000000003":"a", "99999999-0000-0000-0000-000000000004":"b",
-    "99999999-0000-0000-0000-000000000005":"b"}') r), '2', 'check is marked against the stored key');
-select is((select retake_after_lesson from public.mastery_checks where user_id = '11111111-0000-0000-0000-00000000000a' order by taken_at desc limit 1), 3,
-  'retake waits for the lesson behind most misses');
-select throws_ok($$select public.submit_mastery_check('s1', '{"99999999-0000-0000-0000-000000000001":"a","99999999-0000-0000-0000-000000000002":"a","99999999-0000-0000-0000-000000000003":"a","99999999-0000-0000-0000-000000000004":"a","99999999-0000-0000-0000-000000000005":"a"}')$$,
-  '55000', 'retake_locked', 'retake is blocked until lesson 3 is done again');
-select throws_ok($$select public.submit_mastery_check('s1', '{"99999999-0000-0000-0000-000000000001":"a"}')$$,
-  '22023', 'invalid_answers', 'a check needs exactly five answers');
+select throws_ok($$insert into public.skill_progress (user_id, skill_uri, state) values ('11111111-0000-0000-0000-00000000000a', 's1', 'mastered')
+                   on conflict (user_id, skill_uri) do update set state = 'mastered'$$,
+  '42501', 'mastered_needs_passed_check', 'a failed check does not let the student mark the skill mastered');
 select lives_ok($$insert into public.lesson_progress (user_id, lesson_id, done_at) values ('11111111-0000-0000-0000-00000000000a', '88888888-0000-0000-0000-000000000003', now())$$,
   'student marks lesson 3 done');
-select is((select r ->> 'passed' from public.submit_mastery_check('s1', '{"99999999-0000-0000-0000-000000000001":"a","99999999-0000-0000-0000-000000000002":"a","99999999-0000-0000-0000-000000000003":"a","99999999-0000-0000-0000-000000000004":"a","99999999-0000-0000-0000-000000000005":"b"}') r),
-  'true', 'four of five passes');
-select is((select state::text from public.skill_progress where skill_uri = 's1'), 'mastered', 'a passed check makes the skill mastered');
+select ok((select done_at > (select max(taken_at) from public.mastery_checks where skill_uri = 's1') from public.lesson_progress
+            where lesson_id = '88888888-0000-0000-0000-000000000003'), 'done_at is server time, after the failed check');
+reset role;
+set local role service_role;
+insert into public.mastery_checks (user_id, skill_uri, score) values ('11111111-0000-0000-0000-00000000000a', 's1', 4);
+reset role;
+set local request.jwt.claims to '{"sub":"11111111-0000-0000-0000-00000000000a","role":"authenticated","app_metadata":{"role":"student"}}';
+set local role authenticated;
+select lives_ok($$insert into public.skill_progress (user_id, skill_uri, state) values ('11111111-0000-0000-0000-00000000000a', 's1', 'mastered')
+                  on conflict (user_id, skill_uri) do update set state = 'mastered'$$,
+  'after a passing check the server can record mastered as the student');
+select is((select state::text from public.skill_progress where skill_uri = 's1'), 'mastered', 'skill is mastered');
+select throws_ok($$update public.skill_progress set state = 'mastered' where skill_uri = 's2'$$,
+  '42501', 'mastered_needs_passed_check', 'updating a claimed skill to mastered without a check is refused');
+reset role;
+select is((select state::text from public.student_skill_states('11111111-0000-0000-0000-00000000000a') where skill_uri = 's2'), 'check_needed',
+  'advisers see the derived state (claimed, not mastered)');
 
 -- Interview: marks validated; AI feedback only with consent and 18+
 select lives_ok($$select public.record_interview_answer('aaaaaaaa-0000-0000-0000-000000000001', 'I built a chatbot', false, '{"structure":2,"accuracy":1,"evidence":1}')$$,

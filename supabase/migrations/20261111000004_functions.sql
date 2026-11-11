@@ -4,8 +4,7 @@
 -- Error codes (the server maps them to Result codes, System Design 2.5):
 --   42501 FORBIDDEN    forbidden, undertaking_required, withdrawn, ai_not_allowed, account_locked
 --   P0002 NOT_FOUND    not_found
---   22023 VALIDATION   invalid_answers, answer_required, invalid_input
---   55000 CONFLICT     retake_locked
+--   22023 VALIDATION   answer_required, invalid_input
 -- Booking functions (migration 000005) use the backend's tokens: not_allowed, slot_taken, slot_closed, ...
 
 -- ---------------------------------------------------------------------------------------------------------
@@ -42,66 +41,9 @@ begin
   on conflict do nothing;
 end $$;
 
--- ---------------------------------------------------------------------------------------------------------
--- Learning: A3 mastery check, marked here against the answer key (which students cannot read)
--- ---------------------------------------------------------------------------------------------------------
--- p_answers: {"<check question id>": "<chosen option id>", ...} for exactly 5 questions of the skill.
--- Returns {check_id, score, passed, retake_after_lesson, missed: [question ids]}.
-create function public.submit_mastery_check(p_skill text, p_answers jsonb) returns jsonb
-language plpgsql security definer set search_path = '' as $$
-declare
-  me uuid := public.require_student();
-  last public.mastery_checks;
-  v_score int; v_missed uuid[]; v_retake int; v_passed boolean; v_id uuid; n_keys int; n_valid int;
-begin
-  if p_answers is null or jsonb_typeof(p_answers) <> 'object' then
-    raise exception 'invalid_answers' using errcode = '22023';
-  end if;
-  select count(*) into n_keys from jsonb_object_keys(p_answers);
-  select count(*) into n_valid
-    from jsonb_object_keys(p_answers) k
-    join ref.check_questions q on q.id::text = k
-    join ref.lessons l on l.id = q.lesson_id
-   where l.skill_uri = p_skill;
-  if n_keys <> 5 or n_valid <> 5 then raise exception 'invalid_answers' using errcode = '22023'; end if;
-
-  -- Retake rule: after a failed check, lesson N must be done after that check.
-  select * into last from public.mastery_checks
-   where user_id = me and skill_uri = p_skill order by taken_at desc limit 1;
-  if found and last.retake_after_lesson is not null and not exists (
-       select 1 from public.lesson_progress lp join ref.lessons l on l.id = lp.lesson_id
-        where lp.user_id = me and l.skill_uri = p_skill and l.lesson_no = last.retake_after_lesson
-          and lp.done_at > last.taken_at) then
-    raise exception 'retake_locked' using errcode = '55000', detail = last.retake_after_lesson::text;
-  end if;
-
-  with graded as (
-    select q.id, l.lesson_no, (p_answers ->> q.id::text) is not distinct from q.answer_key as correct
-      from ref.check_questions q join ref.lessons l on l.id = q.lesson_id
-     where l.skill_uri = p_skill and p_answers ? q.id::text
-  )
-  select count(*) filter (where correct),
-         coalesce(array_agg(id order by id) filter (where not correct), '{}'),
-         (select g.lesson_no from graded g where not g.correct
-           group by g.lesson_no order by count(*) desc, g.lesson_no limit 1)
-    into v_score, v_missed, v_retake
-    from graded;
-
-  v_passed := v_score >= 4;
-  insert into public.mastery_checks (user_id, skill_uri, score, retake_after_lesson)
-  values (me, p_skill, v_score, case when v_passed then null else v_retake end)
-  returning id into v_id;
-
-  insert into public.skill_progress as sp (user_id, skill_uri, state, updated_at)
-  values (me, p_skill, case when v_passed then 'mastered' else 'learning' end::public.skill_state, now())
-  on conflict (user_id, skill_uri) do update
-    set state = case when v_passed or sp.state = 'mastered' then 'mastered' else 'learning' end::public.skill_state,
-        claimed = case when v_passed then sp.claimed else false end,
-        updated_at = now();
-
-  return jsonb_build_object('check_id', v_id, 'score', v_score, 'passed', v_passed,
-    'retake_after_lesson', case when v_passed then null else v_retake end, 'missed', to_jsonb(v_missed));
-end $$;
+-- Mastery checks (A3) are marked on the server from content/lessons and inserted with the service role,
+-- scoped to the student (server/data/learning.ts). skill_progress cannot reach 'mastered' without a passing
+-- row (guard_mastered, 000003), and advisers see states derived from checks (student_skill_states).
 
 -- ---------------------------------------------------------------------------------------------------------
 -- Interview (A5): checklist marks come from the server engine; AI feedback only for 18+ with consent
@@ -356,7 +298,7 @@ grant execute on function public.app_role(), public.is_unlocked(), public.has_cu
 
 grant execute on function
   public.accept_staff_undertaking(),
-  public.submit_mastery_check(text, jsonb), public.record_interview_answer(uuid, text, boolean, jsonb),
+  public.record_interview_answer(uuid, text, boolean, jsonb),
   public.add_ai_feedback(uuid, text),
   public.list_advisers(), public.open_request(uuid), public.adviser_students(), public.cohort_rows(text)
   to authenticated;

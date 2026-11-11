@@ -183,7 +183,7 @@ grant select (user_id, parent_email, expires_at, decision, decided_at) on public
 revoke update on public.availability_slots from authenticated;
 grant update (is_open) on public.availability_slots to authenticated;
 
--- Reference data: everything except the answer keys (marked inside submit_mastery_check).
+-- Reference data: everything except the answer keys (the server marks checks from content/lessons).
 grant usage on schema ref to service_role;
 grant all on all tables in schema ref to service_role;
 revoke select on ref.check_questions from authenticated;
