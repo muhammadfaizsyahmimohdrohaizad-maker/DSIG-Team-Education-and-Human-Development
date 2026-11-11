@@ -3,6 +3,7 @@ import "server-only";
 import { adminDb, db } from "./supabase.ts";
 import { getLessons } from "./reference.ts";
 import type { SkillProgress, SkillState } from "../../lib/types.ts";
+import type { Json } from "../../lib/database.types.ts";
 
 function fail(what: string, error: { message: string }): never {
   throw new Error(`learning: ${what}: ${error.message}`);
@@ -73,8 +74,7 @@ export async function claimSkill(userId: string, uri: string): Promise<void> {
 /** Marks a lesson done now (again, if it was done before: a retake needs a fresh done time) and keeps the notes. */
 export async function markLessonDone(userId: string, lessonId: string, notes?: string): Promise<Date> {
   const doneAt = new Date();
-  const row: Record<string, unknown> = { user_id: userId, lesson_id: lessonId, done_at: doneAt.toISOString() };
-  if (notes !== undefined) row.notes = notes;
+  const row = { user_id: userId, lesson_id: lessonId, done_at: doneAt.toISOString(), ...(notes !== undefined ? { notes } : {}) };
   const { error } = await (await db()).from("lesson_progress").upsert(row, { onConflict: "user_id,lesson_id" });
   if (error) fail("lesson done", error);
   return doneAt;
@@ -112,7 +112,7 @@ export async function addReviewCards(userId: string, uri: string, cards: NewCard
   if (existing.error) fail("review cards", existing.error);
   if ((existing.count ?? 0) > 0 || cards.length === 0) return 0;
   const { error } = await client.from("review_cards").insert(cards.map((c) => ({
-    user_id: userId, skill_uri: uri, front: c.front, back: c.back, fsrs: c.fsrs, card_due_at: c.due.toISOString(),
+    user_id: userId, skill_uri: uri, front: c.front, back: c.back, fsrs: c.fsrs as Json, card_due_at: c.due.toISOString(),
   })));
   if (error) fail("add review cards", error);
   return cards.length;
