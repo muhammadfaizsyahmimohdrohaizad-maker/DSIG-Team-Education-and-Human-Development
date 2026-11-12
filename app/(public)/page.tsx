@@ -50,7 +50,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap gap-3">
               <ButtonLink href="/sign-up" size="large">Get started</ButtonLink>
-              <ButtonLink href="#how" variant="on-navy" size="large">See how it works</ButtonLink>
+              <ButtonLink href="/demo" variant="on-navy" size="large">Try the demo</ButtonLink>
             </div>
             <p className="m-0 text-[15px] text-cream">Free for students · You choose what&apos;s shared</p>
           </div>

@@ -8,7 +8,10 @@ import { setTarget } from "@/features/matches/actions";
 export default async function Page() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
-  const data = await loadAboutYou(user.id);
+  const data = await loadAboutYou(user.id).catch((error: unknown) => {
+    if (error instanceof Error && error.message.includes("Invalid schema: ref")) redirect("/demo");
+    throw error;
+  });
   async function choose(form: FormData) {
     "use server";
     const result = await setTarget({ code: form.get("code") });
