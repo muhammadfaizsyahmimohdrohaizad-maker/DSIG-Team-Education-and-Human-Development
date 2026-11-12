@@ -1,3 +1,4 @@
+import { demoRoutes } from "./lib/demo-routes";
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
@@ -8,6 +9,16 @@ const STAFF_SETUP = ["/staff"];
 const INSTITUTION = ["/institution"];
 
 export async function middleware(req: NextRequest) {
+  // Public presentation screens are rewritten to isolated fixture-only components.
+  const route = req.nextUrl.pathname.split("/").filter(Boolean);
+  if (demoRoutes.some(pattern => {
+    const parts = pattern.split("/");
+    return parts.length === route.length && parts.every((part, i) => part.startsWith(":") || part === route[i]);
+  })) {
+    const destination = req.nextUrl.clone();
+    destination.pathname = "/showcase/" + route.join("/");
+    return NextResponse.rewrite(destination);
+  }
   let res = NextResponse.next({ request: req });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -49,3 +60,5 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|api/cron).*)"],
 };
+
+
