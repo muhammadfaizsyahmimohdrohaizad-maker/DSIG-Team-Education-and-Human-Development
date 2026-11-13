@@ -1,3 +1,4 @@
+import { HeroBand } from "@/components/ui";
 import { redirect } from "next/navigation";
 import { randomUUID } from "node:crypto";
 import { WorkspacePage, Panel, RouteLink } from "@/components/workspace-page";
@@ -22,8 +23,14 @@ export default async function Page() {
   }
   return (
     <WorkspacePage title="Book an adviser">
+      <HeroBand gap="gap-4"><h2 className="text-2xl">Plan a career conversation</h2>
+        <p>Choose an adviser and a time, add your question, and select the parts of your plan to share.</p>
+        <div className="flex flex-wrap gap-3"><a href="#available-sessions" className="font-semibold text-white underline">Available sessions{slots.ok && " · " + slots.value.length}</a>
+        <a href="#my-bookings" className="font-semibold text-white underline">My bookings{bookings.ok && " · " + bookings.value.length}</a></div>
+      </HeroBand>
+      <div className="grid items-start gap-4 tablet:grid-cols-[3fr_2fr]">
       <Panel>
-        <h2>Choose a session</h2>
+        <h2 className="text-xl" id="available-sessions">Choose a session</h2>
         {!slots.ok ? (
           <p>{slots.error.message}</p>
         ) : !slots.value.length ? (
@@ -66,7 +73,7 @@ export default async function Page() {
         )}
       </Panel>
       <Panel>
-        <h2>Your bookings</h2>
+        <h2 className="text-xl" id="my-bookings">Your bookings</h2>
         {!bookings.ok ? (
           <p>{bookings.error.message}</p>
         ) : bookings.value.length ? (
@@ -79,6 +86,8 @@ export default async function Page() {
           <p>You have no bookings yet.</p>
         )}
       </Panel>
+      </div>
     </WorkspacePage>
   );
 }
+

@@ -1,3 +1,4 @@
+import { ButtonLink, HeroBand, SoftPanel } from "@/components/ui";
 import { redirect } from "next/navigation";
 import { WorkspacePage, Panel, RouteLink } from "@/components/workspace-page";
 import { ActionForm } from "@/components/action-form";
@@ -16,10 +17,11 @@ export default async function Page() {
     redirect("/skill-gap");
   }
   return (
-    <WorkspacePage title="Occupations your skills point to">
+    <WorkspacePage title="My career map">
+      <div className="grid gap-4 tablet:grid-cols-[2fr_1fr]"><HeroBand gap="gap-4"><h2 className="text-2xl">{data?.matches.length ? "Explore your occupation matches" : "Build your first career map"}</h2><p>{data?.matches.length ? "Open a role to inspect its skills and choose a target." : "Add a skill, module or interest to find occupations connected to your studies."}</p><ButtonLink href="/about-you" variant="on-navy" className="self-start">Edit your skills and interests</ButtonLink></HeroBand><SoftPanel><h2 className="text-xl">Your profile</h2><p>{data?.form.skills.length ?? 0} skills · {data?.form.projects.length ?? 0} projects</p><p>Target · {data?.target?.title ?? "Choose a role from your matches"}</p></SoftPanel></div>
       <details><summary>How the match is calculated</summary><p>Your skills, modules, interests and projects help rank occupations. Skill coverage shows the percentage of essential skills your profile already covers.</p></details>
-      <RouteLink href="/about-you">Edit your skills and interests</RouteLink>
-      {!data?.matches.length && <p>Add your modules, skills or interests to see matching occupations.</p>}
+
+      <div className="grid gap-4 tablet:grid-cols-2">
       {data?.matches.map((job) => (
         <Panel key={job.code}>
           <span>
@@ -53,7 +55,9 @@ export default async function Page() {
           )}
         </Panel>
       ))}
+      </div>
     </WorkspacePage>
   );
 }
+
 
