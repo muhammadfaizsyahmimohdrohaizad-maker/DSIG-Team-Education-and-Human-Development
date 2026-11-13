@@ -22,7 +22,7 @@ const LOG_IN = "Log in with your staff account to continue.";
 async function adviser() {
   const user = await currentUser();
   if (!user) return null;
-  const role = (user.app_metadata as { role?: string } | undefined)?.role;
+  const role = (await ownProfile(user.id))?.role;
   return role === "adviser" ? user : undefined;
 }
 

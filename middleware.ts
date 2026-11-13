@@ -35,13 +35,19 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(to);
   }
 
-  // Role comes from the custom access-token hook (System Design 5.2); RLS enforces it again.
-  const role = (data.user?.app_metadata as { role?: string } | undefined)?.role;
+  if (!needsAuth || !data.user) return res;
+  const { data: role, error } = await supabase.rpc("app_role");
+  if (error || !role) return new NextResponse("Could not load your account role. Refresh to retry.", { status: 503 });
+  function redirectWithSession(path: string) {
+    const redirect = NextResponse.redirect(new URL(path, req.url));
+    for (const cookie of res.cookies.getAll()) redirect.cookies.set(cookie);
+    return redirect;
+  }
   const under = (list: string[]) => list.some((p) => path === p || path.startsWith(`${p}/`));
-  if (role === "student" && (under(ADVISER) || under(STAFF_SETUP))) return NextResponse.redirect(new URL("/careerprep/dashboard", req.url));
-  if (role === "adviser" && under(STUDENT)) return NextResponse.redirect(new URL("/careerprep/adviser/requests", req.url));
-  if (role !== "institution" && under(INSTITUTION)) return NextResponse.redirect(new URL(role === "adviser" ? "/careerprep/adviser/requests" : "/careerprep/dashboard", req.url));
-  if (role === "institution" && (under(STUDENT) || under(ADVISER) || under(STAFF_SETUP))) return NextResponse.redirect(new URL("/careerprep/institution", req.url));
+  if (role === "student" && (under(ADVISER) || under(STAFF_SETUP))) return redirectWithSession("/careerprep/dashboard");
+  if (role === "adviser" && under(STUDENT)) return redirectWithSession("/careerprep/adviser/requests");
+  if (role !== "institution" && under(INSTITUTION)) return redirectWithSession(role === "adviser" ? "/careerprep/adviser/requests" : "/careerprep/dashboard");
+  if (role === "institution" && (under(STUDENT) || under(ADVISER) || under(STAFF_SETUP))) return redirectWithSession("/careerprep/institution");
 
   return res;
 }

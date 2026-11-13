@@ -10,7 +10,8 @@ import { SHARE_LABELS, SHARE_ORDER, TOPICS, dayKey, dayLabel, firstName, initial
 
 export function BookForm({ slots: initial }: { slots: OpenSlot[] }) {
   const router = useRouter();
-  const [slots, setSlots] = useState(initial);
+  const [unavailable, setUnavailable] = useState<string[]>([]);
+  const slots = useMemo(() => initial.filter(slot => !unavailable.includes(slot.id)), [initial, unavailable]);
   const [pending, start] = useTransition();
   const [selId, setSelId] = useState<string | null>(null);
   const [topic, setTopic] = useState<string>(TOPICS[1]);
@@ -44,7 +45,7 @@ export function BookForm({ slots: initial }: { slots: OpenSlot[] }) {
       const r = await requestBooking({ slotId: sel.id, topic, note: note.trim() || undefined, shared, requestId });
       if (r.ok) { router.push(`/book/appointments?requested=${r.value.bookingId}`); return; }
       if (r.error.code === "CONFLICT") {
-        setSlots((all) => all.filter((s) => s.id !== sel.id));
+        setUnavailable(ids => [...ids, sel.id]);
         setSelId(null);
         setError(`Someone else reserved ${whenLabel(sel.start)} with ${sel.adviserName} a moment ago. Nothing was booked and nothing was shared. Pick another time.`);
         return;

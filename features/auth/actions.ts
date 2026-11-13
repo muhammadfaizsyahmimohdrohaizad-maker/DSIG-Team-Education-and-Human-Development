@@ -77,7 +77,7 @@ export async function logIn(input: unknown): Promise<Result<LogInResult>> {
     return err("FORBIDDEN", "We couldn't find a CareerPrep profile for this account. Sign up again, or contact GMI Career Services.");
   }
   await touchLastLogin(userId);
-  const role = signedIn.value.role ?? profile.role;
+  const role = profile.role;
   const undertaking = role === "adviser" ? await hasCurrentUndertaking(userId) : false;
   return ok({ role, redirectTo: homeFor(role, undertaking), locked: profile.locked });
 }
@@ -100,7 +100,7 @@ export async function setNewPassword(input: unknown): Promise<Result<{ redirectT
   if (!user) return err("UNAUTHENTICATED", "This reset link has expired or was already used. Ask for a new one from the log-in page.");
   const updated = await authUpdatePassword(parsed.data.password);
   if (!updated.ok) return updated;
-  const role = (user.app_metadata as { role?: Role } | undefined)?.role;
+  const role = (await ownProfile(user.id))?.role;
   const undertaking = role === "adviser" ? await hasCurrentUndertaking(user.id) : false;
   return ok({ redirectTo: homeFor(role, undertaking) });
 }
