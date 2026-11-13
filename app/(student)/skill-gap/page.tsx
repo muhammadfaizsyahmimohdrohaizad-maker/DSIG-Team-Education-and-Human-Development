@@ -25,7 +25,7 @@ export default async function Page() {
 
         </Panel>
       ))}
-      <RouteLink href="/plan/interview">Practise a mock interview</RouteLink>
+      <RouteLink href="/plan">Scan my résumé</RouteLink>
       <RouteLink href="/book">Talk to an adviser</RouteLink>
     </WorkspacePage>
   );

@@ -7,8 +7,7 @@ import { getSkillGap } from "@/features/plan/actions";
 
 const tools = [
   { href: "/map", title: "Career map", detail: "Compare occupations and see which skills support each match." },
-  { href: "/plan/resume", title: "Résumé scanner", detail: "Compare résumé evidence with your chosen occupation." },
-  { href: "/plan/interview", title: "Mock interview", detail: "Practise answering questions about your target occupation." },
+  { href: "/plan", title: "Résumé scanner", detail: "Compare résumé evidence with your chosen occupation." },
   { href: "/book", title: "Adviser booking", detail: "Find an available session to discuss your next step." },
 ];
 
@@ -18,7 +17,7 @@ export default async function Page() {
   const profile = await getProfile(user.id);
   const gap = profile?.target ? await getSkillGap() : null;
   const next = gap?.ok
-    ? { title: gap.value.target.title, detail: "Prepare your résumé and practise interview answers for this role.", href: "/plan", action: "Open my plan" }
+    ? { title: gap.value.target.title, detail: "Check how your résumé describes the skills for this role.", href: "/plan", action: "Open my plan" }
     : profile?.educationLevel
       ? { title: "Find your target occupation", detail: "Compare the occupations linked to your profile, then choose one to work towards.", href: "/map", action: "Explore my matches" }
       : { title: "Start with a skill you have used", detail: "Add a module, a project or a skill. Your career map will show which occupations use it.", href: "/about-you", action: "Build my profile" };

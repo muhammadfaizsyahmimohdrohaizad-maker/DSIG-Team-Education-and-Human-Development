@@ -10,7 +10,7 @@ const sectionTitle = "m-0 text-[clamp(1.75rem,3.5vw,2.5rem)] leading-[1.15] trac
 const steps = [
   { title: "Tell us about yourself", text: "Your interests, results or modules, skills and projects. About 5 minutes." },
   { title: "See your matches", text: "Official MASCO jobs that fit what you added, with the reasons shown on a career map." },
-  { title: "Practise with your plan", text: "Short lessons for each missing skill, quick reviews, mock interviews and a CV." },
+  { title: "Check your résumé", text: "Compare your résumé with an occupation and see which skills you can support with evidence." },
   { title: "Talk to a person", text: "Book a career adviser. They see only what you choose to share." },
 ];
 
@@ -30,7 +30,7 @@ const protections = [
 const faqs: Array<{ q: string; a: React.ReactNode }> = [
   { q: "Is CareerPrep free?", a: "Yes, for students. Institutions that use it for their career services pay for it." },
   { q: "Who can see my data?", a: <>You, and your career adviser only for what you choose to share. Your institution sees totals with no names. Read the <a href="/careerprep/privacy">Privacy Notice</a> for the details.</> },
-  { q: "Does it use AI?", a: "Matching uses official job and skill lists, not AI. AI writes feedback on your notes and interview answers only if you turn it on, and it is always labelled." },
+  { q: "Does it use AI?", a: "Career matching uses weighted rules. The résumé scanner checks your wording against occupation skills in your browser." },
   { q: "Is it only for GMI students?", a: "We are starting at GMI. It is built for anyone from SPM leavers to degree students." },
 ];
 
@@ -50,7 +50,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap gap-3">
               <ButtonLink href="/sign-up" size="large">Get started</ButtonLink>
-              <ButtonLink href="/demo" variant="on-navy" size="large">Try the demo</ButtonLink>
+              <ButtonLink href="/demo" variant="on-navy" size="large">Try the résumé scanner</ButtonLink>
             </div>
             <p className="m-0 text-[15px] text-cream">Free for students · You choose what&apos;s shared</p>
           </div>
@@ -98,7 +98,7 @@ export default function HomePage() {
               <h2 id="goal-h" className={sectionTitle}>Our goal</h2>
             </div>
             <p className="m-0 min-w-0 max-w-[46rem] flex-[999_1_520px] text-lg">
-              Give every student a clear answer to &quot;what job are my studies for, and am I ready?&quot;, with the evidence behind it and practice for the real interview.
+              Give every student a clear answer to &quot;what job are my studies for, and am I ready?&quot;, with the evidence behind it and a résumé that shows those skills.
             </p>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(260px,100%),1fr))] gap-4">

@@ -23,7 +23,7 @@ const config: NextConfig = {
   basePath: "/careerprep",
   poweredByHeader: false,
   async redirects() {
-    return ["cv", "review", "lessons", "learn", "check", "progress"].map(section => ({
+    return ["interview", "cv", "review", "lessons", "learn", "check", "progress"].map(section => ({
       source: "/plan/" + section + "/:path*", destination: "/plan", permanent: false,
     }));
   },
