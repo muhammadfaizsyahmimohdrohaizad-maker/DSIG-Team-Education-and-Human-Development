@@ -13,7 +13,7 @@ export async function sendEmail(mail: Email): Promise<Result<{ id?: string }>> {
   const e = env();
   if (!e.RESEND_API_KEY) {
     console.info("[email] RESEND_API_KEY not set; not sent:", mail.subject);
-    return ok({});
+    return err("EMAIL_FAILED", "Email delivery has not been configured.");
   }
   for (let attempt = 0; attempt < BACKOFF_MS.length; attempt++) {
     try {
