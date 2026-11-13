@@ -5,11 +5,12 @@ import { AvailabilityGrid } from "@/features/adviser/availability-grid";
 
 export const metadata: Metadata = { title: "Your availability" };
 
-/** Monday of this week in Malaysia time (UTC+8), as YYYY-MM-DD. Kept here so the server needs no client code. */
+/** Monday of the next schedulable week in Malaysia time (UTC+8), as YYYY-MM-DD. Kept here so the server needs no client code. */
 function thisMonday(): string {
   const myt = new Date(Date.now() + 8 * 3600e3);
   const dow = (myt.getUTCDay() + 6) % 7;
-  return new Date(myt.getTime() - dow * 864e5).toISOString().slice(0, 10);
+  const weekEnded = dow > 4 || (dow === 4 && (myt.getUTCHours() * 60 + myt.getUTCMinutes()) >= 16 * 60 + 30);
+  return new Date(myt.getTime() + ((weekEnded ? 7 : 0) - dow) * 864e5).toISOString().slice(0, 10);
 }
 
 // Adviser: availability board.

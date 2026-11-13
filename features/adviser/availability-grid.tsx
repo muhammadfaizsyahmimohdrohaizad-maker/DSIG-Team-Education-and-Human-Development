@@ -1,7 +1,7 @@
 "use client";
 // Adviser availability board: a Monday-to-Friday grid for one week (Malaysia time). Select a time to open or
 // close it; booked or requested times can't change here. Nothing is stored until "Save availability".
-import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { AlertMessage, Button, Card, Select, SoftPanel, StatusMessage, TextInput, cn } from "@/components/ui";
 import { getAvailability, setAvailability, type Availability } from "./actions";
 
@@ -34,10 +34,10 @@ export function AvailabilityGrid({ initial, initialWeek }: { initial: Availabili
     startLoad(async () => {
       const r = await getAvailability({ from: iso(w, 0), days: 7 });
       if (!r.ok) { setError(r.error.message); return; }
+      setWeek(w);
       setData(r.value);
     });
   }, []);
-  useEffect(() => { if (week !== initialWeek) load(week); }, [week, initialWeek, load]);
 
   const days = useMemo(() => [0, 1, 2, 3, 4].map((n) => addDays(week, n)), [week]);
   const times = useMemo(() => { const t: number[] = []; for (let m = START_HOUR * 60; m < END_HOUR * 60; m += len) t.push(m); return t; }, [len]);
@@ -56,7 +56,7 @@ export function AvailabilityGrid({ initial, initialWeek }: { initial: Availabili
   };
 
   const save = () => {
-    if (saving || !dirty) { if (!dirty) setMessage("Nothing to save yet."); return; }
+    if (saving || loading || !dirty) return;
     setError(null);
     startSave(async () => {
       const r = await setAvailability({
@@ -83,9 +83,9 @@ export function AvailabilityGrid({ initial, initialWeek }: { initial: Availabili
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center gap-3">
-        <Button variant="outline" size="compact" aria-label="Previous week" onClick={() => { if (dirty && !confirm("You have unsaved changes on this week. Leave them?")) return; setChanges(new Map()); setWeek(addDays(week, -7)); }}>‹</Button>
+        <Button variant="outline" size="compact" aria-disabled={loading || saving} aria-label="Previous week" onClick={() => { if (loading || saving) return; if (dirty && !confirm("You have unsaved changes on this week. Leave them?")) return; setChanges(new Map()); setToBlock([]); setToUnblock([]); setMessage(null); load(addDays(week, -7)); }}>‹</Button>
         <b className="text-navy" aria-live="polite">Week of {fmtDay(week)}</b>
-        <Button variant="outline" size="compact" aria-label="Next week" onClick={() => { if (dirty && !confirm("You have unsaved changes on this week. Leave them?")) return; setChanges(new Map()); setWeek(addDays(week, 7)); }}>›</Button>
+        <Button variant="outline" size="compact" aria-disabled={loading || saving} aria-label="Next week" onClick={() => { if (loading || saving) return; if (dirty && !confirm("You have unsaved changes on this week. Leave them?")) return; setChanges(new Map()); setToBlock([]); setToUnblock([]); setMessage(null); load(addDays(week, 7)); }}>›</Button>
         <ul className="m-0 ml-auto flex list-none flex-wrap gap-4 p-0 text-sm">
           <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-3.5 rounded-[3px] bg-navy" />Open</li>
           <li className="flex items-center gap-1.5"><span aria-hidden="true" className="size-3.5 rounded-[3px] border border-control bg-white" />Closed</li>
@@ -112,11 +112,13 @@ export function AvailabilityGrid({ initial, initialWeek }: { initial: Availabili
                   const slot = byStart.get(key(start));
                   if (slot?.booked) return <td key={d} className="px-1.5 py-1"><span className="flex min-h-11 items-center justify-center rounded-control bg-maroon text-xs font-semibold text-white">Booked</span></td>;
                   if (blocked.has(d)) return <td key={d} className="px-1.5 py-1"><span className="flex min-h-11 items-center justify-center rounded-control bg-hairline text-xs text-muted">—</span></td>;
+                  if (Date.parse(start) <= Date.now()) return <td key={d} className="text-center text-xs text-muted">Past</td>;
                   const open = changes.get(key(start)) ?? slot?.open ?? false;
                   return (
                     <td key={d} className="px-1.5 py-1">
                       <button
                         type="button"
+                        disabled={loading || saving}
                         aria-pressed={open}
                         aria-label={`${fmtDay(d)} ${fmtTime(m)}: ${open ? "open" : "closed"}`}
                         onClick={() => toggle(start, open)}
@@ -160,7 +162,7 @@ export function AvailabilityGrid({ initial, initialWeek }: { initial: Availabili
           ) : null}
         </SoftPanel>
       </div>
-      <Button onClick={save} loading={saving} loadingText="Saving" className="self-start">Save availability</Button>
+      <Button onClick={save} aria-disabled={!dirty || loading} loading={saving} loadingText="Saving" className="self-start">Save availability</Button>
     </div>
   );
 }
