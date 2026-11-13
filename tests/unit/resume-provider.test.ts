@@ -23,7 +23,7 @@ describe("Gemini résumé provider", () => {
     vi.stubGlobal("fetch", request);
     await expect(reviewResume("Built SQL reports.", "Data analyst", ["SQL"])).resolves.toBe("Evidence: Built SQL reports.");
     const [url, options] = request.mock.calls[0]!;
-    expect(url).toBe("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent");
+    expect(url).toBe("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent");
     expect(JSON.parse(options.body).contents[0].parts[0].text).toContain("Data analyst");
     expect(options.headers["x-goog-api-key"]).toBe("test-secret");
   });

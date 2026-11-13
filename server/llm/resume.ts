@@ -3,7 +3,7 @@ import "server-only";
 export async function reviewResume(text: string, occupation: string, skills: string[]): Promise<string> {
   const token = process.env.GEMINI_API_KEY;
   if (!token) throw new Error("GEMINI_NOT_CONFIGURED");
-  const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(process.env.GEMINI_MODEL || "gemini-2.5-flash-lite") + ":generateContent", {
+  const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(process.env.RESUME_GEMINI_MODEL || "gemini-3.5-flash-lite") + ":generateContent", {
     method: "POST",
     signal: AbortSignal.timeout(25000),
     headers: {"x-goog-api-key": token, "Content-Type": "application/json"},
