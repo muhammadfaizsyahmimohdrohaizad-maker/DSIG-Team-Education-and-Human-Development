@@ -20,7 +20,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
       <AuthCard
         current="/sign-in"
         title="Welcome back"
-        intro="Log in to see your job matches and today's lesson."
+        intro="Log in to see your job matches and your plan."
         footer={<>New to CareerPrep? <Link href="/sign-up" className="inline-flex min-h-11 items-center px-1 font-semibold">Sign up</Link></>}
       >
         <LogInForm logIn={logIn} requestPasswordReset={requestPasswordReset} next={safeNext(next)} />

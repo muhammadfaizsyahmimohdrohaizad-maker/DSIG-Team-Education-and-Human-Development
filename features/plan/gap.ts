@@ -31,15 +31,10 @@ export async function buildSkillGap(profile: ProfileDetails & { target: string }
   };
 
   const evidence = (state: GapRowView["state"], uri: string, p?: SkillProgressDetail): string => {
-    const done = p?.lessonsDone.length ?? 0;
     switch (state) {
-      case "mastered": return `You passed the 5-question check on ${dateMyt(p!.masteredAt!)}.`;
-      case "check_needed": return "You said you know this. Take the 5-question check to confirm it.";
-      case "learning": {
-        const c = p?.latestCheck;
-        if (c && c.score < 4 && c.retakeAfterLesson) return `Your last check scored ${c.score} of 5. Redo lesson ${c.retakeAfterLesson}, then try again.`;
-        return done >= 4 ? "All 4 lessons done. Take the 5-question check." : `${done} of 4 lessons done. The 5-question check comes after lesson 4.`;
-      }
+      case "mastered": return `You showed this skill on ${dateMyt(p!.masteredAt!)}.`;
+      case "check_needed": return "You said you know this. Add a project, certificate or document that shows it.";
+      case "learning": return "In progress in your plan. Add the evidence to your résumé when it's done.";
       case "have": return whyHave(uri);
       case "missing": return "Not in your modules, skills or projects yet.";
     }

@@ -193,3 +193,25 @@ export async function cohortRows(programme?: string): Promise<Result<CohortMetri
     metric: r.metric, label: r.label, students: Number(r.students),
   })));
 }
+
+// ---------- Students (adviser_students RPC: target and progress only with the student's latest adviser_visibility yes; audited) ----------
+
+export type AdviserStudent = {
+  studentId: string; fullName: string; educationLevel: EducationLevel | null; programme: string | null; semester: number | null;
+  sharing: boolean; targetTitle: string | null; skillsReady: number | null; skillsTotal: number | null;
+  lastSession: string | null; upcoming: { start: string; status: BookingState }[];
+};
+
+export async function adviserStudents(): Promise<Result<AdviserStudent[]>> {
+  const { data, error } = await (await db()).rpc("adviser_students");
+  if (error) return fromDb(error, ADVISER_ERRORS, "adviserStudents");
+  return ok((data ?? []).map((r) => {
+    const up = (Array.isArray(r.upcoming) ? r.upcoming : []) as { slot_start?: string; start?: string; status?: BookingState }[];
+    return {
+      studentId: r.student_id, fullName: r.full_name, educationLevel: r.education_level ?? null, programme: r.programme ?? null,
+      semester: r.semester ?? null, sharing: r.sharing, targetTitle: r.target_title ?? null,
+      skillsReady: r.skills_ready ?? null, skillsTotal: r.skills_total ?? null, lastSession: r.last_session ?? null,
+      upcoming: up.map((u) => ({ start: (u.slot_start ?? u.start) as string, status: (u.status ?? "requested") as BookingState })).filter((u) => !!u.start),
+    };
+  }));
+}

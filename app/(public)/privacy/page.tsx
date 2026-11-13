@@ -45,7 +45,7 @@ const sections: Section[] = [
     body: (
       <ul className={list}>
         <li>To show which occupations your modules point to and which skills you are missing.</li>
-        <li>To schedule your practice and mark your mastery checks.</li>
+        <li>To track your practice: your skill progress, your résumé and the marks on your mock interview answers.</li>
         <li>To write hints and interview feedback, only if you allow AI processing.</li>
         <li>To let your career adviser prepare for a session, only if you allow adviser visibility or send a booking.</li>
         <li>To email you about booking changes, only if you allow booking emails. Those emails carry the status, the time and a link, nothing else.</li>
