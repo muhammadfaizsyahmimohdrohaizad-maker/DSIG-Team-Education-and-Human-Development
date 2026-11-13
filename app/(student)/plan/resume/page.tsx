@@ -1,2 +1,1 @@
-import { redirect } from "next/navigation";
-export default function Page() { redirect("/plan"); }
+export { default } from "@/components/resume-scanner";

@@ -1,93 +1,36 @@
-import { HeroBand } from "@/components/ui";
-import { redirect } from "next/navigation";
-import { randomUUID } from "node:crypto";
-import { WorkspacePage, Panel, RouteLink } from "@/components/workspace-page";
-import { ActionForm } from "@/components/action-form";
-import { getOpenSlots, listMyBookings, requestBooking } from "@/features/booking/actions";
-import { bookingTime } from "@/lib/booking-time";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ButtonLink, ErrorState } from "@/components/ui";
+import { getOpenSlots, listMyBookings } from "@/features/booking/actions";
+import { BookForm } from "@/features/booking/book-form";
 
-export default async function Page() {
-  const [slots, bookings] = await Promise.all([getOpenSlots(), listMyBookings()]);
-  const requestId = randomUUID();
-  async function book(form: FormData) {
-    "use server";
-    const r = await requestBooking({
-      requestId,
-      slotId: form.get("slot"),
-      topic: form.get("topic"),
-      note: form.get("note"),
-      shared: form.getAll("share"),
-    });
-    if (!r.ok) return r.error.message;
-    redirect("/book/" + r.value.bookingId);
-  }
+export const metadata: Metadata = { title: "Book an adviser" };
+
+const pageTitle = "m-0 text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.15] tracking-[-0.02em]";
+const UPCOMING = new Set(["requested", "accepted", "change_requested"]);
+
+// Book board. Search by institution, expertise, ratings and credentials is not built: the backend has no
+// adviser profiles yet, so the list shows every adviser with a free time in the next 14 days.
+export default async function BookPage() {
+  const [slots, mine] = await Promise.all([getOpenSlots({ days: 14 }), listMyBookings()]);
+  const upcoming = mine.ok ? mine.value.filter((b) => UPCOMING.has(b.status) && new Date(b.start) > new Date()).length : 0;
+
   return (
-    <WorkspacePage title="Book an adviser">
-      <HeroBand gap="gap-4"><h2 className="text-2xl">Plan a career conversation</h2>
-        <p>Choose an adviser and a time, add your question, and select the parts of your plan to share.</p>
-        <div className="flex flex-wrap gap-3"><a href="#available-sessions" className="font-semibold text-white underline">Available sessions{slots.ok && " · " + slots.value.length}</a>
-        <a href="#my-bookings" className="font-semibold text-white underline">My bookings{bookings.ok && " · " + bookings.value.length}</a></div>
-      </HeroBand>
-      <div className="grid items-start gap-4 tablet:grid-cols-[3fr_2fr]">
-      <Panel>
-        <h2 className="text-xl" id="available-sessions">Choose a session</h2>
-        {!slots.ok ? (
-          <p>{slots.error.message}</p>
-        ) : !slots.value.length ? (
-          <p>No appointments are available yet. Check back for new times.</p>
-        ) : (
-          <ActionForm submit={book} label="Request session">
-            <label>
-              Adviser and time{" "}
-              <select name="slot" required defaultValue="">
-                <option disabled value="">
-                  Select a time
-                </option>
-                {slots.value.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.adviserName} · {bookingTime(s.start)} · {s.minutes} min
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              What would you like to discuss? <input name="topic" required maxLength={150} />
-            </label>
-            <label>
-              Optional note <textarea name="note" maxLength={1000} />
-            </label>
-            <fieldset>
-              <legend>Share with this adviser for this booking</legend>
-              {Object.entries({
-                target_matches: "Target job and matches",
-                gap_progress: "Skill gap progress",
-                study_plan: "Study plan",
-                interview_feedback: "Interview feedback",
-              }).map(([key, label]) => (
-                <label key={key} className="block">
-                  <input name="share" type="checkbox" value={key} /> {label}
-                </label>
-              ))}
-            </fieldset>
-          </ActionForm>
-        )}
-      </Panel>
-      <Panel>
-        <h2 className="text-xl" id="my-bookings">Your bookings</h2>
-        {!bookings.ok ? (
-          <p>{bookings.error.message}</p>
-        ) : bookings.value.length ? (
-          bookings.value.map((b) => (
-            <RouteLink href={"/book/" + b.id} key={b.id}>
-              {b.topic} · {bookingTime(b.start)} · {b.status}
-            </RouteLink>
-          ))
-        ) : (
-          <p>You have no bookings yet.</p>
-        )}
-      </Panel>
+    <main id="main" className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-6 px-4 pb-16 pt-5 tablet:px-6 tablet:pt-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex max-w-[48rem] flex-col gap-1.5">
+          <h1 className={pageTitle}>Book an adviser</h1>
+          <p className="m-0">Pick a free time with a GMI career adviser and say what you want to talk about. They only see what you choose to share.</p>
+        </div>
+        <Link href="/book/appointments" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-hairline px-4 font-semibold text-navy no-underline hover:bg-cream hover:text-navy">
+          My appointments{upcoming ? <span className="rounded-full bg-maroon px-2 text-sm text-white">{upcoming} upcoming</span> : null}
+        </Link>
       </div>
-    </WorkspacePage>
+      {slots.ok ? (
+        <BookForm slots={slots.value} />
+      ) : (
+        <ErrorState title="Free times didn't load." actions={<ButtonLink href="/book">Try again</ButtonLink>}>{slots.error.message}</ErrorState>
+      )}
+    </main>
   );
 }
-

@@ -1,0 +1,182 @@
+<title>CareerPrep Backend Handoff</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: one reading column with a sticky contents rail on wide screens; items are rows with a priority chip. */
+:root {
+  --bg: #FFFFFF; --surface: #F4F1EA; --fg: #2C3E50; --muted: #5C6672; --head: #1B365D; --accent: #8B263E; --line: #E5DFD3;
+  --chip-blocker-bg: #8B263E; --chip-blocker-fg: #FFFFFF;
+  --chip-design-bg: #1B365D; --chip-design-fg: #FFFFFF;
+  --chip-clean-bg: #F4F1EA; --chip-clean-fg: #1B365D;
+  --chip-review-bg: #FFFFFF; --chip-review-fg: #8B263E;
+  --code-bg: #F4F1EA;
+  --display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --body: "Inter", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111A26; --surface: #182433; --fg: #D9DEE5; --muted: #9AA6B4; --head: #E8EDF4; --accent: #E58FA3; --line: #2A3747;
+  --chip-blocker-bg: #E58FA3; --chip-blocker-fg: #111A26; --chip-design-bg: #9DB8DF; --chip-design-fg: #111A26;
+  --chip-clean-bg: #223042; --chip-clean-fg: #D9DEE5; --chip-review-bg: #111A26; --chip-review-fg: #E58FA3;
+  --code-bg: #1E2B3B; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111A26; --surface: #182433; --fg: #D9DEE5; --muted: #9AA6B4; --head: #E8EDF4; --accent: #E58FA3; --line: #2A3747;
+  --chip-blocker-bg: #E58FA3; --chip-blocker-fg: #111A26; --chip-design-bg: #9DB8DF; --chip-design-fg: #111A26;
+  --chip-clean-bg: #223042; --chip-clean-fg: #D9DEE5; --chip-review-bg: #111A26; --chip-review-fg: #E58FA3;
+  --code-bg: #1E2B3B; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 40px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; }
+@media (max-width: 860px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; } nav.toc { position: static !important; } }
+nav.toc { position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); align-self: start; font-size: 14px; }
+nav.toc ol { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+nav.toc a { color: var(--fg); text-decoration: none; } nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+.label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0; }
+h1, h2, h3 { font-family: var(--display); color: var(--head); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: 1.5rem; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-size: 1.05rem; font-family: var(--body); font-weight: 600; }
+main { min-width: 0; display: grid; gap: 48px; }
+header.top { display: grid; gap: 12px; }
+.lede { font-size: 18px; max-width: 64ch; margin: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--muted); margin: 0; padding: 0; list-style: none; }
+section { display: grid; gap: 16px; scroll-margin-top: 24px; }
+section > p { margin: 0; max-width: 70ch; }
+.items { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.items > li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 6px 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+@media (max-width: 560px) { .items > li { grid-template-columns: minmax(0, 1fr); } }
+.items p { margin: 4px 0 0; }
+.chip { align-self: start; justify-self: start; display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+.chip.blocker { background: var(--chip-blocker-bg); color: var(--chip-blocker-fg); }
+.chip.design { background: var(--chip-design-bg); color: var(--chip-design-fg); }
+.chip.clean { background: var(--chip-clean-bg); color: var(--chip-clean-fg); border: 1px solid var(--line); }
+.chip.review { background: var(--chip-review-bg); color: var(--chip-review-fg); border: 1px solid var(--chip-review-fg); }
+code { font-family: var(--mono); font-size: 0.86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 14px; color: var(--muted); align-items: center; }
+.tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-top: 1px solid var(--line); }
+thead th { background: var(--surface); color: var(--head); font-weight: 600; border-top: 0; }
+tbody th { font-weight: 600; color: var(--head); white-space: nowrap; }
+.note { background: var(--surface); border-radius: 12px; padding: 16px 18px; max-width: 70ch; }
+.note p { margin: 0; }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Contents">
+    <p class="label">Contents</p>
+    <ol>
+      <li><a href="#summary">What changed</a></li>
+      <li><a href="#review">New code to review</a></li>
+      <li><a href="#blockers">Bugs that need you</a></li>
+      <li><a href="#leftovers">Leftovers from removed features</a></li>
+      <li><a href="#design-data">Data the new design needs</a></li>
+      <li><a href="#setup">Local setup</a></li>
+      <li><a href="#untested">Not verified yet</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="top">
+      <p class="label">Front end → back end</p>
+      <h1>CareerPrep backend handoff</h1>
+      <p class="lede">The front end now follows the new design canvas, and the review, learning, lessons and mastery-check screens are gone. These notes list what touches your code, what is broken without a backend change, and what data the new screens still need.</p>
+      <ul class="meta">
+        <li>Branch <code>chore/remove-review-learning</code> (not committed yet)</li>
+        <li>13 Nov 2026</li>
+        <li>Type-check, lint and 132 unit tests pass</li>
+      </ul>
+      <div class="legend" aria-label="Priority key">
+        <span><span class="chip blocker">Blocker</span> broken until fixed</span>
+        <span><span class="chip review">Review</span> I changed your code</span>
+        <span><span class="chip design">Design</span> needed to match the design</span>
+        <span><span class="chip clean">Clean-up</span> dead code or data</span>
+      </div>
+    </header>
+
+    <section id="summary" aria-labelledby="summary-h">
+      <h2 id="summary-h">What changed on the front end</h2>
+      <ul class="items">
+        <li><span class="chip clean">Removed</span><div><h3>Review, learning, lessons and mastery checks</h3><p><code>features/review</code>, <code>features/learning</code>, the routes <code>/plan/review</code>, <code>/plan/learn</code>, <code>/plan/check</code>, <code>/plan/lessons</code>, <code>server/data/review.ts</code> and two unit tests that covered the review code.</p></div></li>
+        <li><span class="chip clean">Removed</span><div><h3>Hard-coded sample data</h3><p>The four sample files behind the student and adviser headers, the dashboard and parent consent are deleted, along with the homepage sample. Those screens now read real rows through <code>server/data</code>. <code>supabase/seed.sql</code> is untouched.</p></div></li>
+        <li><span class="chip design">Built</span><div><h3>Screens that were placeholders</h3><p>Map, Skill gap, Plan, Progress, Résumé, Book, My appointments (new route <code>/book/appointments</code>), Appointment detail, Settings, Staff undertaking, and the adviser pages for Requests, Students, Cohort and Availability. They use the existing server actions.</p></div></li>
+        <li><span class="chip review">Changed</span><div><h3>Adviser gate</h3><p><code>app/adviser/layout.tsx</code> now redirects to <code>/staff/undertaking</code> when <code>has_current_undertaking</code> is false. Before, an adviser could open adviser pages without accepting the undertaking.</p></div></li>
+      </ul>
+    </section>
+
+    <section id="review" aria-labelledby="review-h">
+      <h2 id="review-h">New or changed code in your area</h2>
+      <p>All of these follow the existing patterns. Please check the query shapes against the real database: I could not run them, because local keys weren't available.</p>
+      <ul class="items">
+        <li><span class="chip review">Review</span><div><h3><code>recentAnswers(userId, limit)</code> in <code>server/data/interview.ts</code></h3><p>Read-only, user client, own rows only. Reads <code>interview_answers</code>, then <code>ref.interview_questions</code> by id for the round and prompt. Used by the Progress page.</p></div></li>
+        <li><span class="chip review">Review</span><div><h3><code>adviserStudents()</code> in <code>server/data/adviser.ts</code>, and <code>listStudents</code> in <code>features/adviser/actions.ts</code></h3><p>Calls the existing <code>adviser_students</code> RPC, which no code called before. I assumed each item in <code>upcoming</code> (Json) has <code>slot_start</code> or <code>start</code>, plus <code>status</code>. Please confirm the shape.</p></div></li>
+        <li><span class="chip review">Review</span><div><h3><code>loadCv</code> in <code>features/cv/build.ts</code>, and <code>CvView.skills</code> in <code>lib/types.ts</code></h3><p>The CV listed only skills with a passed mastery check, so it would always be empty now. It now lists skills with evidence: skills the student added, or skills covered by a passed module or SPM result (<code>shownSkills</code>), plus any earlier passed check. Target-job skills come first. The type changes from <code>masteredOn</code> to <code>evidence</code> and <code>forTarget</code>.</p></div></li>
+        <li><span class="chip review">Review</span><div><h3>Skill-gap wording in <code>features/plan/gap.ts</code></h3><p>The evidence text no longer mentions lessons or the 5-question check. The logic is unchanged.</p></div></li>
+        <li><span class="chip review">Review</span><div><h3>Development-only CSP in <code>next.config.ts</code></h3><p>Next's development runtime needs <code>'unsafe-eval'</code>. Without it, React never started on localhost, so no button or form worked. It's added only when <code>NODE_ENV === "development"</code>, so production headers are unchanged.</p></div></li>
+      </ul>
+    </section>
+
+    <section id="blockers" aria-labelledby="blockers-h">
+      <h2 id="blockers-h">Bugs that need a backend change</h2>
+      <ul class="items">
+        <li><span class="chip blocker">Blocker</span><div><h3>"I already know this" leaves a skill stuck</h3><p><code>claimSkill</code> sets <code>check_needed</code>, and only a passing <code>mastery_checks</code> row moved it on (<code>guard_mastered</code>). The check screens are gone, so a claimed skill can never become "have". The new design says "Needs evidence: add a project, certificate or document that shows it". It needs an evidence store (link or file, kind, review status) and a rule that moves the skill to <code>have</code>. Until then, the front end shows "Needs evidence" with no way to finish.</p></div></li>
+        <li><span class="chip blocker">Blocker</span><div><h3>"How recommendations work" page vs the matching engine</h3><p>The design states <em>score = 70% essential skills + 20% optional skills + 10% interest fit</em>. <code>server/engines/matches.ts</code> uses <code>WEIGHTS = { skill: 2, interest: 3, project: 1, jobInMind: 2 }</code>. The page isn't built so we don't publish a false claim. Either the engine or the copy has to change first.</p></div></li>
+        <li><span class="chip design">Design</span><div><h3>Sharing can't be changed after booking</h3><p>The design lets a student change what an adviser sees from the appointment page. There is no action to update <code>bookings.shared_items</code>, so the list is read-only for now.</p></div></li>
+        <li><span class="chip design">Design</span><div><h3>No action for booking emails</h3><p><code>profiles.reminder_emails</code> exists, but nothing updates it. The Settings switch is hidden until there is one.</p></div></li>
+      </ul>
+    </section>
+
+    <section id="leftovers" aria-labelledby="leftovers-h">
+      <h2 id="leftovers-h">Leftovers from the removed features</h2>
+      <p>The front end no longer reads or writes any of these. Decide whether each one is dropped or kept for later. AGENTS.md says to remove code when a feature is replaced.</p>
+      <ul class="items">
+        <li><span class="chip clean">Clean-up</span><div><h3>Tables</h3><p><code>review_cards</code>, <code>lesson_progress</code> and <code>mastery_checks</code>, with their RLS policies, and the <code>ref</code> lessons and check questions loaded by <code>scripts/import-reference.ts</code> from <code>content/lessons</code>.</p></div></li>
+        <li><span class="chip clean">Clean-up</span><div><h3>Functions in <code>server/data/learning.ts</code></h3><p><code>addReviewCards</code>, <code>markLessonDone</code>, <code>getNotes</code>, <code>recordCheck</code> and <code>setLearningState</code> are now unused. <code>getProgress</code>, <code>claimSkill</code> and the saved-option functions are still used by Plan, Skill gap and CV.</p></div></li>
+        <li><span class="chip clean">Clean-up</span><div><h3>Engines and dependencies</h3><p><code>server/engines/lesson.ts</code> (only <code>PASS_MARK</code> is still used, by <code>claimSkill</code>) and the <code>lessonsLeft</code> engine in <code>features/plan/gap.ts</code>. The <code>ts-fsrs</code> dependency was only for review cards.</p></div></li>
+        <li><span class="chip clean">Clean-up</span><div><h3>Database logic that still assumes lessons</h3><p><code>student_skill_states</code>, behind <code>open_request</code> and <code>adviser_students</code>, derives states from checks and lessons. The <code>ai_calls.kind</code> value <code>notes_cards</code> and the AI budget belonged to the notes-to-cards feature. Data export and deletion still walk these tables.</p></div></li>
+        <li><span class="chip review">Review</span><div><h3>Privacy Notice and parent-consent wording</h3><p>The front end changed both to stop mentioning mastery checks and lesson notes. The Privacy Notice now says "To track your practice: your skill progress, your résumé and the marks on your mock interview answers." Whoever owns the notice should sign this off, and update the data inventory if the lesson tables are dropped.</p></div></li>
+        <li><span class="chip blocker">Blocker</span><div><h3>Sign-up asks students to agree to Terms that aren't written</h3><p>The sign-up form requires "I agree to the Terms &amp; Conditions" and records a <code>terms_privacy</code> consent, but there is no Terms text. <code>/terms</code> now says the terms aren't published yet, and the footer link is hidden. The team needs to publish the terms, or decide what the required consent covers until then.</p></div></li>
+      </ul>
+    </section>
+
+    <section id="design-data" aria-labelledby="design-data-h">
+      <h2 id="design-data-h">Data the new design needs</h2>
+      <p>These parts of the design are left out of the build because nothing stores the data. Nothing is invented on screen.</p>
+      <div class="tablebox">
+        <table>
+          <caption class="label" style="text-align:left;padding:12px 14px">Missing data by screen</caption>
+          <thead><tr><th scope="col">Screen</th><th scope="col">What the design shows</th><th scope="col">What's missing</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Header</th><td>Notifications bell</td><td>A notifications table, or a feed built from bookings and feedback</td></tr>
+            <tr><th scope="row">Dashboard</th><td>"Industrial Training in 9 weeks"; "Continue practising" with résumé progress</td><td>A training-start date on the profile; résumé progress by section</td></tr>
+            <tr><th scope="row">Map</th><td>Study routes under each career; "Subjects to focus on"</td><td>Route stages and focus subjects per occupation</td></tr>
+            <tr><th scope="row">Plan</th><td>Multi-stage pathway; campus, intake, fees, ownership, country, orientation and mode filters; entry requirements checked against results; suggested projects and certificates</td><td>Programme detail fields; admission requirements with a met / not met / needs verification check; a suggestions catalogue per gap skill</td></tr>
+            <tr><th scope="row">Progress</th><td>Skill levels in %, practice scores by area, sessions count, day streak, week / month / all-time ranges, AI "Advice to improve"</td><td>Level scores per skill; practice score history; an advice service. Today only skill states and interview marks out of 5 exist</td></tr>
+            <tr><th scope="row">Résumé</th><td>Summary, achievements, certifications, choosing lines and skills; "Review it against a job" (AI plus rules, upload or paste an ad)</td><td>A résumé table for the student's own edits; a review service; a <code>resume</code> value for <code>SharedItem</code></td></tr>
+            <tr><th scope="row">Book</th><td>Search by institution, name, service, date and time; ratings, credentials, expertise, experience, location</td><td>Adviser profiles; verified credentials; appointment ratings</td></tr>
+            <tr><th scope="row">My appointments</th><td>Agreed next steps with checkboxes; star rating and comment</td><td>Next-step items per booking; reviews with anonymised display</td></tr>
+            <tr><th scope="row">Settings</th><td>Programme, semester and adviser on the profile card</td><td><code>getProfile</code> doesn't return <code>programme</code> or <code>semester</code>, and there's no linked-adviser relation</td></tr>
+            <tr><th scope="row">Adviser: requests</th><td>"Students" count of linked students</td><td>The page counts unique names in the request list instead</td></tr>
+            <tr><th scope="row">Adviser: cohort</th><td>Programme filter; "Download totals (CSV)"</td><td>A programme list that matches <code>profiles.programme</code> exactly (the page uses three names from the design); a CSV export</td></tr>
+            <tr><th scope="row">Whole app</th><td>EN / BM language switch; a Bahasa Melayu first visit</td><td>BM text for the interface (<code>titleMs</code> covers job titles only)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="setup" aria-labelledby="setup-h">
+      <h2 id="setup-h">Local setup notes</h2>
+      <ul class="items">
+        <li><span class="chip blocker">Blocker</span><div><h3>Keys for local testing</h3><p>The front end needs a dev or staging project: <code>NEXT_PUBLIC_SUPABASE_URL</code>, <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code> and <code>CRON_SECRET</code> in <code>.env.local</code>, plus one test student and one test adviser. To create an adviser through sign-up, it also needs <code>STAFF_CODE_HASHES</code>.</p></div></li>
+        <li><span class="chip clean">Note</span><div><h3>Node and pnpm</h3><p><code>package.json</code> asks for Node 22. The machine used here has Node 24 and worked. <code>corepack enable</code> needs admin rights on Windows, so run <code>corepack pnpm …</code> instead.</p></div></li>
+      </ul>
+    </section>
+
+    <section id="untested" aria-labelledby="untested-h">
+      <h2 id="untested-h">Not verified yet</h2>
+      <div class="note"><p>No signed-in screen has been run against a database yet. That covers every student and adviser page, the RPC result shapes above, and the sign-in, booking and consent flows. The public pages and the staff undertaking page were tested in a browser at desktop and phone widths, and they pass. That includes the new 404 page and the Terms notice.</p></div>
+    </section>
+  </main>
+</div>

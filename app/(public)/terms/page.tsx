@@ -1,35 +1,25 @@
+import type { Metadata } from "next";
+import Link from "next/link";
 import { PublicHeader } from "@/components/public-header";
-import { WorkspacePage, Panel, RouteLink } from "@/components/workspace-page";
-export default function Page() {
+import { SoftPanel } from "@/components/ui";
+
+export const metadata: Metadata = { title: "Terms and conditions" };
+
+// The Terms text isn't written yet. Until it is, this page says so instead of showing a placeholder.
+// The footer link is hidden until then; the sign-up form still links here.
+export default function TermsPage() {
   return (
     <>
-      <PublicHeader variant="plain" />
-      <WorkspacePage title="Terms and conditions">
-        <Panel>
-          <h2>Using CareerPrep</h2>
-          <p>
-            CareerPrep is a student-built career preparation prototype from the German-Malaysian Institute. It
-            matches skills to occupations, provides practice materials, and lets students request adviser
-            sessions.
+      <PublicHeader variant="account" />
+      <main id="main" className="mx-auto flex w-full max-w-[860px] flex-1 flex-col gap-5 px-4 pb-16 pt-5 tablet:px-6 tablet:pt-8">
+        <h1 className="m-0 text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.15] tracking-[-0.02em]">Terms and conditions</h1>
+        <SoftPanel gap="gap-2">
+          <p className="m-0 font-semibold text-navy">Our terms and conditions aren&apos;t published yet.</p>
+          <p className="m-0">
+            Read the <Link href="/privacy">Privacy Notice</Link> to see what CareerPrep keeps about you, who can see it, and how to download or delete it.
           </p>
-          <p>
-            A match reflects the skills and information you enter. Hiring and admission decisions belong to
-            employers and institutions.
-          </p>
-        </Panel>
-        <Panel>
-          <h2>Your account and work</h2>
-          <p>
-            Keep your login details private. Submit work you have permission to share and leave other people’s
-            personal information out of project descriptions and interview answers.
-          </p>
-          <p>
-            If you are under 18, your parent or guardian must approve your account before you use the learning
-            features.
-          </p>
-          <RouteLink href="/privacy">How we use your data and how to contact us</RouteLink>
-        </Panel>
-      </WorkspacePage>
+        </SoftPanel>
+      </main>
     </>
   );
 }

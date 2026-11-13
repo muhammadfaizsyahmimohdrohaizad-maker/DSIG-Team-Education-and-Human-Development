@@ -25,7 +25,7 @@ export default async function Page() {
         notifications={[]}
         account={{ firstName: profile.fullName, initials: "IN", links: [] }}
       />
-      <Cohort />
+      <Cohort searchParams={Promise.resolve({})} />
       <section className="mx-auto w-full max-w-[960px] px-4 pb-16">
         <h2>Recent record access</h2>
         {error ? (

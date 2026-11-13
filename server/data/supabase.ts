@@ -1,3 +1,4 @@
+import { cache } from "react";
 import "server-only";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
@@ -44,7 +45,7 @@ export function adminDb() {
   });
 }
 
-export async function currentUser() {
+export const currentUser = cache(async function currentUser() {
   const { data } = await (await db()).auth.getUser();
   return data.user ?? null;
-}
+});

@@ -1,31 +1,25 @@
-import { AppHeader, ADVISER_NAV } from "@/components/app-header";
-import { currentUser } from "@/server/data/supabase";
-import { hasCurrentUndertaking, ownProfile } from "@/server/data/account";
 import { redirect } from "next/navigation";
+import { AppHeader, ADVISER_NAV } from "@/components/app-header";
+import { SiteFooter } from "@/components/site-footer";
+import { headerFor } from "@/features/account/header";
+import { hasCurrentUndertaking } from "@/server/data/account";
+import { currentUser } from "@/server/data/supabase";
 
+// Every adviser page sits behind a current staff undertaking: has_current_undertaking() in RLS, and this
+// redirect so an adviser who hasn't accepted the current version sees it first.
 export default async function AdviserLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
-  const profile = await ownProfile(user.id);
-  if (profile?.role !== "adviser") redirect("/dashboard");
   if (!(await hasCurrentUndertaking(user.id))) redirect("/staff/undertaking");
-  const names = profile.fullName.trim().split(/\s+/);
+  const { account, notifications } = await headerFor([
+    { href: "/adviser/availability", label: "My availability" },
+    { href: "/staff/undertaking", label: "Staff undertaking" },
+  ]);
   return (
     <>
-      <AppHeader
-        nav={ADVISER_NAV}
-        home="/adviser/requests"
-        notifications={[]}
-        account={{
-          firstName: names[0] || "Adviser",
-          initials: names
-            .slice(0, 2)
-            .map((n) => n[0])
-            .join(""),
-          links: [{ href: "/staff/undertaking", label: "Staff undertaking" }],
-        }}
-      />
+      <AppHeader nav={ADVISER_NAV} home="/adviser/requests" account={account} notifications={notifications} />
       {children}
+      <SiteFooter variant="app" />
     </>
   );
 }

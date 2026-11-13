@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Print your CV" };
 
 const LEVEL: Record<EducationLevel, string> = { spm: "SPM", pre_university: "Pre-university", diploma: "Diploma", degree: "Degree" };
 
-// A4 print view of the CV (exportCvPdf points here). Only mastered skills, passed modules and projects.
+// A4 print view of the CV (exportCvPdf points here). Only skills with evidence, passed modules and projects.
 export default async function Page() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
@@ -40,10 +40,10 @@ export default async function Page() {
           <h2 id="cv-skills" className="mb-2 text-xl">Skills</h2>
           {cv.skills.length ? (
             <ul className="m-0 flex list-disc flex-col gap-1 pl-5">
-              {cv.skills.map((s) => <li key={s.uri}>{s.label} <span className="text-muted">(mastery check passed {s.masteredOn})</span></li>)}
+              {cv.skills.map((s) => <li key={s.uri}>{s.label}</li>)}
             </ul>
           ) : (
-            <p className="m-0 text-muted">No skills yet. A skill appears here after you pass its 5-question check.</p>
+            <p className="m-0 text-muted">No skills yet. Add your skills, modules and projects in Tell us about yourself.</p>
           )}
         </section>
 

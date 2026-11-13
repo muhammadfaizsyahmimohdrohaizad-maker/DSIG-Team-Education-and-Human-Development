@@ -1,85 +1,30 @@
-import { revalidatePath } from "next/cache";
-import { WorkspacePage, Panel } from "@/components/workspace-page";
-import { ActionForm } from "@/components/action-form";
-import { getAvailability, setAvailability } from "@/features/adviser/actions";
-import { bookingTime } from "@/lib/booking-time";
+import type { Metadata } from "next";
+import { ButtonLink, ErrorState } from "@/components/ui";
+import { getAvailability } from "@/features/adviser/actions";
+import { AvailabilityGrid } from "@/features/adviser/availability-grid";
 
-export default async function Page() {
-  const availability = await getAvailability();
-  async function save(form: FormData) {
-    "use server";
-    const start = form.get("start") || String(form.get("local")) + ":00+08:00";
-    const r = await setAvailability({
-      slots: [{ start, minutes: Number(form.get("minutes")), open: form.get("open") === "yes" }],
-    });
-    if (!r.ok) return r.error.message;
-    revalidatePath("/adviser/availability");
-    return r.value.keptBooked.length ? "This time already has a booking." : "Availability updated.";
-  }
-  async function block(form: FormData) {
-    "use server";
-    const day = form.get("day");
-    const r = await setAvailability(
-      form.has("unblock") ? { slots: [], unblockDays: [day] } : { slots: [], blockDays: [{ day }] },
-    );
-    if (!r.ok) return r.error.message;
-    revalidatePath("/adviser/availability");
-    return "Calendar updated.";
-  }
+export const metadata: Metadata = { title: "Your availability" };
+
+/** Monday of this week in Malaysia time (UTC+8), as YYYY-MM-DD. Kept here so the server needs no client code. */
+function thisMonday(): string {
+  const myt = new Date(Date.now() + 8 * 3600e3);
+  const dow = (myt.getUTCDay() + 6) % 7;
+  return new Date(myt.getTime() - dow * 864e5).toISOString().slice(0, 10);
+}
+
+// Adviser: availability board.
+export default async function AvailabilityPage() {
+  const week = thisMonday();
+  const result = await getAvailability({ from: `${week}T00:00:00+08:00`, days: 7 });
   return (
-    <WorkspacePage title="Availability">
-      <Panel>
-        <h2>Open a session</h2>
-        <ActionForm submit={save} label="Add time">
-          <label>
-            Start (Malaysia time) <input required name="local" type="datetime-local" />
-          </label>
-          <label>
-            Minutes{" "}
-            <select name="minutes">
-              <option>30</option>
-              <option>60</option>
-            </select>
-          </label>
-          <input type="hidden" name="open" value="yes" />
-        </ActionForm>
-      </Panel>
-      <Panel>
-        <h2>Block a day</h2>
-        <ActionForm submit={block} label="Block date">
-          <input aria-label="Date to block" name="day" type="date" required />
-        </ActionForm>
-        {availability.ok &&
-          availability.value.blockedDays.map((d) => (
-            <ActionForm key={d.day} submit={block} label={"Unblock " + d.day}>
-              <input type="hidden" name="day" value={d.day} />
-              <input type="hidden" name="unblock" />
-            </ActionForm>
-          ))}
-      </Panel>
-      <Panel>
-        <h2>Your session times</h2>
-        {!availability.ok ? (
-          <p>{availability.error.message}</p>
-        ) : availability.value.slots.length === 0 ? (
-          <p>No times scheduled.</p>
-        ) : (
-          availability.value.slots.map((s) => (
-            <div key={s.id}>
-              <p>
-                {bookingTime(s.start)} · {s.minutes} min · {s.booked ? "Booked" : s.open ? "Open" : "Closed"}
-              </p>
-              {!s.booked && (
-                <ActionForm submit={save} label={s.open ? "Close time" : "Open time"}>
-                  <input type="hidden" name="start" value={s.start} />
-                  <input type="hidden" name="minutes" value={s.minutes} />
-                  <input type="hidden" name="open" value={s.open ? "no" : "yes"} />
-                </ActionForm>
-              )}
-            </div>
-          ))
-        )}
-      </Panel>
-    </WorkspacePage>
+    <main id="main" className="mx-auto flex w-full max-w-[1280px] flex-1 flex-col gap-5 px-4 pb-16 pt-5 tablet:px-6 tablet:pt-8">
+      <div className="flex max-w-[48rem] flex-col gap-1.5">
+        <h1 className="m-0 text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.15] tracking-[-0.02em]">Your availability</h1>
+        <p className="m-0">Select a time to open or close it. Students can only request open times. Booked and requested times stay as they are.</p>
+      </div>
+      {result.ok
+        ? <AvailabilityGrid initial={result.value} initialWeek={week} />
+        : <ErrorState title="Your times didn't load." actions={<ButtonLink href="/adviser/availability">Try again</ButtonLink>}>{result.error.message}</ErrorState>}
+    </main>
   );
 }

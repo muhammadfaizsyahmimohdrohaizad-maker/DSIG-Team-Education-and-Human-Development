@@ -122,7 +122,7 @@ export function AboutYouForm({ data }: { data: AboutYouData }) {
 
   const pickTarget = async (m: MatchView) => {
     const r = await setTarget({ code: m.code });
-    if (r.ok) { setTargetState(r.value); setStatus(`${r.value.title} is now your target job. Your skill gap and lessons follow it.`); }
+    if (r.ok) { setTargetState(r.value); setStatus(`${r.value.title} is now your target job. Your skill gap and plan follow it.`); }
     else setStatus(r.error.message);
   };
 

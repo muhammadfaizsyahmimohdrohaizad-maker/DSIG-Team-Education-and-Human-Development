@@ -1,6 +1,6 @@
 "use server";
 
-// cv: a CV built only from what the student has shown: mastered skills (passed checks), modules they
+// cv: a CV built only from what the student has shown: skills with evidence, modules they
 // passed and their projects (FR-CV). The "PDF" is the print page at /plan/cv/print: the browser's
 // Save as PDF gives a clean A4 file without a PDF library on the server.
 import { err, ok, type Result } from "@/lib/result";

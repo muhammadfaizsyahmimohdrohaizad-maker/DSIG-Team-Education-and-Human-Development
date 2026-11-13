@@ -178,7 +178,7 @@ export function SignUpForm({ signUp }: { signUp: (input: SignUpInput) => Promise
               </CheckboxRow>
             )}
             <CheckboxRow {...box("consents.adviserVisibility")} requirement="optional">Let my career adviser see my progress before a session.</CheckboxRow>
-            {under18 ? <p className="m-0 text-sm text-muted">AI feedback stays off for students under 18. Lessons, checks and checklist marking work without it.</p> : null}
+            {under18 ? <p className="m-0 text-sm text-muted">AI feedback stays off for students under 18. Matching, the résumé builder and checklist marking work without it.</p> : null}
           </>
         ) : null}
       </ChoiceGroup>

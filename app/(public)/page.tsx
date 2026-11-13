@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PublicHeader } from "@/components/public-header";
-import { ButtonLink, CheckIcon, DotsIcon, HeroBand, Kicker, PlusIcon, SoftPanel, cn } from "@/components/ui";
-import { homeSkillGapSample, type PreviewSkill } from "./home-sample-data";
+import { ButtonLink, HeroBand, Kicker, SoftPanel, cn } from "@/components/ui";
 
 export const metadata: Metadata = { title: { absolute: "CareerPrep: find the job your studies point to" } };
 
@@ -10,19 +9,19 @@ const sectionTitle = "m-0 text-[clamp(1.75rem,3.5vw,2.5rem)] leading-[1.15] trac
 const steps = [
   { title: "Tell us about yourself", text: "Your interests, results or modules, skills and projects. About 5 minutes." },
   { title: "See your matches", text: "Official MASCO jobs that fit what you added, with the reasons shown on a career map." },
-  { title: "Check your résumé", text: "Compare your résumé with an occupation and see which skills you can support with evidence." },
+  { title: "Practise with your plan", text: "Build and review your résumé, then practise mock interviews by text, with optional voice and camera." },
   { title: "Talk to a person", text: "Book a career adviser. They see only what you choose to share." },
 ];
 
 const audiences = [
-  { title: "For students", text: "See which official jobs fit you, what skills you're missing, and practise for that job before your next step." },
-  { title: "For career advisers", text: "Start every conversation from what the student chose to share, not from zero." },
-  { title: "For institutions", text: "See how each programme maps to national jobs and where a cohort falls short, with no names attached." },
+  { title: "For students", text: "A connected route from the qualifications you have to further study and your first job, with explained options and practical next steps." },
+  { title: "For career advisers", text: "See the relevant evidence the student chose to share before the conversation starts, not from zero." },
+  { title: "For institutions", text: "See how clearly each programme connects to national occupations, and where learners need more support, with no names attached." },
 ];
 
 const protections = [
   { title: "You choose what's shared", text: "Your adviser sees only what you tick for each booking." },
-  { title: "AI only if you say yes", text: "Feedback uses Google Gemini only when you turn it on. Lessons and checks never need it. It stays off for students under 18." },
+  { title: "AI only if you say yes", text: "Feedback uses Google Gemini only when you turn it on. Matching and résumé checks never need it. It stays off for students under 18." },
   { title: "No names in reports", text: "Your institution sees totals only, and never a group smaller than 5 students." },
   { title: "Delete it any time", text: "Download everything we hold, or delete your account in one step." },
 ];
@@ -30,8 +29,8 @@ const protections = [
 const faqs: Array<{ q: string; a: React.ReactNode }> = [
   { q: "Is CareerPrep free?", a: "Yes, for students. Institutions that use it for their career services pay for it." },
   { q: "Who can see my data?", a: <>You, and your career adviser only for what you choose to share. Your institution sees totals with no names. Read the <a href="/careerprep/privacy">Privacy Notice</a> for the details.</> },
-  { q: "Does it use AI?", a: "Career matching uses weighted rules. The résumé scanner checks your wording against occupation skills in your browser." },
-  { q: "Is it only for GMI students?", a: "We are starting at GMI. It is built for anyone from SPM leavers to degree students." },
+  { q: "Does it use AI?", a: "Matching uses official job and skill lists, not AI. AI writes feedback on your notes and interview answers only if you turn it on, and it is always labelled." },
+  { q: "Is it only for GMI students?", a: "We are starting with a pilot at GMI: the diploma route, a small set of occupations, a reviewed programme catalogue and a few participating advisers. It is built for anyone from SPM leavers to degree students, and more institutions can join once the pilot shows it works." },
 ];
 
 export default function HomePage() {
@@ -50,11 +49,10 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap gap-3">
               <ButtonLink href="/sign-up" size="large">Get started</ButtonLink>
-              <ButtonLink href="/demo" variant="on-navy" size="large">Try the résumé scanner</ButtonLink>
+              <ButtonLink href="#how" variant="on-navy" size="large">See how it works</ButtonLink>
             </div>
             <p className="m-0 text-[15px] text-cream">Free for students · You choose what&apos;s shared</p>
           </div>
-          <SkillGapPreview />
         </HeroBand>
 
         <p className="m-0 text-center text-[15px] text-muted">
@@ -98,7 +96,7 @@ export default function HomePage() {
               <h2 id="goal-h" className={sectionTitle}>Our goal</h2>
             </div>
             <p className="m-0 min-w-0 max-w-[46rem] flex-[999_1_520px] text-lg">
-              Give every student a clear answer to &quot;what job are my studies for, and am I ready?&quot;, with the evidence behind it and a résumé that shows those skills.
+              Give every student a clear answer to &quot;what job are my studies for, and am I ready?&quot;, with the evidence behind it and practice for the real interview.
             </p>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(min(260px,100%),1fr))] gap-4">
@@ -143,40 +141,5 @@ export default function HomePage() {
         </section>
       </main>
     </>
-  );
-}
-
-const previewMark: Record<PreviewSkill["state"], { box: string; label: string; text: string; icon: React.ReactNode }> = {
-  have: { box: "bg-navy text-white", label: "You have it", text: "text-navy", icon: <CheckIcon size={15} /> },
-  learning: { box: "bg-maroon text-white", label: "Learning", text: "text-maroon", icon: <DotsIcon size={15} /> },
-  missing: { box: "bg-cream text-navy", label: "Missing", text: "text-navy", icon: <PlusIcon size={15} /> },
-};
-
-function SkillGapPreview() {
-  const d = homeSkillGapSample;
-  return (
-    <figure className="m-0 flex min-w-0 max-w-[460px] flex-[1_1_340px] flex-col gap-2.5">
-      <div className="flex flex-col gap-3 rounded-card bg-white p-5 text-ink">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-xs font-bold uppercase tracking-[0.08em] text-maroon">Target job · {d.targetJob}</span>
-          <b className="font-display text-xl text-navy">Your skill gap</b>
-        </div>
-        <span className="text-sm text-muted">You have {d.have} of the {d.total} skills this job asks for.</span>
-        <ul className="m-0 list-none overflow-hidden rounded-button border border-hairline p-0">
-          {d.skills.map((s, i) => {
-            const m = previewMark[s.state];
-            return (
-              <li key={s.name} className={cn("flex items-center gap-2.5 px-3 py-2.5", i > 0 && "border-t border-hairline")}>
-                <span aria-hidden="true" className={cn("inline-flex size-[26px] shrink-0 items-center justify-center rounded-[7px]", m.box)}>{m.icon}</span>
-                <b className="min-w-0 flex-1 text-[15px] text-navy">{s.name}</b>
-                <span className={cn("whitespace-nowrap text-[13px] font-bold", m.text)}>{m.label}</span>
-              </li>
-            );
-          })}
-        </ul>
-        <span className="text-[13px] text-muted">Source: {d.source}</span>
-      </div>
-      <figcaption className="text-sm text-cream">The skill gap screen, with sample data.</figcaption>
-    </figure>
   );
 }
