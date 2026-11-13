@@ -64,7 +64,7 @@ export type SharedSummary = {
   shared: SharedItem[];
   /** target_matches */
   target?: { code: string; title: string } | null;
-  matches?: unknown[] | null;
+  matches?: string[] | null;
   /** gap_progress */
   gaps?: { skill: string; label: string; state: SkillState }[];
   /** study_plan */
@@ -76,7 +76,24 @@ export type SharedSummary = {
 export async function openRequest(bookingId: string): Promise<Result<SharedSummary>> {
   const { data, error } = await (await db()).rpc("open_request", { p_booking: bookingId });
   if (error) return fromDb(error, ADVISER_ERRORS, "openRequest");
-  return ok(data as SharedSummary);
+  const summary = data as SharedSummary;
+  const codes = (summary.matches ?? []).filter(code => typeof code === "string");
+  if (codes.length) {
+    const titles = await (await db()).schema("ref").from("occupations").select("code,title_en").in("code", codes);
+    if (titles.error) return fromDb(titles.error, ADVISER_ERRORS, "sharedMatchTitles");
+    const byCode = new Map(titles.data.map(row => [row.code, row.title_en]));
+    summary.matches = codes.map(code => byCode.get(code) ?? code);
+  }
+  return ok(summary);
+}
+
+export async function storeMeeting(bookingId: string, url: string): Promise<Result<null>> {
+  const { error } = await (await db()).rpc("set_booking_meeting", { p_booking: bookingId, p_url: url });
+  return error ? fromDb(error, ADVISER_ERRORS, "setMeeting") : ok(null);
+}
+
+export async function bookingMeeting(id: string) {
+  return (await db()).from("bookings").select("meeting_url").eq("id", id).eq("status", "accepted").maybeSingle();
 }
 
 export type Decision = { bookingId: string; studentId: string; start: string; minutes: number; status: BookingState; changed: boolean };

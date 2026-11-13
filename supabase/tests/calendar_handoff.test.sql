@@ -1,6 +1,6 @@
 -- Exact new-slot save and discovery path, including stale adviser metadata.
 begin;
-select plan(8);
+select plan(13);
 insert into auth.users(id,email) values
  ('40000000-0000-4000-8000-000000000001','calendar-adviser@example.test'),
  ('40000000-0000-4000-8000-000000000002','calendar-student@example.test');
@@ -26,5 +26,13 @@ select is((select count(*)::int from public.adviser_requests()),1,'request reach
 select public.respond_booking((select id from public.adviser_requests() limit 1),true,null);
 set local request.jwt.claims to '{"sub":"40000000-0000-4000-8000-000000000002","role":"authenticated","app_metadata":{"role":"student"}}';
 select is((select status::text from public.my_bookings()),'accepted','student sees adviser decision');
+select throws_ok($$select public.set_booking_meeting((select id from public.my_bookings()),'https://meet.google.com/abc-defg-hij')$$,'42501','forbidden','student cannot publish a meeting link');
+set local request.jwt.claims to '{"sub":"40000000-0000-4000-8000-000000000001","role":"authenticated"}';
+select throws_ok($$select public.set_booking_meeting((select id from public.adviser_requests()),'https://example.com/')$$,'23514',null,'foreign host rejected');
+select lives_ok($$select public.set_booking_meeting((select id from public.adviser_requests()),'https://meet.google.com/abc-defg-hij')$$,'assigned adviser saves meeting');
+set local request.jwt.claims to '{"sub":"40000000-0000-4000-8000-000000000002","role":"authenticated"}';
+select is((select meeting_url from public.bookings),'https://meet.google.com/abc-defg-hij','student can read the meeting');
+select public.cancel_booking((select id from public.my_bookings()));
+select ok((select meeting_url is null from public.bookings),'cancel clears meeting');
 select * from finish();
 rollback;

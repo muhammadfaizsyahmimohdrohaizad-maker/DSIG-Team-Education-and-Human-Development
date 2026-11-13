@@ -1,3 +1,4 @@
+import { bookingMeeting } from "@/server/data/adviser";
 import { ActionForm } from "@/components/action-form";
 import { revalidatePath } from "next/cache";
 import { db } from "@/server/data/supabase";
@@ -44,6 +45,7 @@ export default async function BookingPage({ params }: { params: Promise<{ id: st
   const when = whenLabel(b.start);
   const active = ACTIVE.has(b.status) && new Date(b.start) > new Date();
   const free = active ? await getOpenSlots({ days: 14, adviserId: b.adviserId }) : null;
+  const meeting = b.status === "accepted" ? await bookingMeeting(id) : null;
   const who = firstName(b.adviserName);
 
   return (
@@ -64,6 +66,8 @@ export default async function BookingPage({ params }: { params: Promise<{ id: st
               {b.note ? <div className="col-span-full"><dt className="text-sm text-muted">Your note</dt><dd className="m-0">{b.note}</dd></div> : null}
               {b.adviserNote ? <div className="col-span-full"><dt className="text-sm text-muted">Note from {who}</dt><dd className="m-0">{b.adviserNote}</dd></div> : null}
             </dl>
+            {meeting?.data?.meeting_url && <a href={meeting.data.meeting_url} target="_blank" rel="noopener noreferrer">Join Google Meet</a>}
+            {meeting?.error && <p role="alert">The meeting link could not be loaded. Refresh to try again.</p>}
             <div className="flex flex-col gap-1">
               <b className="text-navy">What {who} can see</b>
               {active ? <ActionForm submit={saveSharing} label="Save sharing">

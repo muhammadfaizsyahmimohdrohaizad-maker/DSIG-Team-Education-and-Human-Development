@@ -217,6 +217,7 @@ export type Database = {
           shared_items: string[]
           request_id: string
           created_at: string
+          meeting_url: string | null
           adviser_note: string | null
         }
         Insert: {
@@ -990,6 +991,7 @@ export type Database = {
         }
         Returns: string[]
       }
+      set_booking_meeting: { Args: { p_booking: string; p_url: string }; Returns: undefined }
       set_booking_sharing: { Args: { p_booking: string; p_shared: string[] }; Returns: undefined }
       my_bookings: {
         Args: never

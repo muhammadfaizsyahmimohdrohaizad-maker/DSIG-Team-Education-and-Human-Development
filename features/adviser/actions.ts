@@ -3,12 +3,12 @@
 // adviser: undertaking, requests, responses, feedback, availability and cohort (FR-CON-04, FR-ADV-01..04).
 // Student data reaches an adviser only through the open_request RPC, which writes the audit row.
 import { err, invalid, ok, type Result } from "@/lib/result";
-import { adviserFeedback, availabilityInput, bookingRef, cohortQuery, openSlotsQuery, respondInput } from "@/lib/schemas";
+import { adviserFeedback, meetingInput, availabilityInput, bookingRef, cohortQuery, openSlotsQuery, respondInput } from "@/lib/schemas";
 import { MIN_GROUP } from "@/server/engines/cohort";
 import { ownProfile } from "@/server/data/account";
 import {
   acceptUndertaking as acceptUndertakingRow, adviserRequests, adviserStudents, cohortRows, mySlots, openRequest as openRequestRpc,
-  respondTo, saveAvailability, saveFeedback,
+  storeMeeting, respondTo, saveAvailability, saveFeedback,
   type AdviserRequest, type AdviserStudent, type AvailabilitySaved, type BlockedDay, type CohortMetricRow, type MySlot, type SharedSummary, type Undertaking,
 } from "@/server/data/adviser";
 import { currentUser } from "@/server/data/supabase";
@@ -58,6 +58,12 @@ export async function openRequest(input: unknown): Promise<Result<SharedSummary>
   if (user === null) return err("UNAUTHENTICATED", LOG_IN);
   if (!user) return err("FORBIDDEN", NOT_ADVISER);
   return openRequestRpc(parsed.data.bookingId);
+}
+
+export async function setMeeting(input: unknown) {
+  const parsed = meetingInput.safeParse(input);
+  if (!parsed.success) return invalid(parsed.error);
+  return storeMeeting(parsed.data.bookingId, parsed.data.url);
 }
 
 export type Responded = { bookingId: string; status: "accepted" | "declined" };

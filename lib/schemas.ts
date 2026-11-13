@@ -85,6 +85,9 @@ export const openSlotsQuery = z.object({
   adviserId: uuid.optional(),
 });
 export const bookingRef = z.object({ bookingId: uuid });
+export const meetingInput = bookingRef.extend({
+  url: z.string().trim().regex(/^(?:https:\/\/meet\.google\.com\/[a-z]{3}-[a-z]{4}-[a-z]{3})?$/, "Enter a Google Meet link such as https://meet.google.com/abc-defg-hij."),
+});
 export const moveBookingInput = z.object({ bookingId: uuid, slotId: uuid });
 
 export const respondInput = z.object({

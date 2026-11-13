@@ -2,11 +2,12 @@
 // Adviser booking requests board. Opening a request calls open_request, which returns only what the student
 // ticked and writes an audit row, so it runs on "View", never to prefetch.
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { ActionForm } from "@/components/action-form";
+import { useRef, useState, useTransition } from "react";
 import { AlertMessage, Button, Card, EmptyState, SoftPanel, StatusMessage, StatusTag, Textarea, cn, type TagKind } from "@/components/ui";
 import { STATUS_LABEL, firstName, whenLabel } from "@/features/booking/labels";
 import type { BookingState, EducationLevel } from "@/lib/types";
-import { openRequest, respond, sendFeedback, type AdviserRequest, type SharedSummary } from "./actions";
+import { setMeeting, openRequest, respond, sendFeedback, type AdviserRequest, type SharedSummary } from "./actions";
 
 const LEVEL: Record<EducationLevel, string> = { spm: "SPM", pre_university: "Pre-university", diploma: "Diploma", degree: "Degree" };
 const TAG: Partial<Record<BookingState, TagKind>> = { requested: "requested", change_requested: "requested", accepted: "accepted", declined: "declined", cancelled: "declined", completed: "accepted" };
@@ -27,10 +28,13 @@ export function RequestsBoard({ requests }: { requests: AdviserRequest[] }) {
 
   const sel = requests.find((r) => r.id === selId) ?? null;
 
+  const selected = useRef<string | null>(null);
   const view = (id: string) => {
+    selected.current = id;
     setSelId(id); setSummary(null); setError(null); setMessage(null); setDeclining(false); setNote(""); setFeedback(""); setFbError(null);
     startLoad(async () => {
       const r = await openRequest({ bookingId: id });
+      if (selected.current !== id) return;
       if (!r.ok) { setError(r.error.message); return; }
       setSummary(r.value);
     });
@@ -116,6 +120,11 @@ export function RequestsBoard({ requests }: { requests: AdviserRequest[] }) {
                   {summary.target ? (
                     <div><h3 className="m-0 font-sans text-base">Target job</h3><p className="m-0"><b className="text-navy">{summary.target.title}</b></p></div>
                   ) : null}
+                  {summary.shared.includes("target_matches") && (
+                    <div><h3 className="font-semibold">Career matches</h3>
+                      {summary.matches?.length ? <ol className="list-decimal pl-5">{summary.matches.map((title, i) => <li key={i}>{title}</li>)}</ol> : <p>No saved matches.</p>}
+                    </div>
+                  )}
                   {summary.gaps?.length ? (
                     <div className="flex flex-col gap-1">
                       <h3 className="m-0 font-sans text-base">Skills and progress</h3>
@@ -162,6 +171,17 @@ export function RequestsBoard({ requests }: { requests: AdviserRequest[] }) {
               </div>
             ) : null}
 
+            {sel.status === "accepted" && (
+              <ActionForm key={sel.id} label="Save meeting link" submit={async form => {
+                const result = await setMeeting({ bookingId: sel.id, url: form.get("meeting") });
+                if (!result.ok) return result.error.fields?.url ?? result.error.message;
+                return form.get("meeting") ? "Meeting link saved to the student's appointment." : "Meeting link removed.";
+              }}>
+                <label htmlFor="meeting">Google Meet link</label>
+                <input id="meeting" name="meeting" type="url" className="w-full rounded-field border p-2" placeholder="https://meet.google.com/abc-defg-hij" />
+                <span className="text-sm">Paste a link to add or replace it. Save an empty field to remove it.</span>
+              </ActionForm>
+            )}
             {sel.status === "completed" ? (
               <div className="flex flex-col gap-2 border-t border-hairline pt-3">
                 <Textarea id="fb" label="Feedback after the session" rows={4} value={feedback} onChange={(e) => setFeedback(e.target.value)} error={fbError ?? undefined}
