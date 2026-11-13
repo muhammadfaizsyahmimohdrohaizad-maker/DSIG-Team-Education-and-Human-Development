@@ -25,6 +25,8 @@ export async function getDashboardData(): Promise<DashboardData> {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
   const profile = await getProfile(user.id);
+  if (profile?.role === "adviser") redirect("/adviser/requests");
+  if (profile?.role === "institution") redirect("/institution");
   const { firstName } = nameParts(profile?.fullName || "there");
   if (!profile?.target) return { kind: "first-visit", firstName };
 

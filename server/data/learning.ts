@@ -1,7 +1,6 @@
 import "server-only";
 // D4 learning progress: skill claims, lessons done, mastery checks, review cards, saved study options.
 import { adminDb, db } from "./supabase.ts";
-import { getLessons } from "./reference.ts";
 import type { SkillProgress, SkillState } from "../../lib/types.ts";
 import type { Json } from "../../lib/database.types.ts";
 
@@ -19,14 +18,11 @@ export type SkillProgressDetail = SkillProgress & {
 /** Everything A2 and A3 need, for every skill the student has touched. */
 export async function getProgress(userId: string): Promise<Map<string, SkillProgressDetail>> {
   const client = await db();
-  const [claims, lessonsDone, checks, lessons] = await Promise.all([
+  const [claims, checks] = await Promise.all([
     client.from("skill_progress").select("skill_uri, claimed, evidence_note").eq("user_id", userId),
-    client.from("lesson_progress").select("lesson_id, done_at").eq("user_id", userId).not("done_at", "is", null),
     client.from("mastery_checks").select("skill_uri, score, retake_after_lesson, taken_at").eq("user_id", userId).order("taken_at", { ascending: false }),
-    getLessons(),
   ]);
   if (claims.error) fail("claims", claims.error);
-  if (lessonsDone.error) fail("lessons done", lessonsDone.error);
   if (checks.error) fail("checks", checks.error);
 
   const out = new Map<string, SkillProgressDetail>();
@@ -40,15 +36,6 @@ export async function getProgress(userId: string): Promise<Map<string, SkillProg
     const progress = get(c.skill_uri);
     progress.claimed = c.claimed;
     progress.evidenceNote = c.evidence_note ?? undefined;
-  }
-
-  const lessonById = new Map(lessons.map((l) => [l.id, l]));
-  for (const d of lessonsDone.data as { lesson_id: string; done_at: string }[]) {
-    const l = lessonById.get(d.lesson_id);
-    if (!l) continue;
-    const p = get(l.skillUri);
-    p.lessonDoneAt.set(l.no, new Date(d.done_at));
-    p.lessonsDone = [...p.lessonDoneAt.keys()].sort((a, b) => a - b);
   }
 
   // Newest first, so the first row per skill is the latest check.
