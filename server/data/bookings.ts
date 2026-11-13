@@ -110,7 +110,11 @@ export async function acceptedBookingsBetween(from: string, to: string): Promise
     if (e2) return fromDb(e2, BOOKING_ERRORS, "acceptedBookingsBetween");
     for (const a of advisers as { user_id: string; full_name: string }[]) names.set(a.user_id, a.full_name);
   }
-  return ok(rows.map((r) => ({
+  if (!rows.length) return ok([]);
+  const preferences = await admin.from("profiles").select("user_id").in("user_id", [...new Set(rows.map(r => r.student_id))]).eq("reminder_emails", true);
+  if (preferences.error) return fromDb(preferences.error, BOOKING_ERRORS, "reminderPreferences");
+  const optedIn = new Set(preferences.data.map(r => r.user_id));
+  return ok(rows.filter(r => optedIn.has(r.student_id)).map((r) => ({
     bookingId: r.id, studentId: r.student_id, start: r.availability_slots.slot_start, minutes: r.availability_slots.minutes,
     adviserName: names.get(r.availability_slots.adviser_id) ?? "your adviser",
   })));

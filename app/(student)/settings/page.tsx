@@ -1,3 +1,6 @@
+import { ActionForm } from "@/components/action-form";
+import { revalidatePath } from "next/cache";
+import { db } from "@/server/data/supabase";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -20,6 +23,15 @@ export default async function SettingsPage() {
   if (!user) redirect("/sign-in");
   const [profile, consents, occupations] = await Promise.all([getProfile(user.id), listMyConsents(), getOccupations()]);
   if (!profile) redirect("/dashboard");
+  async function saveReminders(form: FormData) {
+    "use server";
+    const viewer = await currentUser();
+    if (!viewer) return "Sign in to update reminders.";
+    const { error } = await (await db()).from("profiles").update({ reminder_emails: form.has("reminders") }).eq("user_id", viewer.id).select("user_id").single();
+    if (error) return "Could not save your reminder preference.";
+    revalidatePath("/settings");
+    return "Reminder preference saved.";
+  }
   const target = occupations.find((o) => o.code === profile.target)?.titleEn;
   const adviserSees = consents.ok && consents.value.current.adviser_visibility
     ? "Your target job and skill progress, plus what you tick for each booking."
@@ -56,6 +68,7 @@ export default async function SettingsPage() {
             </div>
           </Card>
 
+          <Card><ActionForm submit={saveReminders} label="Save reminder preference"><label><input name="reminders" type="checkbox" defaultChecked={profile.reminderEmails} /> Email me the day before an appointment</label></ActionForm></Card>
           <DeleteAccount fullName={profile.fullName} />
         </div>
 

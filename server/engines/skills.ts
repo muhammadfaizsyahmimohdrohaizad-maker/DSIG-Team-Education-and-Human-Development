@@ -4,6 +4,7 @@ import { PASS_MARK } from "./lesson.ts";
 
 export function status(skill: string, shownSkills: ReadonlySet<string>, progress?: SkillProgress): SkillState {
   if (progress?.bestCheckScore !== undefined && progress.bestCheckScore >= PASS_MARK) return "mastered";
+  if (progress?.evidenceNote) return "have";
   if (progress?.claimed) return "check_needed";
   if (progress && progress.lessonsDone.length > 0) return "learning";
   if (shownSkills.has(skill)) return "have";

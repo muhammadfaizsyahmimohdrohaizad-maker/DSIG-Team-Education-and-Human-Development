@@ -35,7 +35,7 @@ export async function buildSkillGap(profile: ProfileDetails & { target: string }
       case "mastered": return `You showed this skill on ${dateMyt(p!.masteredAt!)}.`;
       case "check_needed": return "You said you know this. Add a project, certificate or document that shows it.";
       case "learning": return "In progress in your plan. Add the evidence to your résumé when it's done.";
-      case "have": return whyHave(uri);
+      case "have": return p?.evidenceNote ?? whyHave(uri);
       case "missing": return "Not in your modules, skills or projects yet.";
     }
   };

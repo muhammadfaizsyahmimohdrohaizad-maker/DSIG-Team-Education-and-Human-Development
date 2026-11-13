@@ -20,7 +20,7 @@ export type SkillProgressDetail = SkillProgress & {
 export async function getProgress(userId: string): Promise<Map<string, SkillProgressDetail>> {
   const client = await db();
   const [claims, lessonsDone, checks, lessons] = await Promise.all([
-    client.from("skill_progress").select("skill_uri, claimed").eq("user_id", userId),
+    client.from("skill_progress").select("skill_uri, claimed, evidence_note").eq("user_id", userId),
     client.from("lesson_progress").select("lesson_id, done_at").eq("user_id", userId).not("done_at", "is", null),
     client.from("mastery_checks").select("skill_uri, score, retake_after_lesson, taken_at").eq("user_id", userId).order("taken_at", { ascending: false }),
     getLessons(),
@@ -36,7 +36,11 @@ export async function getProgress(userId: string): Promise<Map<string, SkillProg
     return p;
   };
 
-  for (const c of claims.data as { skill_uri: string; claimed: boolean }[]) get(c.skill_uri).claimed = c.claimed;
+  for (const c of claims.data) {
+    const progress = get(c.skill_uri);
+    progress.claimed = c.claimed;
+    progress.evidenceNote = c.evidence_note ?? undefined;
+  }
 
   const lessonById = new Map(lessons.map((l) => [l.id, l]));
   for (const d of lessonsDone.data as { lesson_id: string; done_at: string }[]) {

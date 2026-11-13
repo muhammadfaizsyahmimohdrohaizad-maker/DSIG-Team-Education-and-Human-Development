@@ -19,11 +19,12 @@ export async function loadCv(userId: string): Promise<CvView | null> {
   const evidence = (uri: string): string => {
     const p = progress.get(uri);
     if (p?.masteredAt) return `Skill check passed ${dateMyt(p.masteredAt)}`;
+    if (p?.evidenceNote) return p.evidenceNote;
     if (profile.skills.includes(uri)) return "You added this skill";
     const mod = modules.find((m) => profile.moduleIds.includes(m.id) && m.skills.includes(uri));
     return mod ? `From your module ${mod.title}` : "From your SPM results";
   };
-  const uris = new Set<string>([...shown, ...[...progress.values()].filter((p) => p.masteredAt).map((p) => p.skill)]);
+  const uris = new Set<string>([...shown, ...[...progress.values()].filter((p) => p.masteredAt || p.evidenceNote).map((p) => p.skill)]);
   const cvSkills = [...uris]
     .map((uri) => ({ uri, label: skills.get(uri)?.label ?? uri, evidence: evidence(uri), forTarget: essential.has(uri) }))
     .sort((a, b) => Number(b.forTarget) - Number(a.forTarget) || a.label.localeCompare(b.label));

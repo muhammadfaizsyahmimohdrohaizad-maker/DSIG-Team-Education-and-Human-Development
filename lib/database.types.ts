@@ -769,6 +769,7 @@ export type Database = {
           user_id: string
           skill_uri: string
           state: Database["public"]["Enums"]["skill_state"]
+          evidence_note: string | null
           claimed: boolean
           evidence: string | null
           updated_at: string
@@ -777,6 +778,7 @@ export type Database = {
           user_id: string
           skill_uri: string
           state: Database["public"]["Enums"]["skill_state"]
+          evidence_note?: string | null
           claimed?: boolean
           evidence?: string | null
           updated_at?: string
@@ -785,6 +787,7 @@ export type Database = {
           user_id?: string
           skill_uri?: string
           state?: Database["public"]["Enums"]["skill_state"]
+          evidence_note?: string | null
           claimed?: boolean
           evidence?: string | null
           updated_at?: string
@@ -987,6 +990,7 @@ export type Database = {
         }
         Returns: string[]
       }
+      set_booking_sharing: { Args: { p_booking: string; p_shared: string[] }; Returns: undefined }
       my_bookings: {
         Args: never
         Returns: {

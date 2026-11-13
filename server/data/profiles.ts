@@ -3,7 +3,7 @@ import "server-only";
 import { db } from "./supabase.ts";
 import type { EducationLevel, Profile, Project, SpmGrade } from "../../lib/types.ts";
 
-export type ProfileDetails = Profile & { fullName: string; educationLevel?: EducationLevel };
+export type ProfileDetails = Profile & { reminderEmails: boolean; fullName: string; educationLevel?: EducationLevel };
 
 export type ProfileFields = {
   educationLevel: EducationLevel;
@@ -20,7 +20,7 @@ function fail(what: string, error: { message: string }): never {
 }
 
 type ProfileRow = {
-  user_id: string; full_name: string; is_under_18: boolean; education_level: EducationLevel | null;
+  reminder_emails: boolean; user_id: string; full_name: string; is_under_18: boolean; education_level: EducationLevel | null;
   spm_grades: SpmGrade[]; module_ids: string[]; skills: string[]; interests: string[];
   job_in_mind: string | null; target_occupation: string | null;
 };
@@ -29,7 +29,7 @@ export async function getProfile(userId: string): Promise<ProfileDetails | null>
   const client = await db();
   const [p, projects] = await Promise.all([
     client.from("profiles")
-      .select("user_id, full_name, is_under_18, education_level, spm_grades, module_ids, skills, interests, job_in_mind, target_occupation")
+      .select("reminder_emails, user_id, full_name, is_under_18, education_level, spm_grades, module_ids, skills, interests, job_in_mind, target_occupation")
       .eq("user_id", userId).maybeSingle(),
     client.from("projects").select("name, description, link").eq("user_id", userId).order("name"),
   ]);
@@ -39,6 +39,7 @@ export async function getProfile(userId: string): Promise<ProfileDetails | null>
   if (!row) return null;
   return {
     userId: row.user_id,
+    reminderEmails: row.reminder_emails,
     fullName: row.full_name,
     isUnder18: row.is_under_18,
     educationLevel: row.education_level ?? undefined,

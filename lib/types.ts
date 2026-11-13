@@ -50,6 +50,7 @@ export type Match = {
 };
 
 export type SkillProgress = {
+  evidenceNote?: string;
   skill: EscoUri;
   claimed: boolean;
   lessonsDone: number[];

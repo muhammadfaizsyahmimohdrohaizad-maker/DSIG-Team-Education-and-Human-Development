@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { ActionForm } from "@/components/action-form";
+import { db, currentUser } from "@/server/data/supabase";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { ButtonLink, Card, EmptyState, Kicker, SegmentedLinks, SoftPanel, StatusTag, cn, type TagKind } from "@/components/ui";
 import { ClaimSkillButton } from "@/features/plan/buttons";
@@ -106,7 +109,17 @@ export default async function SkillGapPage({ searchParams }: { searchParams: Pro
                     </div>
                     {!isHave(r) ? (
                       <div className="flex flex-[1_1_180px] flex-wrap items-center gap-2 tablet:justify-end">
-                        <ButtonLink href="/plan" variant="outline" size="compact">{r.state === "learning" ? "Continue in my plan" : r.state === "check_needed" ? "Add evidence" : "See how to close it"}</ButtonLink>
+                        {r.state === "check_needed" ? <ActionForm label="Save evidence" submit={async form => {
+                          "use server";
+                          const user = await currentUser();
+                          if (!user) return "Sign in to save evidence.";
+                          const note = String(form.get("evidence") ?? "").trim();
+                          if (note.length < 10 || note.length > 1000) return "Describe your evidence in 10 to 1,000 characters.";
+                          const { error } = await (await db()).from("skill_progress").update({ evidence_note: note, state: "have" }).eq("user_id", user.id).eq("skill_uri", r.skill).eq("claimed", true).select("skill_uri").single();
+                          if (error) return "Could not save this evidence. Refresh and try again.";
+                          revalidatePath("/skill-gap");
+                          return "Evidence saved.";
+                        }}><label>Describe a project or certificate demonstrating {r.label}<textarea name="evidence" required minLength={10} maxLength={1000} /></label></ActionForm> : <ButtonLink href="/plan" variant="outline" size="compact">{r.state === "learning" ? "Continue in my plan" : "See how to close it"}</ButtonLink>}
                         {r.state === "missing" ? <ClaimSkillButton skill={r.skill} label={r.label} /> : null}
                       </div>
                     ) : null}

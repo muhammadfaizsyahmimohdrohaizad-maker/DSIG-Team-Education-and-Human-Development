@@ -24,7 +24,7 @@ function Bars({ rows, max }: { rows: CohortMetricRow[]; max: number }) {
 // Adviser: cohort board. cohort_rows never returns a group under 5 students, so small groups simply don't appear.
 export default async function CohortPage({ searchParams }: { searchParams: Promise<{ programme?: string }> }) {
   const { programme } = await searchParams;
-  const prog = programme && PROGRAMMES.includes(programme) ? programme : undefined;
+  const prog = typeof programme === "string" ? programme.trim() || undefined : undefined;
   const result = await getCohort(prog ? { programme: prog } : {});
 
   const header = (
@@ -36,10 +36,7 @@ export default async function CohortPage({ searchParams }: { searchParams: Promi
       <form method="get" action="/careerprep/adviser/cohort" className="flex items-end gap-2">
         <div className="flex flex-col gap-1.5">
           <label htmlFor="programme" className="text-[15px] font-semibold text-navy">Programme</label>
-          <select id="programme" name="programme" defaultValue={prog ?? ""} className="min-h-11 rounded-control border border-control bg-white px-3">
-            <option value="">All programmes</option>
-            {PROGRAMMES.map((p) => <option key={p} value={p}>{p}</option>)}
-          </select>
+          <input id="programme" name="programme" defaultValue={prog ?? ""} className="min-h-11 rounded-control border border-control bg-white px-3" list="cohort-programmes" placeholder="All programmes" maxLength={120} /><datalist id="cohort-programmes">{PROGRAMMES.map(p => <option key={p} value={p} />)}</datalist>
         </div>
         <button type="submit" className="min-h-11 rounded-button border border-navy px-4 font-semibold text-navy hover:bg-cream">Show</button>
       </form>

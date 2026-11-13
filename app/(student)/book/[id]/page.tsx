@@ -1,3 +1,6 @@
+import { ActionForm } from "@/components/action-form";
+import { revalidatePath } from "next/cache";
+import { db } from "@/server/data/supabase";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink, Card, EmptyState, ErrorState, SoftPanel, StatusTag, type TagKind } from "@/components/ui";
@@ -30,6 +33,14 @@ export default async function BookingPage({ params }: { params: Promise<{ id: st
     );
   }
 
+  async function saveSharing(form: FormData) {
+    "use server";
+    const shared = SHARE_ORDER.filter(key => form.getAll("shared").includes(key));
+    const { error } = await (await db()).rpc("set_booking_sharing", { p_booking: id, p_shared: shared });
+    if (error) return "Could not update this appointment. Refresh and try again.";
+    revalidatePath("/book/" + id);
+    return "Sharing updated.";
+  }
   const when = whenLabel(b.start);
   const active = ACTIVE.has(b.status) && new Date(b.start) > new Date();
   const free = active ? await getOpenSlots({ days: 14, adviserId: b.adviserId }) : null;
@@ -55,7 +66,9 @@ export default async function BookingPage({ params }: { params: Promise<{ id: st
             </dl>
             <div className="flex flex-col gap-1">
               <b className="text-navy">What {who} can see</b>
-              {b.shared.length ? (
+              {active ? <ActionForm submit={saveSharing} label="Save sharing">
+                {SHARE_ORDER.map(key => <label key={key}><input type="checkbox" name="shared" value={key} defaultChecked={b.shared.includes(key)} /> {SHARE_LABELS[key]}</label>)}
+              </ActionForm> : b.shared.length ? (
                 <ul className="m-0 flex flex-col gap-0.5 pl-5">{SHARE_ORDER.filter((k) => b.shared.includes(k)).map((k) => <li key={k}>{SHARE_LABELS[k]}</li>)}</ul>
               ) : <span>Nothing beyond your name, topic and note.</span>}
               <span className="text-sm text-muted">Shared items stay visible until the appointment ends, then close.</span>
