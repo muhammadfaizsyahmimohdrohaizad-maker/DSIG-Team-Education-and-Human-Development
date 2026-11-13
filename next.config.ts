@@ -22,6 +22,11 @@ const config: NextConfig = {
   reactStrictMode: true, 
   basePath: "/careerprep",
   poweredByHeader: false,
+  async redirects() {
+    return ["cv", "review", "lessons", "learn", "check", "progress"].map(section => ({
+      source: "/plan/" + section + "/:path*", destination: "/plan", permanent: false,
+    }));
+  },
   async headers() {
     return [
       {

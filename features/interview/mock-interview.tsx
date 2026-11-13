@@ -120,7 +120,7 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
             <li><b className="text-navy">Evidence:</b> an example from your own work</li>
           </ul>
           <p className="m-0">Each answer gets a practical suggestion from a fixed checklist. If you share interview feedback when you book, your adviser sees your latest answer.</p>
-          <Link href="/plan/progress" className="inline-flex min-h-11 items-center font-semibold">See skill progress</Link>
+          <Link href="/plan" className="inline-flex min-h-11 items-center font-semibold">Back to Plan</Link>
         </SoftPanel>
       </div>
     );
@@ -227,7 +227,7 @@ export function MockInterview({ setup }: { setup: InterviewSetup }) {
         })}
       </ol>
       <div className="flex flex-wrap gap-3">
-        <ButtonLink href="/plan/progress" variant="outline">See my progress</ButtonLink>
+        <ButtonLink href="/plan" variant="outline">Back to Plan</ButtonLink>
         <ButtonLink href="/book" variant="outline">Ask an adviser to review it</ButtonLink>
         <Button onClick={() => { setSession(null); setView({ kind: "setup" }); focusHeading(); }}>Start another round</Button>
       </div>

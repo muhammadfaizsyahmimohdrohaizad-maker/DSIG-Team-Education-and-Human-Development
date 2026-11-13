@@ -7,10 +7,8 @@ import { getSkillGap } from "@/features/plan/actions";
 
 const tools = [
   { href: "/map", title: "Career map", detail: "Compare occupations and see which skills support each match." },
-  { href: "/plan", title: "Learning plan", detail: "Choose a target role to find skills to practise and lessons to take." },
-  { href: "/plan/cv", title: "CV builder", detail: "Turn your skills and projects into a printable CV." },
+  { href: "/plan/resume", title: "Résumé scanner", detail: "Compare résumé evidence with your chosen occupation." },
   { href: "/plan/interview", title: "Mock interview", detail: "Practise answering questions about your target occupation." },
-  { href: "/plan/review", title: "Review cards", detail: "Revisit what you have learned with short practice questions." },
   { href: "/book", title: "Adviser booking", detail: "Find an available session to discuss your next step." },
 ];
 
@@ -20,7 +18,7 @@ export default async function Page() {
   const profile = await getProfile(user.id);
   const gap = profile?.target ? await getSkillGap() : null;
   const next = gap?.ok
-    ? { title: gap.value.target.title, detail: gap.value.lessonsLeft + " lessons remaining in your skill plan.", href: "/skill-gap", action: "Open skill gap" }
+    ? { title: gap.value.target.title, detail: "Prepare your résumé and practise interview answers for this role.", href: "/plan", action: "Open my plan" }
     : profile?.educationLevel
       ? { title: "Find your target occupation", detail: "Compare the occupations linked to your profile, then choose one to work towards.", href: "/map", action: "Explore my matches" }
       : { title: "Start with a skill you have used", detail: "Add a module, a project or a skill. Your career map will show which occupations use it.", href: "/about-you", action: "Build my profile" };
