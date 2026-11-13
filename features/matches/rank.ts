@@ -12,9 +12,8 @@ export async function shownSkills(profile: Pick<Profile, "skills" | "moduleIds" 
 export async function computeMatches(profile: Profile): Promise<MatchView[]> {
   const [occupations, skills, shown] = await Promise.all([getOccupations(), getSkills(), shownSkills(profile)]);
   const labels = new Map([...skills].map(([uri, s]) => [uri, s.label]));
-  const terms = new Map([...skills].map(([uri, s]) => [uri, s.altLabels]));
   const byCode = new Map(occupations.map((o) => [o.code, o]));
-  return rank(profile, shown, occupations, labels, terms).map((m) => {
+  return rank(profile, shown, occupations, labels).map((m) => {
     const o = byCode.get(m.code)!;
     return { ...m, title: o.titleEn, titleMs: o.titleMs, tasks: o.tasks, sourceUrl: o.sourceUrl };
   });

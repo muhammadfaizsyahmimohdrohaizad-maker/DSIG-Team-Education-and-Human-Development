@@ -1,7 +1,7 @@
 // A1. Match ranking (FR-MAT-01, FR-MAT-02, NFR-02). Pure: no AI, no trained model, no I/O.
 import type { Fit, Match, Occupation, Profile, Reason } from "../../lib/types.ts";
 
-export const WEIGHTS = { skill: 2, interest: 3, project: 1, jobInMind: 2 } as const;
+export const WEIGHTS = { essential: 70, optional: 20, interest: 10 } as const;
 export const FIT_THRESHOLDS = { strong: 0.5, good: 0.25 } as const; // starting values, check in the pilot
 export const TOP_N = 5;
 
@@ -11,61 +11,43 @@ export function fitLabel(coverage: number): Fit {
   return "Some";
 }
 
-/**
- * @param shownSkills the student's skill set S: added skills plus skills linked to passed modules
- *        and SPM subjects (resolved by the caller from reference data).
- * @param skillLabels ESCO URI -> label, used to find skills named in project descriptions and to write reasons.
- * @param projectTerms optional ESCO URI -> other names for the skill (alternative labels such as "Python" for
- *        "Programming in Python"). A skill counts as named in a project when its label or any of these terms
- *        appears as a whole word.
- */
+/** Only available evidence components participate in the denominator. */
 export function rank(
   profile: Profile,
   shownSkills: ReadonlySet<string>,
   occupations: readonly Occupation[],
   skillLabels: ReadonlyMap<string, string>,
-  projectTerms: ReadonlyMap<string, readonly string[]> = new Map(),
 ): Match[] {
-  const projectText = profile.projects.map((p) => `${p.name} ${p.description ?? ""}`.toLowerCase()).join(" ");
-  const named = (skill: string): boolean => {
-    const terms = [skillLabels.get(skill), ...(projectTerms.get(skill) ?? [])];
-    return terms.some((t) => !!t && namesTerm(projectText, t.toLowerCase()));
-  };
+  if (!shownSkills.size) return [];
   const interests = new Set(profile.interests);
-
-  const scored = occupations.map((o): Match => {
-    const reasons: Reason[] = [];
-    const shown = o.essentialSkills.filter((s) => shownSkills.has(s));
-    const sharedInterests = o.interestAreas.filter((i) => interests.has(i));
-    const inProjects = o.essentialSkills.filter(named);
-    const jobInMind = profile.jobInMind === o.code ? 1 : 0;
-
-    for (const i of sharedInterests) reasons.push({ kind: "interest", text: `You're interested in ${i}`, source: `MASCO ${o.code}` });
-    for (const s of shown) reasons.push({ kind: "skill", text: `You show ${skillLabels.get(s) ?? s}`, source: `ESCO ${s}` });
-    for (const s of inProjects) reasons.push({ kind: "project", text: `Your project uses ${skillLabels.get(s) ?? s}`, source: `ESCO ${s}` });
-    if (jobInMind) reasons.push({ kind: "job_in_mind", text: "This is the job you had in mind", source: `MASCO ${o.code}` });
-
-    const score =
-      WEIGHTS.skill * shown.length +
-      WEIGHTS.interest * sharedInterests.length +
-      WEIGHTS.project * inProjects.length +
-      WEIGHTS.jobInMind * jobInMind;
-    const coverage = o.essentialSkills.length ? shown.length / o.essentialSkills.length : 0;
-    return { code: o.code, score, coverage, fit: fitLabel(coverage), reasons };
-  });
-
-  const titles = new Map(occupations.map((o) => [o.code, o.titleEn]));
-  return scored
-    .filter((m) => m.score > 0)
-    .sort((a, b) => b.score - a.score || b.coverage - a.coverage || (titles.get(a.code) ?? "").localeCompare(titles.get(b.code) ?? ""))
-    .slice(0, TOP_N);
-}
-
-/** True when term appears in text as a whole word ("java" does not match "javascript"; "c++" works). */
-export function namesTerm(text: string, term: string): boolean {
-  if (term.length < 2) return false;
-  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`(^|[^a-z0-9+#])${escaped}($|[^a-z0-9+#])`).test(text);
+  const matches: Match[] = [];
+  for (const occupation of occupations) {
+    const essential = [...new Set(occupation.essentialSkills)];
+    const optional = [...new Set(occupation.optionalSkills)].filter(skill => !essential.includes(skill));
+    if (!essential.length && !optional.length) continue;
+    const areas = [...new Set(occupation.interestAreas)];
+    const present = essential.filter(skill => shownSkills.has(skill));
+    const extra = optional.filter(skill => shownSkills.has(skill));
+    const shared = areas.filter(area => interests.has(area));
+    const coverage = essential.length ? present.length / essential.length : 0;
+    let weighted = coverage * WEIGHTS.essential;
+    let weight = essential.length ? WEIGHTS.essential : 0;
+    if (optional.length) {
+      weighted += WEIGHTS.optional * extra.length / optional.length;
+      weight += WEIGHTS.optional;
+    }
+    if (areas.length && interests.size) {
+      weighted += WEIGHTS.interest * shared.length / areas.length;
+      weight += WEIGHTS.interest;
+    }
+    const reasons: Reason[] = [...present, ...extra].map(skill => ({
+      kind: "skill", text: "You show " + (skillLabels.get(skill) ?? skill), source: skill,
+    }));
+    for (const area of shared) reasons.push({kind: "interest", text: "You are interested in " + area, source: occupation.code});
+    matches.push({ code: occupation.code, score: weighted / weight, coverage, fit: fitLabel(coverage), reasons,
+      missingEssential: essential.filter(skill => !shownSkills.has(skill)).map(skill => skillLabels.get(skill) ?? skill) });
+  }
+  return matches.sort((a,b) => b.score - a.score || b.coverage - a.coverage || a.code.localeCompare(b.code)).slice(0, TOP_N);
 }
 
 // ---- A1 step 1: the student's skill set S ----

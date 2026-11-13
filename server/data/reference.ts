@@ -21,12 +21,16 @@ export const getOccupations = cache(async (): Promise<OccupationRow[]> => {
   const r = await ref();
   const [occ, links] = await Promise.all([
     r.from("occupations").select("code, title_en, title_ms, tasks, interest_areas, source_url").order("code"),
-    r.from("occupation_skills").select("code, uri").eq("essential", true),
+    r.from("occupation_skills").select("code, uri, essential"),
   ]);
   if (occ.error) fail("occupations", occ.error);
   if (links.error) fail("occupation skills", links.error);
   const skillsOf = new Map<string, string[]>();
-  for (const l of links.data as { code: string; uri: string }[]) skillsOf.set(l.code, [...(skillsOf.get(l.code) ?? []), l.uri]);
+  const optionalOf = new Map<string, string[]>();
+  for (const link of links.data) {
+    const bucket = link.essential ? skillsOf : optionalOf;
+    bucket.set(link.code, [...(bucket.get(link.code) ?? []), link.uri]);
+  }
   return (occ.data as { code: string; title_en: string; title_ms: string | null; tasks: string[]; interest_areas: string[]; source_url: string | null }[])
     .map((o) => ({
       code: o.code,
@@ -34,6 +38,7 @@ export const getOccupations = cache(async (): Promise<OccupationRow[]> => {
       titleMs: o.title_ms ?? undefined,
       tasks: o.tasks,
       essentialSkills: skillsOf.get(o.code) ?? [],
+      optionalSkills: optionalOf.get(o.code) ?? [],
       interestAreas: o.interest_areas,
       sourceUrl: o.source_url ?? undefined,
     }));

@@ -18,8 +18,8 @@ export default async function Page() {
   }
   return (
     <WorkspacePage title="My career map">
-      <div className="grid gap-4 tablet:grid-cols-[2fr_1fr]"><HeroBand gap="gap-4"><h2 className="text-2xl">{data?.matches.length ? "Explore your occupation matches" : "Build your first career map"}</h2><p>{data?.matches.length ? "Open a role to inspect its skills and choose a target." : "Add a skill, module or interest to find occupations connected to your studies."}</p><ButtonLink href="/about-you" variant="on-navy" className="self-start">Edit your skills and interests</ButtonLink></HeroBand><SoftPanel><h2 className="text-xl">Your profile</h2><p>{data?.form.skills.length ?? 0} skills · {data?.form.projects.length ?? 0} projects</p><p>Target · {data?.target?.title ?? "Choose a role from your matches"}</p></SoftPanel></div>
-      <details><summary>How the match is calculated</summary><p>Your skills, modules, interests and projects help rank occupations. Skill coverage shows the percentage of essential skills your profile already covers.</p></details>
+      <div className="grid gap-4 tablet:grid-cols-[2fr_1fr]"><HeroBand gap="gap-4"><h2 className="text-2xl">{data?.matches.length ? "Explore your occupation matches" : "Build your first career map"}</h2><p>{data?.matches.length ? "Open a role to inspect its skills and choose a target." : "Add a skill or a completed module to find occupations connected to your studies."}</p><ButtonLink href="/about-you" variant="on-navy" className="self-start">Edit your skills and interests</ButtonLink></HeroBand><SoftPanel><h2 className="text-xl">Your profile</h2><p>{data?.form.skills.length ?? 0} skills · {data?.form.projects.length ?? 0} projects</p><p>Target · {data?.target?.title ?? "Choose a role from your matches"}</p></SoftPanel></div>
+      <details><summary>How the match is calculated</summary><p>Essential skills carry 70% of the score, optional skills 20% and shared interests 10%. Available components share the weight when a component is missing.</p></details>
 
       <div className="grid gap-4 tablet:grid-cols-2">
       {data?.matches.map((job) => (
@@ -28,6 +28,8 @@ export default async function Page() {
             MASCO {job.code} · {job.fit} match
           </span>
           <h2 className="text-xl">{job.title}</h2>
+          <strong>{(job.score * 100).toFixed(2)}% compatibility</strong>
+          {job.missingEssential.length > 0 && <p>Essential skills to build: {job.missingEssential.join(", ")}</p>}
           <span>{Math.round(job.coverage * 100)}% essential skill coverage</span>
           <progress className="w-full accent-maroon" aria-label="Essential skill coverage" value={job.coverage} max={1}/>
           <RouteLink href={"/map/" + job.code}>View {job.code} details</RouteLink>

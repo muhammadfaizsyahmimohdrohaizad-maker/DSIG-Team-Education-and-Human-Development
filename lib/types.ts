@@ -34,6 +34,7 @@ export type Occupation = {
   titleMs?: string;
   tasks: string[];
   essentialSkills: EscoUri[];
+  optionalSkills?: EscoUri[];
   interestAreas: string[];
 };
 
@@ -45,6 +46,7 @@ export type Match = {
   coverage: number;
   fit: Fit;
   reasons: Reason[];
+  missingEssential: string[];
 };
 
 export type SkillProgress = {

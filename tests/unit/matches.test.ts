@@ -23,17 +23,23 @@ describe("A1 match ranking", () => {
     expect(fitLabel(0.2)).toBe("Some");
   });
 
-  it("ranks by score, drops zero scores and explains each match", () => {
-    const m = rank(profile, new Set(["py", "sql"]), occupations, labels);
-    expect(m.map((x) => x.code)).toEqual(["2512", "2513"]);
-    expect(m[0]?.score).toBe(2 * 2 + 3 + 2); // two skills, one interest, two skills named in the project
-    expect(m[0]?.coverage).toBe(0.5);
-    expect(m[0]?.fit).toBe("Strong");
-    expect(m[0]?.reasons.some((r) => r.kind === "interest")).toBe(true);
+  it("weights available components, explains missing skills and suppresses scores without skills", () => {
+    const candidate = occupations[0]!;
+    const withoutInterest = { ...profile, interests: [] };
+    expect(rank(profile, new Set(), occupations, labels)).toEqual([]);
+    const half = rank(withoutInterest, new Set(["py","sql"]), [candidate], labels)[0]!;
+    expect(half.score).toBe(0.5);
+    expect(half.missingEssential).toEqual(["machine learning","git"]);
+    const weighted = rank(withoutInterest, new Set(["py","sql","git","extra"]), [{...candidate, optionalSkills:["extra","other"]}], labels)[0]!;
+    expect(weighted.score * 100).toBeCloseTo(69.44, 2);
+    expect(rank(profile, new Set(["py","sql"]), [candidate], labels)[0]?.score).toBeCloseTo(45/80);
   });
 
-  it("gives job in mind its weight", () => {
-    const m = rank({ ...profile, interests: [], projects: [], jobInMind: "2611" }, new Set(), occupations, labels);
-    expect(m.map((x) => x.code)).toEqual(["2611"]);
+  it("counts zero overlap, deduplicates skills and breaks ties by code", () => {
+    const tied = [occ("2","A",["py","py"]),occ("1","Z",["py"])];
+    const result = rank(profile,new Set(["sql"]),tied,labels);
+    expect(result.map(match=>match.code)).toEqual(["1","2"]);
+    expect(result[1]?.missingEssential).toEqual(["python"]);
+    expect(result[0]?.score).toBe(0);
   });
 });
