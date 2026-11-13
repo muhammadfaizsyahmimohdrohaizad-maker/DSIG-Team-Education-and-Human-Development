@@ -13,7 +13,7 @@ export const ADVISER_ERRORS: KnownDbErrors = {
   bad_status: ["CONFLICT", "This request has already changed, for example the student moved or cancelled it. Reload the page to see where it stands."],
   too_late: ["CONFLICT", "This session time has passed, so the request can't be accepted or declined now."],
   not_completed: ["CONFLICT", "Feedback opens after an accepted session has ended."],
-  "42501": ["FORBIDDEN", "You don't have access to this. Accept the current staff undertaking, then try again."],
+  slot_booked: ["CONFLICT", "A student just booked this time. Refresh your calendar."],
   P0002: ["NOT_FOUND", "We couldn't find that request. Reload the page to see the current list."],
 };
 
@@ -160,8 +160,18 @@ export async function saveAvailability(userId: string, change: AvailabilityChang
     rows.push({ adviser_id: userId, slot_start: new Date(at).toISOString(), minutes: s.minutes, is_open: s.open });
   }
   if (rows.length) {
-    const { error } = await c.from("availability_slots").upsert(rows, { onConflict: "adviser_id,slot_start" });
-    if (error) return fromDb(error, ADVISER_ERRORS, "saveAvailability");
+    const newRows = rows.filter(row => !existing.has(Date.parse(row.slot_start)));
+    if (newRows.length) {
+      const { error } = await c.from("availability_slots").upsert(newRows, { onConflict: "adviser_id,slot_start", ignoreDuplicates: true });
+      if (error) return fromDb(error, ADVISER_ERRORS, "addAvailability");
+    }
+    for (const open of [true, false]) {
+      const starts = rows.filter(row => row.is_open === open).map(row => row.slot_start);
+      if (!starts.length) continue;
+      const { error } = await c.from("availability_slots").update({ is_open: open })
+        .eq("adviser_id", userId).in("slot_start", starts).neq("is_open", open);
+      if (error) return fromDb(error, ADVISER_ERRORS, "changeAvailability");
+    }
   }
   if (change.blockDays.length) {
     const { error } = await c.from("blocked_days").upsert(
