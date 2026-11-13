@@ -7,7 +7,7 @@ import { ButtonLink, Card, HeroBand } from "@/components/ui";
 import occupations from "@/content/reference/occupations.json";
 
 export default function ResumeScanner() {
-  const [code, setCode] = useState(occupations[0]!.code);
+  const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [description, setDescription] = useState("");
   const [resumeName, setResumeName] = useState("");
@@ -16,7 +16,7 @@ export default function ResumeScanner() {
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [report, setReport] = useState<ResumeReport | null>(null);
-  const role = occupations.find(item => item.code === code)!;
+  const role = occupations.find(item => item.title_en.toLowerCase() === title.trim().toLowerCase());
   const matched = report?.requirements.filter(item => item.evidence) ?? [];
   const missing = report?.requirements.filter(item => !item.evidence) ?? [];
   const coverage = report ? Math.round(100 * matched.length / report.requirements.length) : 0;
@@ -46,10 +46,12 @@ export default function ResumeScanner() {
   async function scan() {
     clearReport();
     if (text.trim().length < 50) { setError("Add at least 50 characters of résumé text."); return; }
+    if (!title.trim()) { setError("Enter the job title you are applying for."); return; }
+    if (!role && !description.trim()) { setError("Add the job description so the scan uses the requirements for this role."); return; }
     if (!consent) { setError("Allow AI processing before starting the scan."); return; }
     setBusy("Comparing résumé evidence…");
     try {
-      const result = await analyseResume({text, code, consent, jobDescription: description});
+      const result = await analyseResume({text, code: role?.code, title, consent, jobDescription: description});
       if (result.ok) setReport(result.value);
       else setError(result.error.message);
     } catch { setError("The connection was interrupted. Your text is preserved. Try again."); }
@@ -58,7 +60,7 @@ export default function ResumeScanner() {
 
   function download() {
     if (!report) return;
-    const content = [role.title_en, "Requirement evidence coverage: " + coverage + "%", report.summary,
+    const content = [title, "Requirement evidence coverage: " + coverage + "%", report.summary,
       ...report.requirements.map(item => item.requirement + String.fromCharCode(10) + (item.evidence || "No supporting quotation found.")),
       "Suggested improvements", ...report.suggestions, "Limitations", ...report.limitations].join(String.fromCharCode(10,10));
     const url = URL.createObjectURL(new Blob([content], {type: "text/plain;charset=utf-8"}));
@@ -78,11 +80,11 @@ export default function ResumeScanner() {
         <p className="text-sm text-muted">{text.length.toLocaleString()} / 12,000 characters</p>
       </Card>
       <Card as="section"><h2 className="text-2xl">What are you applying for?</h2>
-        <label>Occupation<select className={inputClass} disabled={!!busy} value={code} onChange={e=>{setCode(e.target.value);clearReport();}}>{occupations.map(o=><option key={o.code} value={o.code}>{o.title_en}</option>)}</select></label>
-        <label>Job description file (optional)<input className="block w-full py-2" disabled={!!busy} type="file" accept=".pdf,.txt" onChange={e=>{const f=e.target.files?.[0];if(f) void load(f,"description");e.target.value="";}}/></label>
+        <label>Job title<input className={inputClass} disabled={!!busy} value={title} maxLength={150} placeholder="e.g. Nurse, accountant or electrician" onChange={e=>{setTitle(e.target.value);clearReport();}} list="occupation-suggestions"/></label><datalist id="occupation-suggestions">{occupations.map(o=><option key={o.code} value={o.title_en}/>)}</datalist>
+        <label>Job description file<input className="block w-full py-2" disabled={!!busy} type="file" accept=".pdf,.txt" onChange={e=>{const f=e.target.files?.[0];if(f) void load(f,"description");e.target.value="";}}/></label>
         {descriptionName && <p className="text-sm text-muted">{descriptionName}</p>}
-        <label>Job description (optional)<textarea className={inputClass} rows={7} maxLength={12000} disabled={!!busy} value={description} onChange={e=>{setDescription(e.target.value);clearReport();}}/></label>
-        <p className="text-sm text-muted">Leave this empty to compare with the occupation’s essential skills.</p>
+        <label>Job description<textarea className={inputClass} rows={7} maxLength={12000} disabled={!!busy} value={description} onChange={e=>{setDescription(e.target.value);clearReport();}}/></label>
+        <p className="text-sm text-muted">{role ? "You can leave this empty to use the listed occupation skills." : "Paste or upload the requirements from the job advertisement."}</p>
       </Card>
     </div>
     <Card as="section"><label><input type="checkbox" disabled={!!busy} checked={consent} onChange={e=>setConsent(e.target.checked)}/> Allow Google Gemini to process these texts for this review.</label>

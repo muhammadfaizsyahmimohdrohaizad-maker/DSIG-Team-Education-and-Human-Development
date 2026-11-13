@@ -173,6 +173,7 @@ export const addCardsInput = z.object({
 export const resumeAiInput = z.object({
   jobDescription: z.string().trim().max(12000).default(""),
   text: z.string().trim().min(50, "Add at least 50 characters of résumé text.").max(12000),
-  code: z.string().min(1).max(30),
+  title: z.string().trim().min(1).max(150).optional(),
+  code: z.string().min(1).max(30).optional(),
   consent: z.literal(true),
 });

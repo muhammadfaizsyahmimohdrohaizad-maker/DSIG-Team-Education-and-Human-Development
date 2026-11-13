@@ -20,12 +20,13 @@ export async function analyseResume(input: unknown): Promise<Result<ResumeReport
     if (profile.isUnder18) return err("FORBIDDEN", "AI résumé review is available for accounts aged 18 and over.");
     if (!process.env.GEMINI_API_KEY) return err("AI_ERROR", "Gemini analysis is awaiting service configuration. Your résumé is still available.");
     const role = occupations.find(item => item.code === parsed.data.code);
-    if (!role) return err("VALIDATION", "Choose an occupation from the list.");
+    const title = parsed.data.title || role?.title_en;
+    if (!title || (!role && !parsed.data.jobDescription)) return err("VALIDATION", "Enter the job title and its job description.");
     if (!await hitAiRateLimit(userId)) return err("CONFLICT", "Please wait before requesting another AI review.");
     try {
       const text = redact(parsed.data.text, [profile.fullName]);
-      const labels = role.essential_skills.map(key => skills.find(skill => skill.key === key)?.label_en ?? key);
-      return ok(await reviewResume(text, role.title_en, labels, redact(parsed.data.jobDescription, [profile.fullName])));
+      const labels = (role?.essential_skills ?? []).map(key => skills.find(skill => skill.key === key)?.label_en ?? key);
+      return ok(await reviewResume(text, title, labels, redact(parsed.data.jobDescription, [profile.fullName])));
     } catch (e) {
       console.error("resume.gemini", e instanceof Error ? e.message : "provider failure");
       return err("AI_ERROR", "Gemini could not finish this review. Your résumé is preserved. Try again shortly.");
