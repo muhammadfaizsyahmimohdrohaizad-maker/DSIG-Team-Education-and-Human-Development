@@ -25,6 +25,10 @@ function fromAuth(e: AuthErr, context: string): Result<never> {
 
 export async function authSignUp(email: string, password: string, redirectTo: string): Promise<Result<{ userId: string; hasSession: boolean }>> {
   const { data, error } = await (await db()).auth.signUp({ email, password, options: { emailRedirectTo: redirectTo } });
+  if (error?.code === "email_address_invalid") {
+    const message = "Enter a valid email address where you can receive your confirmation link.";
+    return err("VALIDATION", message, { email: message });
+  }
   if (error) return fromAuth(error, "auth.signUp");
   // With email confirmation on, an existing address returns a user with no identities instead of an error.
   if (!data.user || (data.user.identities && data.user.identities.length === 0)) {
