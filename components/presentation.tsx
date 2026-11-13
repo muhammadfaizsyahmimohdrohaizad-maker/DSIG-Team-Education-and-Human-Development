@@ -1,5 +1,6 @@
 "use client";
 
+import { CareerMap } from "@/components/career-map";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Panel, WorkspacePage } from "@/components/workspace-page";
@@ -39,10 +40,11 @@ export function Presentation({path}:{path:string}) {
   const textField=(key:"name"|"card"|"answer"|"summary"|"available",caption:string)=><label className="grid gap-2">{caption}<textarea className="border border-control rounded-button p-2" value={data[key]} onChange={e=>update({[key]:e.target.value})}/></label>;
   return <WorkspacePage title={title}><p>Sample workspace · Changes last in this browser tab.</p>
     <Panel>
-    {["sign-in","sign-up","demo"].includes(path) && roles}
+    {path==="demo" && <><h2 className="text-2xl">Explore career matches with Aina</h2><p>Aina studies software engineering and has used Python, SQL and statistics. Open her map to compare occupations and choose a target.</p>{link("map","Open the career map")}</>}
+    {["sign-in","sign-up"].includes(path) && roles}
     {path==="dashboard" && <><h2>Welcome, {data.name}</h2><p>Your target is {target.title_en}. You cover {coverage(target)} of {target.essential_skills.length} essential skills.</p>{nav(["about-you","map","skill-gap","plan","book","settings"])}</>}
     {path==="about-you" && <>{textField("name","Student name")}<p>Diploma in Software Engineering</p><h2>Skills you have used</h2>{skills.map(s=><label key={s.key}><input type="checkbox" checked={data.known.includes(s.key)} onChange={e=>update({known:e.target.checked?[...data.known,s.key]:data.known.filter(k=>k!==s.key)})}/> {s.label_en}</label>)}{link("map")}</>}
-    {path==="map" && [...occupations].sort((a,b)=>coverage(b)/b.essential_skills.length-coverage(a)/a.essential_skills.length).map(o=>link("map/"+o.code,o.title_en+" · "+coverage(o)+"/"+o.essential_skills.length+" skills"))}
+    {path==="map" && <CareerMap known={data.known}/>}
     {path.startsWith("map/") && <><p>MASCO {selected.code}</p>{selected.tasks.map(t=><p key={t.en}>{t.en}</p>)}<button className={btn} onClick={()=>update({target:selected.code})}>{data.target===selected.code?"Current target":"Choose this role"}</button>{link("skill-gap")}</>}
     {path==="skill-gap" && <><h2>{target.title_en}</h2>{target.essential_skills.map(s=><p key={s}>{label(s)} · {missing.includes(s)?"To develop":"Covered"}</p>)}{link("plan")}</>}
     {path==="plan" && nav(["plan/lessons","plan/progress","plan/review","plan/interview","plan/cv"])}
@@ -68,3 +70,4 @@ export function Presentation({path}:{path:string}) {
     <details open={path.startsWith("adviser/") || path==="institution"}><summary>Adviser and institution pages</summary>{nav(["adviser/requests","adviser/students","adviser/availability","adviser/cohort","staff/undertaking","institution"])}</details>
     </WorkspacePage>;
 }
+
