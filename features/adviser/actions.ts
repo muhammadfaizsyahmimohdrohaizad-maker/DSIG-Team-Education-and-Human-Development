@@ -7,15 +7,15 @@ import { adviserFeedback, availabilityInput, bookingRef, cohortQuery, openSlotsQ
 import { MIN_GROUP } from "@/server/engines/cohort";
 import { ownProfile } from "@/server/data/account";
 import {
-  acceptUndertaking as acceptUndertakingRow, adviserRequests, cohortRows, mySlots, openRequest as openRequestRpc,
+  acceptUndertaking as acceptUndertakingRow, adviserRequests, adviserStudents, cohortRows, mySlots, openRequest as openRequestRpc,
   respondTo, saveAvailability, saveFeedback,
-  type AdviserRequest, type AvailabilitySaved, type BlockedDay, type CohortMetricRow, type MySlot, type SharedSummary, type Undertaking,
+  type AdviserRequest, type AdviserStudent, type AvailabilitySaved, type BlockedDay, type CohortMetricRow, type MySlot, type SharedSummary, type Undertaking,
 } from "@/server/data/adviser";
 import { currentUser } from "@/server/data/supabase";
 import { notifyAfter } from "@/features/booking/notify";
 import { slotWindow } from "@/features/booking/rules";
 
-export type { AdviserRequest, AvailabilitySaved, BlockedDay, CohortMetricRow, MySlot, SharedSummary, Undertaking };
+export type { AdviserRequest, AdviserStudent, AvailabilitySaved, BlockedDay, CohortMetricRow, MySlot, SharedSummary, Undertaking };
 
 const LOG_IN = "Log in with your staff account to continue.";
 
@@ -40,6 +40,14 @@ export async function listRequests(): Promise<Result<AdviserRequest[]>> {
   if (user === null) return err("UNAUTHENTICATED", LOG_IN);
   if (!user) return err("FORBIDDEN", NOT_ADVISER);
   return adviserRequests();
+}
+
+/** Students linked to this adviser. Target and progress only for students who share them; the RPC audits the read. */
+export async function listStudents(): Promise<Result<AdviserStudent[]>> {
+  const user = await adviser();
+  if (user === null) return err("UNAUTHENTICATED", LOG_IN);
+  if (!user) return err("FORBIDDEN", NOT_ADVISER);
+  return adviserStudents();
 }
 
 /** Each call writes one audit row (NFR-09). Call it when the adviser opens a request, not to prefetch. */

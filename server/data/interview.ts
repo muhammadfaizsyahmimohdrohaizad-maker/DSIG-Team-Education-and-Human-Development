@@ -168,3 +168,23 @@ export async function occupationTitle(code: string): Promise<string | null> {
   if (error) fail("occupation", error);
   return data?.title_en ?? null;
 }
+
+export type PastAnswer = { id: string; createdAt: string; round: InterviewRound | null; prompt: string | null; total: number | null; skipped: boolean; aiFeedback: string | null };
+
+/** Progress summary: the student's latest mock interview answers, newest first. RLS: own rows only. */
+export async function recentAnswers(userId: string, limit = 5): Promise<PastAnswer[]> {
+  const client = await db();
+  const { data, error } = await client.from("interview_answers")
+    .select("id, question_id, created_at, total, skipped, ai_feedback")
+    .eq("user_id", userId).order("created_at", { ascending: false }).limit(limit);
+  if (error) fail("recent answers", error);
+  const rows = data ?? [];
+  if (!rows.length) return [];
+  const q = await client.schema("ref").from("interview_questions").select("id, round, prompt").in("id", [...new Set(rows.map((r) => r.question_id))]);
+  if (q.error) fail("recent answer questions", q.error);
+  const byId = new Map((q.data ?? []).map((x) => [x.id, x as { id: string; round: InterviewRound; prompt: string }]));
+  return rows.map((r) => ({
+    id: r.id, createdAt: r.created_at, round: byId.get(r.question_id)?.round ?? null, prompt: byId.get(r.question_id)?.prompt ?? null,
+    total: r.total, skipped: r.skipped, aiFeedback: r.ai_feedback,
+  }));
+}

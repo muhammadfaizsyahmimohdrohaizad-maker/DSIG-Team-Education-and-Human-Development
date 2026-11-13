@@ -4,7 +4,7 @@ import { SkillStrip } from "@/components/skill-strip";
 import {
   ButtonLink, CalendarIcon, Card, ChartIcon, ChatIcon, ClockIcon, HeroBand, PeopleIcon, Pill, PlayIcon, SoftPanel, cn,
 } from "@/components/ui";
-import { getDashboardSample, type DashboardData } from "./sample-data";
+import { getDashboardData, type DashboardData } from "./data";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -12,10 +12,9 @@ const mainClasses = "mx-auto flex w-full max-w-[1280px] flex-1 flex-col px-4 pb-
 const pageTitle = "m-0 text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.15] tracking-[-0.02em]";
 const cardTitle = "m-0 text-[22px]";
 
-// ?view=first-visit previews the FirstRun board until the profile query can tell a first visit apart.
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ view?: string | string[] }> }) {
-  const { view } = await searchParams;
-  const data = getDashboardSample(view === "first-visit");
+// A student with no target job yet sees the FirstRun board.
+export default async function DashboardPage() {
+  const data = await getDashboardData();
   return data.kind === "first-visit" ? <FirstVisit firstName={data.firstName} /> : <Active data={data} />;
 }
 
@@ -36,13 +35,7 @@ function Active({ data }: { data: Extract<DashboardData, { kind: "active" }> }) 
         <div className="flex min-w-0 flex-[999_1_420px] flex-col gap-1.5">
           <h1 id="hello" className={pageTitle}>Welcome back, {data.firstName}</h1>
           <p className="m-0 text-cream">
-            Target job: <b className="text-white">{data.targetJob}</b>.{" "}
-            {data.dueCards > 0 ? (
-              <>
-                {data.dueCards} {data.dueCards === 1 ? "card is" : "cards are"} due for review today.{" "}
-                <Link href="/plan/review" className="font-semibold text-white hover:text-cream">Review them now</Link>
-              </>
-            ) : "No review cards are due today."}
+            Target job: <b className="text-white">{data.targetJob}</b>.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
@@ -57,34 +50,28 @@ function Active({ data }: { data: Extract<DashboardData, { kind: "active" }> }) 
       </HeroBand>
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-5">
-        <Card as="section" aria-labelledby="continue-h" pad="p-5 tablet:p-7" gap="gap-4">
+        {/* Dashboard board: "Continue practising". The board's résumé progress bar is left out: no table records it yet. */}
+        <Card as="section" aria-labelledby="practise-h" pad="p-5 tablet:p-7" gap="gap-4">
           <IconTile><PlayIcon /></IconTile>
           <div className="flex flex-col gap-1.5">
-            <h2 id="continue-h" className={cardTitle}>Continue learning</h2>
-            <p className="m-0">{data.continueLesson ? "Pick up where you stopped last time." : "Nothing to continue yet. Your lessons will show here."}</p>
+            <h2 id="practise-h" className={cardTitle}>Continue practising</h2>
+            <p className="m-0">Get ready for applications for {data.targetJob}.</p>
           </div>
-          {data.continueLesson ? (
-            <>
-              <div className="flex flex-col gap-2.5 rounded-button bg-cream px-4 py-3.5">
-                <div className="flex justify-between gap-2 text-sm">
-                  <b className="text-navy">Lesson · {data.continueLesson.skill}</b>
-                  <span>{data.continueLesson.lastOpened}</span>
-                </div>
-                <div
-                  role="progressbar"
-                  aria-label={`${data.continueLesson.skill} lesson progress`}
-                  aria-valuenow={data.continueLesson.percentDone}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  className="h-2 overflow-hidden rounded-full bg-hairline"
-                >
-                  <div className="h-full rounded-full bg-navy" style={{ width: `${data.continueLesson.percentDone}%` }} />
-                </div>
-                <span className="text-sm">Lesson {data.continueLesson.lesson} of {data.continueLesson.of} · {data.continueLesson.percentDone}% done</span>
-              </div>
-              <ButtonLink href={data.continueLesson.href} fullWidth className="mt-auto">Continue lesson</ButtonLink>
-            </>
-          ) : null}
+          <ul className="m-0 flex list-none flex-col gap-2 p-0">
+            <li>
+              <Link href="/plan/cv" className="flex min-h-14 flex-col justify-center rounded-button bg-cream px-3 py-2.5 leading-snug text-ink no-underline hover:bg-hairline hover:text-ink">
+                <b className="text-navy">Résumé</b>
+                <span className="text-sm">Built from your skills, modules and projects</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/plan/interview" className="flex min-h-14 flex-col justify-center rounded-button bg-cream px-3 py-2.5 leading-snug text-ink no-underline hover:bg-hairline hover:text-ink">
+                <b className="text-navy">Mock interview</b>
+                <span className="text-sm">Questions for {data.targetJob}</span>
+              </Link>
+            </li>
+          </ul>
+          <ButtonLink href="/plan/cv" fullWidth className="mt-auto">Continue my résumé</ButtonLink>
         </Card>
 
         <Card as="section" aria-labelledby="today-h" pad="p-5 tablet:p-7" gap="gap-4">
@@ -149,14 +136,14 @@ function FirstVisit({ firstName }: { firstName: string }) {
   const steps = [
     { title: "Tell us what you know", text: "Skills, projects and your programme. About 5 minutes." },
     { title: "Pick a target job", text: "From the MASCO jobs that match, with the reasons shown." },
-    { title: "Practise the gaps", text: "Short lessons and a check for each missing skill." },
+    { title: "Practise for applications", text: "Build and review your résumé, and try mock interviews." },
   ];
   return (
     <main id="main" className={cn(mainClasses, "gap-6 tablet:pt-8")}>
       <HeroBand aria-labelledby="hello">
         <h1 id="hello" className={pageTitle}>Welcome, {firstName}</h1>
         <p className="m-0 max-w-[44rem] text-cream">
-          Start with one short session. You&apos;ll see which official jobs fit what you already know, pick one, and get lessons for the skills it needs.
+          Start with one short session. You&apos;ll see which official jobs fit what you already know, pick one, and get a plan to reach it.
         </p>
       </HeroBand>
 
@@ -188,7 +175,7 @@ function FirstVisit({ firstName }: { firstName: string }) {
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(300px,100%),1fr))] gap-5">
         <Card as="section" aria-labelledby="cont-h">
           <h2 id="cont-h" className="m-0 text-xl leading-tight">Continue learning</h2>
-          <p className="m-0 text-muted">Nothing to continue yet. Your lessons will show here.</p>
+          <p className="m-0 text-muted">Nothing to continue yet. Your résumé and interviews will show here.</p>
         </Card>
         <Card as="section" aria-labelledby="prog-h">
           <h2 id="prog-h" className="m-0 text-xl leading-tight">My progress</h2>

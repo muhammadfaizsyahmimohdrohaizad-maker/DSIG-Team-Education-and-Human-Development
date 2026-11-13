@@ -121,7 +121,7 @@ export type CvView = {
   name: string;
   educationLevel?: EducationLevel;
   target?: string;
-  skills: { uri: EscoUri; label: string; masteredOn: string }[];
+  skills: { uri: EscoUri; label: string; evidence: string; forTarget: boolean }[];
   modules: string[];
   projects: Project[];
 };
